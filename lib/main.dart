@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:save_pass/loginscreen.dart';
-import 'package:save_pass/mainscreen.dart';
-import 'package:save_pass/passwordscreen.dart';
-import 'package:save_pass/settingsscreen.dart';
-import 'package:save_pass/walletscreen.dart';
-import 'package:save_pass/notificationsscreen.dart';
+import 'package:save_pass/models/screens/loginscreen.dart';
+import 'package:save_pass/models/screens/mainscreen.dart';
+import 'package:save_pass/models/screens/passwordscreen.dart';
+import 'package:save_pass/models/screens/settingsscreen.dart';
+import 'package:save_pass/models/screens/walletscreen.dart';
+import 'package:save_pass/models/screens/notificationsscreen.dart';
 
 // void main() {
 //   runApp(SavePass());
@@ -25,6 +25,7 @@ class SavePass extends StatelessWidget {
       ),
     );
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: LoginScreen(),
       theme: ThemeData(
         primarySwatch: Colors.blue

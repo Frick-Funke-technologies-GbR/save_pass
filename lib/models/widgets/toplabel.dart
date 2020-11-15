@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import './toplabel.dart';
 
@@ -30,7 +31,9 @@ class ToplabelLogin extends StatelessWidget {
         //     // offset: Offset(3, 4),
         //   ),
         // ],
-        color: Colors.grey[100],
+
+        // color: Colors.grey[100],
+        color: Colors.white,
         borderRadius: BorderRadius.all(
           const Radius.circular(10),
         ),
@@ -47,26 +50,19 @@ class ToplabelLogin extends StatelessWidget {
         textAlign: TextAlign.center,
         text: TextSpan(
           text: 'L',
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            fontSize: 50,
-          ),
+          style: GoogleFonts.oxygen(
+              fontSize: 50, fontWeight: FontWeight.w900, color: Colors.red),
           children: <TextSpan>[
             TextSpan(
-                text: 'ogin',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                ),),
+              text: 'ogin',
+          style: GoogleFonts.oxygen(
+              fontSize: 50, fontWeight: FontWeight.w900, color: Colors.grey[500]),
+            ),
             TextSpan(
-                text: '.',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                ),),
+              text: '.',
+          style: GoogleFonts.oxygen(
+              fontSize: 50, fontWeight: FontWeight.w900, color: Colors.red),
+            ),
           ],
         ),
       ),
@@ -108,40 +104,33 @@ class ToplabelStartup extends StatelessWidget {
         textAlign: TextAlign.center,
         text: TextSpan(
           text: 'S',
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            fontSize: 50,
-          ),
+          style: GoogleFonts.oxygen(
+              fontSize: 50, fontWeight: FontWeight.bold, color: Colors.red),
           children: <TextSpan>[
             TextSpan(
-                text: 'ave',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.bold,
+              text: 'ave',
+              style: GoogleFonts.oxygen(
                   fontSize: 50,
-                ),),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[500]),
+            ),
             TextSpan(
-                text: 'P',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                )),
+              text: 'P',
+              style: GoogleFonts.oxygen(
+                  fontSize: 50, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
             TextSpan(
-                text: 'ass',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.bold,
+              text: 'ass',
+              style: GoogleFonts.oxygen(
                   fontSize: 50,
-                )),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[500]),
+            ),
             TextSpan(
-                text: '.',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                ),),
+              text: '.',
+              style: GoogleFonts.oxygen(
+                  fontSize: 50, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
           ],
         ),
       ),
@@ -183,40 +172,33 @@ class Toplabel extends StatelessWidget {
         textAlign: TextAlign.center,
         text: TextSpan(
           text: 'S',
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            fontSize: 50,
-          ),
+          style: GoogleFonts.oxygen(
+              fontSize: 50, fontWeight: FontWeight.w900, color: Colors.red),
           children: <TextSpan>[
             TextSpan(
-                text: 'ave',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.bold,
+              text: 'ave',
+              style: GoogleFonts.oxygen(
                   fontSize: 50,
-                )),
+                  fontWeight: FontWeight.w900,
+                  color: Colors.grey[500]),
+            ),
             TextSpan(
-                text: 'P',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                )),
+              text: 'P',
+              style: GoogleFonts.oxygen(
+                  fontSize: 50, fontWeight: FontWeight.w900, color: Colors.red),
+            ),
             TextSpan(
-                text: 'ass',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.bold,
+              text: 'ass',
+              style: GoogleFonts.oxygen(
                   fontSize: 50,
-                )),
+                  fontWeight: FontWeight.w900,
+                  color: Colors.grey[500]),
+            ),
             TextSpan(
-                text: '.',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                )),
+              text: '.',
+              style: GoogleFonts.oxygen(
+                  fontSize: 50, fontWeight: FontWeight.w900, color: Colors.red),
+            ),
           ],
         ),
       ),
