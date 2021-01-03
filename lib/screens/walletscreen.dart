@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:save_pass/models/widgets/bottomnavigationbar.dart';
-import 'package:save_pass/models/widgets/drawer.dart';
+import 'package:save_pass/widgets/bottomnavigationbar.dart';
+import 'package:save_pass/widgets/drawer.dart';
 import 'package:flutter_speed_dial_material_design/flutter_speed_dial_material_design.dart';
 
 class WalletScreen extends StatelessWidget {

@@ -1,15 +1,38 @@
+import 'dart:convert';
 
+import 'package:save_pass/widgets/passwordentry.dart';
 
 class PasswordEntryClass {
-  int passwordId;
-  String password;
+  int id;
   String alias;
+  String password;
   String username;
-  String note;
+  String url;
+  String notes;
   int thumbnailId;
-  DateTime creationDate;
-  bool important;
+  String creationDate;
 
-  PasswordEntryClass(this.passwordId, this.username, this.alias, this.note);
+  PasswordEntryClass(
+      this.id, this.alias, this.password, this.username, this.url, this.notes);
+
+  factory PasswordEntryClass.fromJson(Map<String, dynamic> parsedJson) {
+    print('Point_fromJson');
+    print(parsedJson.toString());
+    PasswordEntryClass result = PasswordEntryClass(
+      parsedJson['id'],
+      parsedJson['alias'],
+      parsedJson['password'],
+      parsedJson['username'],
+      parsedJson['url'],
+      parsedJson['notes'],
+    );
+    print('following is result in PasswordEntryClass.fromJson():');
+    print(result.alias + ';' + result.notes + ';' + result.password + ';' + result.username);
+    return result;
+  }
+
+  // String asString() {
+  //   string = id.toString();
+  // }
 
 }

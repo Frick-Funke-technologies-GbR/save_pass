@@ -1,17 +1,51 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
-import 'package:save_pass/models/widgets/bottomnavigationbar.dart';
-import 'package:save_pass/models/widgets/drawer.dart';
-import 'package:save_pass/models/widgets/passwordentry.dart';
+import 'package:save_pass/models/resources/api.dart';
+import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/widgets/bottomnavigationbar.dart';
+import 'package:save_pass/widgets/drawer.dart';
+import 'package:save_pass/widgets/passwordentry.dart';
 import 'dart:ui' as ui;
 
+Future<List<PasswordEntryClass>> getPasswordEntries() {
+  CacheHandler cache = CacheHandler();
+  ApiProvider api = ApiProvider();
+
+  Future<String> userIdent = cache.getStringFromCache('user_ident');
+  Future<String> password = cache.getStringFromCache('master_password');
+
+  Future<List<PasswordEntryClass>> entries = password.then(
+    (passwordValue) {
+      print(passwordValue);
+      return userIdent.then(
+        (userIdentValue) {
+          print(userIdentValue);
+          Future<List<PasswordEntryClass>> result =
+              api.getUserPasswordEntries(userIdentValue, passwordValue);
+          return result.then(
+            (entrycontent) {
+              print('Following is password-result from getPasswordEntries function:');
+              print(entrycontent[0].password);
+              return entrycontent;
+            },
+          );
+          // print(result);
+          // cache.addStringToCache(result.);
+        },
+      );
+    },
+  );
+
+  return entries;
+}
 
 class PasswordScreen extends StatelessWidget {
   // final List<PasswordEntryClass> contents = [PasswordEntryClass(1, 'a', 'alias', 'note')];
@@ -336,25 +370,30 @@ class PasswordScreen extends StatelessWidget {
 
                   Container(
                     // height: 422,
-                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    // margin: EdgeInsets.symmetric(horizontal: 10),
                     // decoration: BoxDecoration(
                     // border: Border.all(color: Colors.grey[300], width: 3),
                     // color: Colors.grey[100],
                     // borderRadius: BorderRadius.circular(10)),
                     child: contents.length != 0
-                        ? LiquidPullToRefresh(
+                        ? RefreshIndicator(
                             onRefresh: () async {},
                             child: ListView.builder(
-                              padding: EdgeInsets.only(top: 100),
+                              // addSemanticIndexes: true,
+                              // addRepaintBoundaries: true,
+                              scrollDirection: Axis.vertical,
+                              padding: EdgeInsets.only(
+                                  top: 100, left: 5, right: 5, bottom: 40),
                               itemCount: contents.length,
                               itemBuilder: (context, i) {
+                                getPasswordEntries();
                                 return PasswordEntry(
                                   1,
                                   'https://www.Google.com/accounts',
                                   'Google',
                                   'Moinsen3327',
                                   'Diesistderbeginntrallala',
-                                  'Dieshatnichtsdamitzutunkasdjfp denn ich habe in der Zwischenzeit noch eine neue Timelie gedrawed. Aber wer noch nicht einen genauen Schuss im Leben missachtet hat, der kann sich auch nicht darüber freuen, wenn er mal danebengeht.',
+                                  'Nicht nur der genaue Wasserfall denn ich habe in der Zwischenzeit noch eine neue Timelie gedrawed. Aber wer noch nicht einen genauen Schuss im Leben missachtet hat, der kann sich auch nicht darüber freuen, wenn er mal danebengeht.',
                                 );
                               },
                             ),

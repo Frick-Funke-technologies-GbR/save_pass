@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:save_pass/models/screens/loginscreen.dart';
-import 'package:save_pass/models/screens/mainscreen.dart';
-import 'package:save_pass/models/screens/passwordscreen.dart';
-import 'package:save_pass/models/screens/settingsscreen.dart';
-import 'package:save_pass/models/screens/walletscreen.dart';
-import 'package:save_pass/models/screens/notificationsscreen.dart';
+import 'package:save_pass/screens/loginscreen.dart';
+import 'package:save_pass/screens/mainscreen.dart';
+import 'package:save_pass/screens/passwordscreen.dart';
+import 'package:save_pass/screens/settingsscreen.dart';
+import 'package:save_pass/screens/walletscreen.dart';
+import 'package:save_pass/screens/notificationsscreen.dart';
 
 // void main() {
 //   runApp(SavePass());
