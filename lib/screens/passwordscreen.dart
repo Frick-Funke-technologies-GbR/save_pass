@@ -15,71 +15,27 @@ import 'package:save_pass/widgets/drawer.dart';
 import 'package:save_pass/widgets/passwordentry.dart';
 import 'dart:ui' as ui;
 
-Future<List<PasswordEntryClass>> getPasswordEntries() {
+Future<List<PasswordEntryClass>> getPasswordEntries() async {
   CacheHandler cache = CacheHandler();
   ApiProvider api = ApiProvider();
 
-  Future<String> userIdent = cache.getStringFromCache('user_ident');
-  Future<String> password = cache.getStringFromCache('master_password');
+  String userIdent = await cache.getStringFromCache('user_ident');
+  String password = await cache.getStringFromCache('master_password');
 
-  Future<List<PasswordEntryClass>> entries = password.then(
-    (passwordValue) {
-      print(passwordValue);
-      return userIdent.then(
-        (userIdentValue) {
-          print(userIdentValue);
-          Future<List<PasswordEntryClass>> result =
-              api.getUserPasswordEntries(userIdentValue, passwordValue);
-          return result.then(
-            (entrycontent) {
-              print('Following is password-result from getPasswordEntries function:');
-              print(entrycontent[0].password);
-              return entrycontent;
-            },
-          );
-          // print(result);
-          // cache.addStringToCache(result.);
-        },
-      );
-    },
-  );
+  List<PasswordEntryClass> entries =
+      await api.getUserPasswordEntries(userIdent, password);
+
+  print(entries[0].password);
 
   return entries;
 }
 
 class PasswordScreen extends StatelessWidget {
   // final List<PasswordEntryClass> contents = [PasswordEntryClass(1, 'a', 'alias', 'note')];
-  final List<String> contents = [
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-    'naöls0üivjknkljföiopaeiofj',
-    'saoibsdnoibn',
-    'vnbbnouasiuelh',
-  ];
   // String _randomGeneratedPassword = 'S(99*aSdFuj9Baum_';
   // for (str  in _randomGeneratedPassword.) {
 
   // }
-
   // @override
   // Widget _createDrawerItem(
   //   {IconData icon, String text, GestureTabCallback onTap}) {
@@ -105,6 +61,27 @@ class PasswordScreen extends StatelessWidget {
         systemNavigationBarColor: Colors.transparent,
       ),
     );
+    ListView _passwordEntryListView(data) {
+      return ListView.builder(
+        // addSemanticIndexes: true,
+        // addRepaintBoundaries: true,
+        scrollDirection: Axis.vertical,
+        padding: EdgeInsets.only(top: 100, left: 5, right: 5, bottom: 40),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          getPasswordEntries();
+          return PasswordEntry(
+            data[index].id,
+            data[index].url,
+            data[index].alias,
+            data[index].username,
+            data[index].password,
+            data[index].notes,
+          );
+        },
+      );
+    }
+
     return Scaffold(
       drawer: CustomDrawer(true, false, false),
       // backgroundColor: Colors.transparent,
@@ -375,26 +352,21 @@ class PasswordScreen extends StatelessWidget {
                     // border: Border.all(color: Colors.grey[300], width: 3),
                     // color: Colors.grey[100],
                     // borderRadius: BorderRadius.circular(10)),
-                    child: contents.length != 0
+                    child: ['contents', 'moin'].length != 0
                         ? RefreshIndicator(
-                            onRefresh: () async {},
-                            child: ListView.builder(
-                              // addSemanticIndexes: true,
-                              // addRepaintBoundaries: true,
-                              scrollDirection: Axis.vertical,
-                              padding: EdgeInsets.only(
-                                  top: 100, left: 5, right: 5, bottom: 40),
-                              itemCount: contents.length,
-                              itemBuilder: (context, i) {
-                                getPasswordEntries();
-                                return PasswordEntry(
-                                  1,
-                                  'https://www.Google.com/accounts',
-                                  'Google',
-                                  'Moinsen3327',
-                                  'Diesistderbeginntrallala',
-                                  'Nicht nur der genaue Wasserfall denn ich habe in der Zwischenzeit noch eine neue Timelie gedrawed. Aber wer noch nicht einen genauen Schuss im Leben missachtet hat, der kann sich auch nicht darüber freuen, wenn er mal danebengeht.',
-                                );
+                            onRefresh: () async {
+                              // TODO: add code here!!!
+                            },
+                            child: FutureBuilder<List<PasswordEntryClass>>(
+                              future: getPasswordEntries(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  List<PasswordEntryClass> data = snapshot.data;
+                                  return _passwordEntryListView(data);
+                                } else if (snapshot.hasError) {
+                                  return Text('${snapshot.error}');
+                                }
+                                return CircularProgressIndicator();
                               },
                             ),
                           )
