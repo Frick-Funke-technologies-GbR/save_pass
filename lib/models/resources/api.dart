@@ -95,9 +95,7 @@ class ApiProvider {
           print('point3.5');
           print(PasswordEntryClass.fromJson(json_).toString());
           passwordEntries.add(PasswordEntryClass.fromJson(json_));
-          print('point4');
         } catch (Exception) {
-          print('point4e');
           print(Exception);
           return null;
         }

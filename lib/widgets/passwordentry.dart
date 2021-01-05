@@ -77,6 +77,7 @@ class PasswordEntry extends StatelessWidget {
         // leading: Checkbox(value: false, onChanged: null),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
           children: [
             // Icon(
             //   Icons.vpn_key,
@@ -90,7 +91,8 @@ class PasswordEntry extends StatelessWidget {
               padding: EdgeInsets.only(left: 20),
               child: Text(
                 storedalias,
-                overflow: TextOverflow.fade,
+                // TODO: fix overflow bug!!!
+                overflow: TextOverflow.clip,
                 style: TextStyle(
                   // color: _lightBlue.withOpacity(1),
                   // color: blueHue.withGreen(250).withRed(250),

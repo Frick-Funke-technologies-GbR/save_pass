@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/widgets/toplabel.dart';
 import 'package:save_pass/models/resources/api.dart';
@@ -85,7 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  @override
   Widget build(BuildContext context) {
     bool _showPassword = false;
     bool passwordValidator = false;
@@ -96,6 +96,18 @@ class _LoginScreenState extends State<LoginScreen> {
     //   'Hello this is a brand new language, i\'m working on right now',
     //   'What\'s our best blue cheese?',
     // ];
+    void togglePasswordVisibillity() {
+      _showPassword = !_showPassword;
+      if (_showPassword) {
+        setState(() {
+          _showPassword = false;
+        });
+      } else {
+        _showPassword = true;
+      }
+      print(_showPassword);
+    }
+
     void passInputValidator() async {
       var response = await checkMasterPassword(textFieldController.text);
 
@@ -117,8 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Navigator.of(context).pushNamed("/newpasswordscreen");
     }
 
-    ;
-    return Scaffold(
+    return new Scaffold(
       // backgroundColor: Colors.white,
 
       // appBar: AppBar(
@@ -127,148 +138,155 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         bottom: true,
         top: true,
-        child: CustomPaint(
+        child:
+            // SingleChildScrollView(
+            // dragStartBehavior: DragStartBehavior.down,
+            // clipBehavior: Clip.hardEdge,
+
+            CustomPaint(
           painter: BackgroundPainter(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ToplabelLogin(),
-              Container(
-                margin: EdgeInsets.only(right: 10, left: 10),
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    // BoxShadow(
-                    //   color: Colors.grey[100],
-                    //   blurRadius: 10,
-                    //   spreadRadius: 3,
-                    //   // offset: Offset(3, 4),
-                    // ),
-                  ],
-                  // color: Colors.grey[100],
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    const Radius.circular(10),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ToplabelLogin(),
+                Container(
+                  margin: EdgeInsets.only(right: 10, left: 10),
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      // BoxShadow(
+                      //   color: Colors.grey[100],
+                      //   blurRadius: 10,
+                      //   spreadRadius: 3,
+                      //   // offset: Offset(3, 4),
+                      // ),
+                    ],
+                    // color: Colors.grey[100],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(10),
+                    ),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    // Expanded(
-                    Container(
-                      decoration: BoxDecoration(
-                        // color: Colors.grey[100],
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                  child: Column(
+                    children: [
+                      // Expanded(
+                      Container(
+                        decoration: BoxDecoration(
+                          // color: Colors.grey[100],
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                         ),
-                      ),
-                      margin: EdgeInsets.symmetric(
-                        vertical: 80,
-                        horizontal: 10,
-                      ),
-                      child: Form(
-                        key: passinputKey,
-                        child: TextFormField(
-                          controller: textFieldController,
-                          // key: ,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please enter a Password';
-                            }
-                            if (wrongPassCount > 3) {
-                              // this.deactivate();
-                              return 'You failed to enter the correct password three times';
-                            }
+                        margin: EdgeInsets.symmetric(
+                          vertical: 80,
+                          horizontal: 10,
+                        ),
+                        child: Form(
+                          key: passinputKey,
+                          child: new TextFormField(
+                            controller: textFieldController,
+                            // key: passinputKey,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Please enter a Password';
+                              }
+                              if (wrongPassCount > 3) {
+                                // this.deactivate();
+                                return 'You failed to enter the correct password three times';
+                              }
 
-                            // bool checked = checkMasterPassword(value);
-                            // String _return = 'Password is incorrect';
+                              // bool checked = checkMasterPassword(value);
+                              // String _return = 'Password is incorrect';
 
-                            // if (checked) {
-                            //   Navigator.of(context)
-                            //       .pushNamed("/newpasswordscreen");
-                            // }
-                            // // print('mensch');
-                            // // print(checked);
+                              // if (checked) {
+                              //   Navigator.of(context)
+                              //       .pushNamed("/newpasswordscreen");
+                              // }
+                              // // print('mensch');
+                              // // print(checked);
 
-                            // // String delay() {
-                            // //   // int sec = 0;
-                            // //   // while (checked == null) {
-                            // //   //   sec += sec;
-                            // //   //   print(sec);
-                            // //   // }
-                            // //   if (checked) {
-                            // //     Navigator.of(context).pushNamed("/newpasswordscreen");
-                            // //   } else if (checked == false) {
-                            // //     return 'Password is incorrect';
-                            // //   }
-                            // // }
+                              // // String delay() {
+                              // //   // int sec = 0;
+                              // //   // while (checked == null) {
+                              // //   //   sec += sec;
+                              // //   //   print(sec);
+                              // //   // }
+                              // //   if (checked) {
+                              // //     Navigator.of(context).pushNamed("/newpasswordscreen");
+                              // //   } else if (checked == false) {
+                              // //     return 'Password is incorrect';
+                              // //   }
+                              // // }
 
-                            // // print('mensch2');
-                            // // print(checked);
-                            // // String delayedchecked = delay();
-                            // // return delayedchecked;
-                            print('niunununun');
-                            print(passwordValidator);
-                            if (passwordValidator) {
-                              return null;
-                            }
-                            return 'Password is incorrect';
-                          },
-                          enableInteractiveSelection: true,
-                          onEditingComplete: () {
-                            // passinputKey.currentState.validate();
-                            // passButtonKey.currentState.
-                            passInputValidator();
-                          },
-                          keyboardType: TextInputType.visiblePassword,
-                          obscureText: !_showPassword,
-                          decoration: InputDecoration(
-                            // prefixIcon: Icon(Icons.security),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                Icons.remove_red_eye,
-                                color:
-                                    _showPassword ? Colors.blue : Colors.grey,
+                              // // print('mensch2');
+                              // // print(checked);
+                              // // String delayedchecked = delay();
+                              // // return delayedchecked;
+                              print('niunununun');
+                              print(passwordValidator);
+                              if (passwordValidator) {
+                                return null;
+                              }
+                              return 'Password is incorrect';
+                            },
+                            enableInteractiveSelection: true,
+                            onEditingComplete: () {
+                              // passinputKey.currentState.validate();
+                              // passButtonKey.currentState.
+                              passInputValidator();
+                            },
+                            keyboardType: TextInputType.visiblePassword,
+                            obscureText: !_showPassword,
+                            decoration: InputDecoration(
+                              // prefixIcon: Icon(Icons.security),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  Icons.remove_red_eye,
+                                  color:
+                                      _showPassword ? Colors.blue : Colors.grey,
+                                ),
+                                onPressed: () {
+                                  togglePasswordVisibillity();
+                                },
                               ),
-                              onPressed: () {
-                                setState(() => _showPassword = !_showPassword);
-                              },
-                            ),
-                            // fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                width: 0,
-                                style: BorderStyle.none,
+                              // fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  width: 0,
+                                  style: BorderStyle.none,
+                                ),
                               ),
+                              filled: true,
+                              // hintText: '',
+                              labelText: 'Password',
                             ),
-                            filled: true,
-                            // hintText: '',
-                            labelText: 'Password',
                           ),
                         ),
                       ),
-                    ),
-                    // ),
-                    Container(
-                      margin: EdgeInsets.only(left: 245, bottom: 20),
-                      child: FlatButton(
-                        key: passButtonKey,
-                        child: Icon(
-                          Icons.lock_open,
-                          color: Colors.blue,
+                      // ),
+                      Container(
+                        margin: EdgeInsets.only(left: 245, bottom: 20),
+                        child: FlatButton(
+                          key: passButtonKey,
+                          child: Icon(
+                            Icons.lock_open,
+                            color: Colors.blue,
+                          ),
+                          // color: Colors.blue,
+                          // splashColor: Colors.blue,
+                          onPressed: () {
+                            passInputValidator();
+                          },
+                          color: Colors.grey[100],
+                          // elevation: 6,
                         ),
-                        // color: Colors.blue,
-                        // splashColor: Colors.blue,
-                        onPressed: () {
-                          passInputValidator();
-                        },
-                        color: Colors.grey[100],
-                        // elevation: 6,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -290,12 +308,12 @@ class BackgroundPainter extends CustomPainter {
 
     Path circlePathOne = Path();
     // Start paint from 20% height to the left
-    circlePathOne.moveTo(0, height * 0.1);
+    circlePathOne.moveTo(0, height * 0.15);
     circlePathOne.quadraticBezierTo(
       width * 0.9,
       height * 0.1,
       width * 0,
-      height * 0.9,
+      height * 1.15,
     );
     paint
       ..shader = ui.Gradient.linear(
@@ -310,12 +328,12 @@ class BackgroundPainter extends CustomPainter {
 
     Path circlePathTwo = Path();
     // Start paint from 20% height to the left
-    circlePathTwo.moveTo(width * 1, height * 0.1);
+    circlePathTwo.moveTo(width * 1, height * 0.15);
     circlePathTwo.quadraticBezierTo(
       width * 0.1,
       height * 0.8,
       width * 1,
-      height * 0.9,
+      height * 1.15,
     );
     // paint.color = Colors.blue;
     paint

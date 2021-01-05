@@ -27,6 +27,16 @@ Future<List<PasswordEntryClass>> getPasswordEntries() async {
 
   print(entries[0].password);
 
+  List<String> ids = [];
+
+  for (PasswordEntryClass entry in entries) {
+    await cache.addStringToCache(
+        'stored_alias_with_id_' + entry.id.toString(), entry.alias);
+    ids.add(entry.id.toString());
+  }
+
+  await cache.addStringListToCache('stored_ids', ids);
+
   return entries;
 }
 
@@ -107,177 +117,7 @@ class PasswordScreen extends StatelessWidget {
       bottomNavigationBar: CustomBottomNavigationBar(),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton.extended(
-        isExtended: true,
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              // scrollable: true,
-              content: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    height: 50,
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.grey[200],
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.grey.withOpacity(0.5),
-                      //     spreadRadius: 2.5,
-                      //     blurRadius: 5,
-                      //     offset: Offset(0, 2), // changes position of shadow
-                      //   ),
-                      // ],
-                    ),
-                    child: RichText(
-                      overflow: TextOverflow.fade,
-                      text: TextSpan(
-                        style: TextStyle(color: Colors.red),
-                        text: 'nmjs',
-                        children: [
-                          TextSpan(
-                            style: TextStyle(color: Colors.blue),
-                            text: '!)i',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                ButtonBar(
-                  children: [
-                    FlatButton(
-                      // textColor: Colors.blue,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        showDialog(
-                          barrierDismissible: false,
-                          // barrierColor:,
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            title: Text('Add own password'),
-                            content: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      margin:
-                                          EdgeInsets.symmetric(vertical: 10),
-                                      // padding: EdgeInsets.symmetric(horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4),
-                                        // color: Colors.grey[200]
-                                      ),
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          labelText: 'Provider',
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.symmetric(vertical: 10),
-                                      // padding: EdgeInsets.symmetric(horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4),
-                                        // color: Colors.grey[200]
-                                      ),
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          labelText: 'Website adress',
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.symmetric(vertical: 10),
-                                      // padding: EdgeInsets.symmetric(horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4),
-                                        // color: Colors.grey[200]
-                                      ),
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          labelText: 'Username',
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // Container(
-                                //   margin: EdgeInsets.symmetric(vertical: 10),
-                                //   // padding: EdgeInsets.symmetric(horizontal: 10),
-                                //   height: 50,
-                                //   decoration: BoxDecoration(
-                                //     borderRadius: BorderRadius.circular(4),
-                                //     // color: Colors.grey[200]
-                                //   ),
-                                //   child: RichText(
-                                //     text: TextSpan(
-                                //       style: GoogleFonts.sourceCodePro(),
-                                //       children: <TextSpan>[
-                                //         TextSpan(text: '')
-                                //       ],
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                            actions: [],
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Add own password',
-                        style: TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    FlatButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      color: Colors.blue,
-                      // textColor: Colors.white,
-                      // color: Colors.grey[500],
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Add generated password'),
-                    ),
-                  ],
-                ),
-              ],
-              title: Text('Create password entry'),
-            ),
-          );
-        },
-        elevation: 8,
-        icon: Icon(Icons.add),
-        label: Text('Add password'),
-      ),
+      floatingActionButton: PasswordActionButtonWithDialogWidget(),
       body: Builder(
         builder: (BuildContext context) {
           return SafeArea(
@@ -366,6 +206,7 @@ class PasswordScreen extends StatelessWidget {
                                 } else if (snapshot.hasError) {
                                   return Text('${snapshot.error}');
                                 }
+                                // TODO: Add proper Progress Indicator
                                 return CircularProgressIndicator();
                               },
                             ),
@@ -428,6 +269,7 @@ class PasswordScreen extends StatelessWidget {
                             ),
                             child: CircleAvatar(
                               backgroundColor: Colors.transparent,
+                              // TODO: Add user account image
                               backgroundImage: NetworkImage(
                                   'https://via.placeholder.com/150'),
                             ),
@@ -498,6 +340,370 @@ class PasswordScreen extends StatelessWidget {
 //     );
 //   }
 // }
+
+class PasswordActionButtonWithDialogWidget extends StatefulWidget {
+  @override
+  _PasswordActionButtonWithDialogWidgetState createState() =>
+      _PasswordActionButtonWithDialogWidgetState();
+}
+
+class _PasswordActionButtonWithDialogWidgetState
+    extends State<PasswordActionButtonWithDialogWidget> {
+  bool aliasValidator = true;
+  bool urlValidator = true;
+  bool usernameValidator = true;
+  final aliasFieldController = TextEditingController();
+  final urlFieldController = TextEditingController();
+  final usernameFieldController = TextEditingController();
+  final notesFieldController = TextEditingController();
+  final aliasFieldKey = GlobalKey<FormState>();
+  final urlFieldKey = GlobalKey<FormState>();
+  final usernameFieldKey = GlobalKey<FormState>();
+  final notesFieldKey = GlobalKey<FormState>();
+
+  void validateAddPasswordEntryFields(String passwordAddMethode) async {
+    CacheHandler cache = CacheHandler();
+
+    String alias = aliasFieldController.text;
+    String url = urlFieldController.text;
+    String username = usernameFieldController.text;
+    String notes = notesFieldController.text;
+
+    List<String> ids = await cache.getStringListFromCache('stored_ids');
+
+    // check if alias already exists
+    for (String id in ids) {
+      String storedalias = await cache
+          .getStringFromCache('stored_alias_with_id_' + id.toString());
+
+      if (storedalias == alias) {
+        setState(() {
+          aliasValidator = false;
+        });
+      }
+    }
+
+    bool aliasvalidate = aliasFieldKey.currentState.validate();
+    bool urlvalidate = urlFieldKey.currentState.validate();
+    bool usernamevalidate = usernameFieldKey.currentState.validate();
+    bool notesvalidate = notesFieldKey.currentState.validate();
+    print(aliasvalidate);
+    print(urlvalidate);
+    print(usernamevalidate);
+    print(notesvalidate);
+
+    if (passwordAddMethode == 'own') {
+      if (aliasvalidate && urlvalidate && usernamevalidate && notesvalidate) {
+        Navigator.of(context).pop();   
+        showDialog(
+          barrierDismissible: false,
+          // barrierColor:,
+          context: context,
+          builder: (_) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Text('Add own password'),
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      // padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        // color: Colors.grey[200]
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          labelText: 'Provider',
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      // padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        // color: Colors.grey[200]
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          labelText: 'Website adress',
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      // padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        // color: Colors.grey[200]
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          labelText: 'Username',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Container(
+                //   margin: EdgeInsets.symmetric(vertical: 10),
+                //   // padding: EdgeInsets.symmetric(horizontal: 10),
+                //   height: 50,
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(4),
+                //     // color: Colors.grey[200]
+                //   ),
+                //   child: RichText(
+                //     text: TextSpan(
+                //       style: GoogleFonts.sourceCodePro(),
+                //       children: <TextSpan>[
+                //         TextSpan(text: '')
+                //       ],
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+            actions: [],
+          ),
+        );
+      }
+    }
+
+    if (passwordAddMethode == 'generate') {
+
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      isExtended: true,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            scrollable: true,
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 50,
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.grey[200],
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.grey.withOpacity(0.5),
+                    //     spreadRadius: 2.5,
+                    //     blurRadius: 5,
+                    //     offset: Offset(0, 2), // changes position of shadow
+                    //   ),
+                    // ],
+                  ),
+                  child: Form(
+                    key: aliasFieldKey,
+                    child: TextFormField(
+                      controller: aliasFieldController,
+                      decoration: InputDecoration(
+                        labelText: 'Alias',
+                        filled: false,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'please enter a alias';
+                        }
+                        if (!aliasValidator) {
+                          return 'alias already in use';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.grey[200],
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.grey.withOpacity(0.5),
+                    //     spreadRadius: 2.5,
+                    //     blurRadius: 5,
+                    //     offset: Offset(0, 2), // changes position of shadow
+                    //   ),
+                    // ],
+                  ),
+                  child: Form(
+                    key: urlFieldKey,
+                    child: TextFormField(
+                      controller: urlFieldController,
+                      decoration: InputDecoration(
+                        labelText: 'Url',
+                        filled: false,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.grey[200],
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.grey.withOpacity(0.5),
+                    //     spreadRadius: 2.5,
+                    //     blurRadius: 5,
+                    //     offset: Offset(0, 2), // changes position of shadow
+                    //   ),
+                    // ],
+                  ),
+                  child: Form(
+                    key: usernameFieldKey,
+                    child: TextFormField(
+                      controller: usernameFieldController,
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        filled: false,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.grey[200],
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.grey.withOpacity(0.5),
+                    //     spreadRadius: 2.5,
+                    //     blurRadius: 5,
+                    //     offset: Offset(0, 2), // changes position of shadow
+                    //   ),
+                    // ],
+                  ),
+                  child: Form(
+                    key: notesFieldKey,
+                    child: TextFormField(
+                      controller: notesFieldController,
+                      decoration: InputDecoration(
+                        labelText: 'notes',
+                        filled: false,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              ButtonBar(
+                children: [
+                  FlatButton(
+                    // textColor: Colors.blue,
+                    child: Text(
+                      'Add own password',
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    onPressed: () {
+                      // Navigator.of(context).pop();
+                      validateAddPasswordEntryFields('own');
+                    },
+                  ),
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    color: Colors.blue,
+                    // textColor: Colors.white,
+                    // color: Colors.grey[500],
+                    onPressed: () {
+                      validateAddPasswordEntryFields('generate');
+                    },
+                    child: Text('Add generated password'),
+                  ),
+                ],
+              ),
+            ],
+            title: Text('Create password entry'),
+          ),
+        );
+      },
+      elevation: 8,
+      icon: Icon(Icons.add),
+      label: Text('Add password'),
+    );
+  }
+}
 
 class BackgroundPainter extends CustomPainter {
   @override
