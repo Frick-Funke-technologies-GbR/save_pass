@@ -1,15 +1,16 @@
+// import 'dart:js';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+// import 'package:path/path.dart' as Path;
 import 'package:loading_animations/loading_animations.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/screens/loginscreen.dart';
 import 'package:save_pass/widgets/bottomnavigationbar.dart';
 import 'package:save_pass/widgets/drawer.dart';
 import 'package:save_pass/widgets/passwordentry.dart';
@@ -79,7 +80,7 @@ class PasswordScreen extends StatelessWidget {
         padding: EdgeInsets.only(top: 100, left: 5, right: 5, bottom: 40),
         itemCount: data.length,
         itemBuilder: (context, index) {
-          getPasswordEntries();
+          // getPasswordEntries();
           return PasswordEntry(
             data[index].id,
             data[index].url,
@@ -352,22 +353,67 @@ class _PasswordActionButtonWithDialogWidgetState
   bool aliasValidator = true;
   bool urlValidator = true;
   bool usernameValidator = true;
+  bool passwordMatchValidatorFalse = false;
+
   final aliasFieldController = TextEditingController();
   final urlFieldController = TextEditingController();
   final usernameFieldController = TextEditingController();
   final notesFieldController = TextEditingController();
+  final passwordFieldController = TextEditingController();
+  final passwordRepeatFieldController = TextEditingController();
+
   final aliasFieldKey = GlobalKey<FormState>();
   final urlFieldKey = GlobalKey<FormState>();
   final usernameFieldKey = GlobalKey<FormState>();
   final notesFieldKey = GlobalKey<FormState>();
+  final passwordFieldKey = GlobalKey<FormState>();
+  final passwordRepeatFieldKey = GlobalKey<FormState>();
 
-  void validateAddPasswordEntryFields(String passwordAddMethode) async {
+  @override
+  void dispose() {
+    aliasFieldController.dispose();
+    urlFieldController.dispose();
+    usernameFieldController.dispose();
+    notesFieldController.dispose();
+    passwordFieldController.dispose();
+    passwordRepeatFieldController.dispose();
+
+    super.dispose();
+  }
+
+
+  void validatePasswordFields() async {
+    ApiProvider api = ApiProvider();
+    CacheHandler cache = CacheHandler();
+
+    if (passwordFieldController.text != passwordRepeatFieldController.text) {
+      passwordFieldKey.currentState.validate();
+      // passwordFieldKey.currentState.validate();
+    } else {
+      String userIdent = await cache.getStringFromCache('user_ident');
+      String masterPassword = await cache.getSecureStringFromCache('master_password');
+
+      await api.addUserPasswordEntry(
+        userIdent,
+        masterPassword,
+        aliasFieldController.text,
+        urlFieldController.text,
+        usernameFieldController.text,
+        passwordFieldController.text,
+        notesFieldController.text,
+      );
+      print('TEEEST');
+
+    }
+  }
+
+  void validateAddPasswordEntryFields(bool addGeneratedPassword) async {
     CacheHandler cache = CacheHandler();
 
     String alias = aliasFieldController.text;
-    String url = urlFieldController.text;
-    String username = usernameFieldController.text;
-    String notes = notesFieldController.text;
+    // String url = urlFieldController.text;
+    // String username = usernameFieldController.text;
+    // String notes = notesFieldController.text;
 
     List<String> ids = await cache.getStringListFromCache('stored_ids');
 
@@ -387,14 +433,10 @@ class _PasswordActionButtonWithDialogWidgetState
     bool urlvalidate = urlFieldKey.currentState.validate();
     bool usernamevalidate = usernameFieldKey.currentState.validate();
     bool notesvalidate = notesFieldKey.currentState.validate();
-    print(aliasvalidate);
-    print(urlvalidate);
-    print(usernamevalidate);
-    print(notesvalidate);
 
-    if (passwordAddMethode == 'own') {
+    if (!addGeneratedPassword) {
       if (aliasvalidate && urlvalidate && usernamevalidate && notesvalidate) {
-        Navigator.of(context).pop();   
+        Navigator.of(context).pop();
         showDialog(
           barrierDismissible: false,
           // barrierColor:,
@@ -419,10 +461,21 @@ class _PasswordActionButtonWithDialogWidgetState
                         borderRadius: BorderRadius.circular(4),
                         // color: Colors.grey[200]
                       ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          labelText: 'Provider',
+                      child: Form(
+                        key: passwordFieldKey,
+                        child: TextFormField(
+                          controller: passwordFieldController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            filled: true,
+                            labelText: 'password',
+                          ),
+                          validator: (value) {
+                            if (!passwordMatchValidatorFalse) {
+                              return 'passwords don\'t match';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ),
@@ -433,27 +486,40 @@ class _PasswordActionButtonWithDialogWidgetState
                         borderRadius: BorderRadius.circular(4),
                         // color: Colors.grey[200]
                       ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          labelText: 'Website adress',
+                      child: Form(
+                        key: passwordRepeatFieldKey,
+                        child: TextFormField(
+                          controller: passwordRepeatFieldController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            filled: true,
+                            labelText: 'repeat password',
+                          ),
+                          validator: (value) {
+                            if (!passwordMatchValidatorFalse) {
+                              return 'passwords don\'t match';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      // padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        // color: Colors.grey[200]
+                    Text(
+                      'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
                       ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          labelText: 'Username',
-                        ),
-                      ),
-                    ),
+                    )
+                    // Container(
+                    //   margin: EdgeInsets.only(top: 20),
+                    //   child: Text(
+                    //     'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
+                    //     style: TextStyle(
+                    //       color: Colors.grey,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 // Container(
@@ -475,15 +541,33 @@ class _PasswordActionButtonWithDialogWidgetState
                 // ),
               ],
             ),
-            actions: [],
+            actions: [
+              ButtonBar(
+                children: [
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    color: Colors.blue,
+                    // textColor: Colors.white,
+                    // color: Colors.grey[500],
+                    onPressed: () {
+                      validatePasswordFields();
+                      Navigator.of(context).pop();
+                      final sucessSnackBar = SnackBar(content: Text('The entry was stored sucessfully!'),);  
+                      Scaffold.of(context).showSnackBar(sucessSnackBar);
+                    },
+                    child: Text('Submit and create Entry'),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       }
     }
 
-    if (passwordAddMethode == 'generate') {
-
-    }
+    if (addGeneratedPassword) {}
   }
 
   @override
@@ -504,43 +588,25 @@ class _PasswordActionButtonWithDialogWidgetState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
                   margin: EdgeInsets.symmetric(vertical: 15),
-                  padding: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.grey[200],
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.grey.withOpacity(0.5),
-                    //     spreadRadius: 2.5,
-                    //     blurRadius: 5,
-                    //     offset: Offset(0, 2), // changes position of shadow
-                    //   ),
-                    // ],
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Form(
                     key: aliasFieldKey,
                     child: TextFormField(
                       controller: aliasFieldController,
                       decoration: InputDecoration(
+                        helperText: 'Keyword for the entry.',
                         labelText: 'Alias',
-                        filled: false,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
+                        filled: true,
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'please enter a alias';
                         }
                         if (!aliasValidator) {
-                          return 'alias already in use';
+                          return 'already in use';
                         }
                         return null;
                       },
@@ -548,21 +614,9 @@ class _PasswordActionButtonWithDialogWidgetState
                   ),
                 ),
                 Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
                   margin: EdgeInsets.symmetric(vertical: 15),
-                  padding: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: Colors.grey[200],
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.grey.withOpacity(0.5),
-                    //     spreadRadius: 2.5,
-                    //     blurRadius: 5,
-                    //     offset: Offset(0, 2), // changes position of shadow
-                    //   ),
-                    // ],
                   ),
                   child: Form(
                     key: urlFieldKey,
@@ -570,14 +624,7 @@ class _PasswordActionButtonWithDialogWidgetState
                       controller: urlFieldController,
                       decoration: InputDecoration(
                         labelText: 'Url',
-                        filled: false,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
+                        filled: true,
                       ),
                       validator: (value) {
                         return null;
@@ -586,21 +633,10 @@ class _PasswordActionButtonWithDialogWidgetState
                   ),
                 ),
                 Container(
-                  height: 50,
                   alignment: Alignment.centerLeft,
                   margin: EdgeInsets.symmetric(vertical: 15),
-                  padding: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: Colors.grey[200],
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.grey.withOpacity(0.5),
-                    //     spreadRadius: 2.5,
-                    //     blurRadius: 5,
-                    //     offset: Offset(0, 2), // changes position of shadow
-                    //   ),
-                    // ],
                   ),
                   child: Form(
                     key: usernameFieldKey,
@@ -608,14 +644,7 @@ class _PasswordActionButtonWithDialogWidgetState
                       controller: usernameFieldController,
                       decoration: InputDecoration(
                         labelText: 'Username',
-                        filled: false,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
+                        filled: true,
                       ),
                       validator: (value) {
                         return null;
@@ -624,21 +653,9 @@ class _PasswordActionButtonWithDialogWidgetState
                   ),
                 ),
                 Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
                   margin: EdgeInsets.symmetric(vertical: 15),
-                  padding: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: Colors.grey[200],
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.grey.withOpacity(0.5),
-                    //     spreadRadius: 2.5,
-                    //     blurRadius: 5,
-                    //     offset: Offset(0, 2), // changes position of shadow
-                    //   ),
-                    // ],
                   ),
                   child: Form(
                     key: notesFieldKey,
@@ -646,14 +663,7 @@ class _PasswordActionButtonWithDialogWidgetState
                       controller: notesFieldController,
                       decoration: InputDecoration(
                         labelText: 'notes',
-                        filled: false,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
+                        filled: true,
                       ),
                       validator: (value) {
                         return null;
@@ -676,7 +686,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     ),
                     onPressed: () {
                       // Navigator.of(context).pop();
-                      validateAddPasswordEntryFields('own');
+                      validateAddPasswordEntryFields(false);
                     },
                   ),
                   FlatButton(
@@ -687,7 +697,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     // textColor: Colors.white,
                     // color: Colors.grey[500],
                     onPressed: () {
-                      validateAddPasswordEntryFields('generate');
+                      validateAddPasswordEntryFields(true);
                     },
                     child: Text('Add generated password'),
                   ),

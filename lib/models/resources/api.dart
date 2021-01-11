@@ -11,7 +11,7 @@ class ApiProvider {
   Future<UserClass> registerUser(String username, String firstname,
       String lastname, String emailadress) async {
     final response = await client.post(
-      "http://127.0.0.1:5000/api/register",
+      "http://10.0.2.2:5000/api/register",
       // headers: "",
       body: jsonEncode(
         {
@@ -110,11 +110,11 @@ class ApiProvider {
     }
   }
 
-  Future addUserPasswordEntry(String userIdent, String alias, String url,
+  Future addUserPasswordEntry(String userIdent, String masterPassword, String alias, String url,
       String username, String password, String notes) async {
     final response = await client.post(
-      "http://127.0.0.1:5000/api/password_entry",
-      headers: {"user_ident": userIdent},
+      "http://10.0.2.2:5000/api/password_entry",
+      headers: {"user_ident": userIdent, 'password': masterPassword},
       body: jsonEncode(
         {
           'alias': alias,

@@ -118,6 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (passinputKey.currentState.validate()) {
+        CacheHandler().addSecureStringToCache('master_password', textFieldController.text);
         Navigator.of(context).pushNamed("/newpasswordscreen");
       }
 
