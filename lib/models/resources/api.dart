@@ -49,6 +49,10 @@ class ApiProvider {
     if (response.statusCode == 201) {
       // If the call to the server was successful, parse the JSON
       await _saveUserIdent(result["data"]["user_ident"]);
+      await _saveUserName(result["data"]["user_name"]);
+      await _saveFirstName(result["data"]["first_name"]);
+      await _saveLastName(result["data"]["last_name"]);
+      await _saveEmailAdress(result["data"]["email_adress"]);
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to login');
@@ -129,7 +133,9 @@ class ApiProvider {
       print("entry added");
     } else {
       // If that call was not successful, throw an error.
-      print(json.decode(response.body));
+      var responsebody = json.decode(response.body);
+      print(responsebody);
+      if (responsebody['message'] == "Entry with given alias already exists")
       throw Exception('Failed to add entry');
     }
   }
@@ -137,6 +143,26 @@ class ApiProvider {
   _saveUserIdent(String userIdent) {
     CacheHandler cache = CacheHandler();
     cache.addStringToCache('user_ident', userIdent);
+  }
+
+  _saveUserName(String userName) {
+    CacheHandler cache = CacheHandler();
+    cache.addStringToCache('user_name', userName);
+  }
+
+  _saveFirstName(String firstName) {
+    CacheHandler cache = CacheHandler();
+    cache.addStringToCache('first_name', firstName);
+  }
+
+  _saveLastName(String lastName) {
+    CacheHandler cache = CacheHandler();
+    cache.addStringToCache('last_name', lastName);
+  }
+
+  _saveEmailAdress(String emailAdress) {
+    CacheHandler cache = CacheHandler();
+    cache.addStringToCache('last_name', emailAdress);
   }
 
   _savePassword(String password) {

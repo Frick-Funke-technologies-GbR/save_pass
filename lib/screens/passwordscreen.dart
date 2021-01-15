@@ -16,6 +16,8 @@ import 'package:save_pass/widgets/drawer.dart';
 import 'package:save_pass/widgets/passwordentry.dart';
 import 'dart:ui' as ui;
 
+import 'package:save_pass/widgets/usercard.dart';
+
 Future<List<PasswordEntryClass>> getPasswordEntries() async {
   CacheHandler cache = CacheHandler();
   ApiProvider api = ApiProvider();
@@ -64,6 +66,23 @@ class PasswordScreen extends StatelessWidget {
   //     onTap: onTap,
   //   };
   // )
+
+  void _showAccountDialog(BuildContext context)  {
+    String username = 'hallo'; 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // backgroundColor: Colors.blue,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          content: UserCard(username: username),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // task
@@ -72,31 +91,107 @@ class PasswordScreen extends StatelessWidget {
         systemNavigationBarColor: Colors.transparent,
       ),
     );
-    ListView _passwordEntryListView(data) {
-      return ListView.builder(
-        // addSemanticIndexes: true,
-        // addRepaintBoundaries: true,
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.only(top: 100, left: 5, right: 5, bottom: 40),
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          // getPasswordEntries();
-          return PasswordEntry(
-            data[index].id,
-            data[index].url,
-            data[index].alias,
-            data[index].username,
-            data[index].password,
-            data[index].notes,
-          );
-        },
+    CustomScrollView _passwordEntryListView(data) {
+      return CustomScrollView(
+        // semanticChildCount: data.length,
+        slivers: <Widget>[
+          SliverPadding(
+            padding: EdgeInsets.only(bottom: 30),
+            sliver: SliverAppBar(
+              elevation: 0,
+              // forceElevated: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              title: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(7),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey[400],
+                      blurRadius: 3,
+                      spreadRadius: 0.01,
+                    )
+                  ],
+                ),
+                // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                // height: 50,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                    Expanded(
+                      child: TextField(
+                        // controller: editingController,
+                        decoration: InputDecoration(
+                          // fillColor: Colors.grey[100],
+                          // hintText: "Search",
+                          // labelText: 'Search',
+                          hintText: 'Search passwords',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        right: 8,
+                      ),
+                      child: CircleAvatar(
+                        child: RawMaterialButton(
+                          onPressed: () {
+                            _showAccountDialog(context);
+                          },
+                          shape: CircleBorder(),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        radius: 15,
+                        // TODO: Add user account image
+                        backgroundImage: NetworkImage(
+                            'https://www.w3schools.com/w3css/img_lights.jpg'),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+
+              // backgroundColor: Colors.transparent,
+              // flexibleSpace: FlexibleSpaceBar(),
+              // collapsedHeight: 200,
+
+              snap: true,
+              floating: true,
+              // pinned: true,
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              // getPasswordEntries();
+              return PasswordEntry(
+                data[index].id,
+                data[index].url,
+                data[index].alias,
+                data[index].username,
+                data[index].password,
+                data[index].notes,
+              );
+            }, childCount: data.length),
+          ),
+        ],
       );
     }
 
     return Scaffold(
       drawer: CustomDrawer(true, false, false),
-      // backgroundColor: Colors.transparent,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
+      // backgroundColor: Colors.grey[200],
       // bottomNavigationBar: BottomNavigationBar(
       //   currentIndex: 0,
       //   items: [
@@ -124,163 +219,114 @@ class PasswordScreen extends StatelessWidget {
           return SafeArea(
             top: true,
             bottom: true,
-            child: CustomPaint(
-              painter: BackgroundPainter(),
-              child: Stack(
-                // height: 900,
+            child: Stack(
+              // height: 900,
 
-                children: [
+              children: [
+                // decoration: BoxDecoration(
+                //   gradient: LinearGradient(
+                //     colors: [
+                //       Colors.blue[800],
+                //       Colors.blue[700],
+                //       Colors.blue[600],
+                //       Colors.blue[400],
+                //     ],
+                //     begin: FractionalOffset(0.0, 0.0),
+                //     end: FractionalOffset(1, 0),
+                //     stops: [0, 1],
+                //     tileMode: TileMode.clamp,
+                //   ),
+                // ),
+
+                // child: Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+
+                // Toplabel(),
+                // TODO: Add search passwords bar
+
+                // Container(
+                //   decoration: BoxDecoration(
+                //     color: Colors.white,
+                //     borderRadius: BorderRadius.circular(5),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.grey[300],
+                //         blurRadius: 3,
+                //         spreadRadius: 1,
+                //       )
+                //     ],
+                //   ),
+                //   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                //   height: 60,
+
+                // alignment: Alignment.center,
+
+                //   child: TextField(
+                //     // controller: editingController,
+                //     decoration: InputDecoration(
+                //       // fillColor: Colors.grey[100],
+                //       // hintText: "Search",
+                //       labelText: 'Search',
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(5),
+                //         borderSide: BorderSide(
+                //           width: 0,
+                //           style: BorderStyle.none,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
+                Container(
+                  // height: 422,
+                  // margin: EdgeInsets.symmetric(horizontal: 10),
                   // decoration: BoxDecoration(
-                  //   gradient: LinearGradient(
-                  //     colors: [
-                  //       Colors.blue[800],
-                  //       Colors.blue[700],
-                  //       Colors.blue[600],
-                  //       Colors.blue[400],
-                  //     ],
-                  //     begin: FractionalOffset(0.0, 0.0),
-                  //     end: FractionalOffset(1, 0),
-                  //     stops: [0, 1],
-                  //     tileMode: TileMode.clamp,
-                  //   ),
-                  // ),
+                  // border: Border.all(color: Colors.grey[300], width: 3),
+                  // color: Colors.grey[100],
+                  // borderRadius: BorderRadius.circular(10)),
 
-                  // child: Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-
-                  // Toplabel(),
-                  // TODO: Add search passwords bar
-
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //     borderRadius: BorderRadius.circular(5),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Colors.grey[300],
-                  //         blurRadius: 3,
-                  //         spreadRadius: 1,
-                  //       )
-                  //     ],
-                  //   ),
-                  //   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  //   height: 60,
-
-                  // alignment: Alignment.center,
-
-                  //   child: TextField(
-                  //     // controller: editingController,
-                  //     decoration: InputDecoration(
-                  //       // fillColor: Colors.grey[100],
-                  //       // hintText: "Search",
-                  //       labelText: 'Search',
-                  //       border: OutlineInputBorder(
-                  //         borderRadius: BorderRadius.circular(5),
-                  //         borderSide: BorderSide(
-                  //           width: 0,
-                  //           style: BorderStyle.none,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  Container(
-                    // height: 422,
-                    // margin: EdgeInsets.symmetric(horizontal: 10),
-                    // decoration: BoxDecoration(
-                    // border: Border.all(color: Colors.grey[300], width: 3),
-                    // color: Colors.grey[100],
-                    // borderRadius: BorderRadius.circular(10)),
-                    child: ['contents', 'moin'].length != 0
-                        ? RefreshIndicator(
-                            onRefresh: () async {
-                              // TODO: add code here!!!
-                            },
-                            child: FutureBuilder<List<PasswordEntryClass>>(
-                              future: getPasswordEntries(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  List<PasswordEntryClass> data = snapshot.data;
-                                  return _passwordEntryListView(data);
-                                } else if (snapshot.hasError) {
-                                  return Text('${snapshot.error}');
-                                }
-                                // TODO: Add proper Progress Indicator
-                                return CircularProgressIndicator();
-                              },
-                            ),
-                          )
-                        : Center(
-                            child: LoadingBouncingGrid.circle(
-                              borderSize: 5,
-                              backgroundColor: Colors.blue,
-                              size: 30,
-                              inverted: true,
-                              duration: Duration(milliseconds: 400),
-                            ),
-                          ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    right: 15,
-                    left: 15,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[400],
-                            blurRadius: 3,
-                            spreadRadius: 1,
-                          )
-                        ],
-                      ),
-                      // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      // height: 50,
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(left: 10),
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              // controller: editingController,
-                              decoration: InputDecoration(
-                                // fillColor: Colors.grey[100],
-                                // hintText: "Search",
-                                // labelText: 'Search',
-                                hintText: 'Search passwords',
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 15,
+                  // TODO: Add no data handler
+                  child: ['contents', 'moin'].length != 0
+                      ? RefreshIndicator(
+                          onRefresh: () async {
+                            // TODO: add refresh function
+                          },
+                          child: FutureBuilder<List<PasswordEntryClass>>(
+                            future: getPasswordEntries(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                List<PasswordEntryClass> data = snapshot.data;
+                                return _passwordEntryListView(data);
+                              } else if (snapshot.hasError) {
+                                return Text('${snapshot.error}');
+                              }
+                              return Expanded(
+                                child: Center(
+                                  child: LoadingBouncingGrid.circle(
+                                    borderSize: 5,
+                                    backgroundColor: Colors.blue,
+                                    size: 30,
+                                    inverted: true,
+                                    duration: Duration(milliseconds: 400),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              right: 8,
-                            ),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              // TODO: Add user account image
-                              backgroundImage: NetworkImage(
-                                  'https://via.placeholder.com/150'),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        )
+                      : Center(
+                          child: LoadingBouncingGrid.circle(
+                            borderSize: 5,
+                            backgroundColor: Colors.blue,
+                            size: 30,
+                            inverted: true,
+                            duration: Duration(milliseconds: 400),
+                          ),
+                        ),
+                ),
+              ],
             ),
           );
         },
@@ -381,8 +427,7 @@ class _PasswordActionButtonWithDialogWidgetState
     super.dispose();
   }
 
-
-  void validatePasswordFields() async {
+  validatePasswordFields() async {
     ApiProvider api = ApiProvider();
     CacheHandler cache = CacheHandler();
 
@@ -391,19 +436,24 @@ class _PasswordActionButtonWithDialogWidgetState
       // passwordFieldKey.currentState.validate();
     } else {
       String userIdent = await cache.getStringFromCache('user_ident');
-      String masterPassword = await cache.getSecureStringFromCache('master_password');
+      String masterPassword =
+          await cache.getSecureStringFromCache('master_password');
 
-      await api.addUserPasswordEntry(
-        userIdent,
-        masterPassword,
-        aliasFieldController.text,
-        urlFieldController.text,
-        usernameFieldController.text,
-        passwordFieldController.text,
-        notesFieldController.text,
-      );
-      print('TEEEST');
+      String exception = null;
 
+      await api
+          .addUserPasswordEntry(
+            userIdent,
+            masterPassword,
+            aliasFieldController.text,
+            urlFieldController.text,
+            usernameFieldController.text,
+            passwordFieldController.text,
+            notesFieldController.text,
+          )
+          .catchError(
+              (e) => e = exception == null ? null : exception.toString());
+      return exception;
     }
   }
 
@@ -551,11 +601,37 @@ class _PasswordActionButtonWithDialogWidgetState
                     color: Colors.blue,
                     // textColor: Colors.white,
                     // color: Colors.grey[500],
-                    onPressed: () {
-                      validatePasswordFields();
+                    onPressed: () async {
+                      var error = await validatePasswordFields();
                       Navigator.of(context).pop();
-                      final sucessSnackBar = SnackBar(content: Text('The entry was stored sucessfully!'),);  
-                      Scaffold.of(context).showSnackBar(sucessSnackBar);
+                      final sucessSnackBar = SnackBar(
+                        content: Text('The entry was stored sucessfully!'),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.grey[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                      );
+                      // sucess = sucess.toString();
+                      final unsucessSnackBar = SnackBar(
+                        content: Text(
+                          'An Error occured $error',
+                        ),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.grey[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                      );
+                      if (error == null) {
+                        error = false;
+                      }
+                      Scaffold.of(context).showSnackBar(
+                          error ? unsucessSnackBar : sucessSnackBar);
                     },
                     child: Text('Submit and create Entry'),
                   ),
@@ -606,6 +682,9 @@ class _PasswordActionButtonWithDialogWidgetState
                           return 'please enter a alias';
                         }
                         if (!aliasValidator) {
+                          setState(() {
+                            aliasValidator = true;
+                          });
                           return 'already in use';
                         }
                         return null;
