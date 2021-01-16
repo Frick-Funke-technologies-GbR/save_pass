@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:save_pass/widgets/passwordentry.dart';
+import 'package:save_pass/widgets/passwordscreen/passwordentry.dart';
 
 class PasswordEntryClass {
   int id;

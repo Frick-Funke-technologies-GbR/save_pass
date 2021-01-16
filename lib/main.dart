@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:save_pass/screens/loginscreen.dart';
 import 'package:save_pass/screens/mainscreen.dart';
 import 'package:save_pass/screens/passwordscreen.dart';
+import 'package:save_pass/screens/registerscreen.dart';
 import 'package:save_pass/screens/settingsscreen.dart';
 import 'package:save_pass/screens/walletscreen.dart';
 import 'package:save_pass/screens/notificationsscreen.dart';
@@ -31,12 +32,13 @@ class SavePass extends StatelessWidget {
         primarySwatch: Colors.blue
       ),
       routes: <String, WidgetBuilder>{
-        // "/mainscreen": (BuildContext context)=> new MainScreen(),
-        "/newpasswordscreen": (BuildContext context)=> PasswordScreen(),
-        "/passwordscreen": (BuildContext context)=> PasswordScreen(),
-        "/settingsscreen": (BuildContext context)=> SettingsScreen(),
-        "/walletscreen": (BuildContext context)=> WalletScreen(),
-        // "/notificationsscreen": (BuildContext context)=> NotificationsScreen(),
+        // "/mainscreen": (BuildContext context) => new MainScreen(),
+        "/newpasswordscreen": (BuildContext context) => PasswordScreen(),
+        "/passwordscreen": (BuildContext context) => PasswordScreen(),
+        "/settingsscreen": (BuildContext context) => SettingsScreen(),
+        "/walletscreen": (BuildContext context) => WalletScreen(),
+        "/registerscreen" : (BuildContext context) => RegisterScreen(), 
+        // "/notificationsscreen": (BuildContext context) => NotificationsScreen(),
       },
     );
   }
