@@ -304,12 +304,13 @@ class PasswordScreen extends StatelessWidget {
                               }
                               return Expanded(
                                 child: Center(
-                                  child: LoadingBouncingGrid.circle(
-                                    borderSize: 5,
-                                    backgroundColor: Colors.blue,
-                                    size: 30,
-                                    inverted: true,
-                                    duration: Duration(milliseconds: 400),
+                                  child: CircularProgressIndicator(
+                                    // borderSize: 5,
+                                    // backgroundColor: Colors.blue,
+                                    strokeWidth: 7,
+                                    // size: 30,
+                                    // inverted: true,
+                                    // duration: Duration(milliseconds: 400),
                                   ),
                                 ),
                               );

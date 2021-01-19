@@ -6,6 +6,7 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // TODO: Add background
       backgroundColor: Colors.white,
       body: SafeArea(
         bottom: true,

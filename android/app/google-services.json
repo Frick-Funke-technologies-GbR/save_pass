@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "513292020254",
+    "project_id": "savepass-46845",
+    "storage_bucket": "savepass-46845.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513292020254:android:7fa7bf824a402ad8c8dc0f",
+        "android_client_info": {
+          "package_name": "com.frifutech.save_pass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "513292020254-mifv1i31al9hr4i9rk7mu25bc6tdk9ct.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.frifutech.save_pass",
+            "certificate_hash": "c111ea14dbba31cc0321e062e3bddd14bc125420"
+          }
+        },
+        {
+          "client_id": "513292020254-clgf0ljhauq94cq5srbka2qqh4g26c1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKjtUJ0FuVjzfJFhM-JXp2OzjRleHtxqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "513292020254-clgf0ljhauq94cq5srbka2qqh4g26c1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

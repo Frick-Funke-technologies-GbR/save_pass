@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class RegisterLoginInputWidget extends StatefulWidget {
   @override
   _RegisterLoginInputWidgetState createState() =>
@@ -8,19 +7,23 @@ class RegisterLoginInputWidget extends StatefulWidget {
 }
 
 class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
+  bool _showSecondRegisterInputWidget = false;
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(minHeight: 100, minWidth: 300),
+      constraints: BoxConstraints(minHeight: 100, minWidth: 270),
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         children: [
-          Container(
-            constraints: BoxConstraints(maxHeight: 110, maxWidth: 260),
-            child: Expanded(
+          AnimatedCrossFade(
+            duration: Duration(milliseconds: 200),
+            firstChild: Container(
+              padding: EdgeInsets.all(0),
+              // key: ValueKey(keyValue),
+              constraints: BoxConstraints(minHeight: 110, minWidth: 260),
               child: Column(
                 children: [
                   Container(
@@ -37,19 +40,19 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Container(
+                            constraints: BoxConstraints(minWidth: 100),
+                            alignment: Alignment.centerLeft,
                             margin: EdgeInsets.only(left: 3),
                             child: CircleAvatar(
                               // FIXME: This google icon just isn't beautiful enough
                               radius: 15,
                               backgroundColor: Colors.white,
-                              child: Padding(
-                                padding: EdgeInsets.all(2),
-                                child: Icon(Icons.account_circle),
-                              ),
+                              child: Icon(Icons.account_circle),
                             ),
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 7, right: 90),
+                            alignment: Alignment.centerLeft,
                             child: Text(
                               'Register',
                               style: TextStyle(
@@ -59,7 +62,13 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                           ),
                         ],
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(
+                          () {
+                            _showSecondRegisterInputWidget = true;
+                          },
+                        );
+                      },
                     ),
                   ),
                   Container(
@@ -82,8 +91,8 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                               radius: 15,
                               backgroundColor: Colors.white,
                               child: Padding(
-                                padding: EdgeInsets.all(2),
-                                child: Image.asset('assets/GoogleIcon.png'),
+                                padding: EdgeInsets.only(left:2, right:2, top:2, bottom:2),
+                                child: Image.asset('assets/google_logo.png'),
                               ),
                             ),
                           ),
@@ -104,6 +113,10 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                 ],
               ),
             ),
+            secondChild: RegisterInputWidget(),
+            crossFadeState: !_showSecondRegisterInputWidget
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 5),
@@ -123,6 +136,38 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class RegisterInputWidget extends StatefulWidget {
+  @override
+  _RegisterInputWidgetState createState() => _RegisterInputWidgetState();
+}
+
+class _RegisterInputWidgetState extends State<RegisterInputWidget> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 5),
+            // padding: EdgeInsets.symmetric(),
+            constraints: BoxConstraints(maxWidth: 230),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+            child: TextField(
+              
+            ),
+          )
+        ],
+      ),
+      height: 300,
+      width: 350,
     );
   }
 }
