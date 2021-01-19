@@ -21,7 +21,7 @@ class _UserCardState extends State<UserCard> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // TODO: Add info
+          // TODO: Add info, from UserClass
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,

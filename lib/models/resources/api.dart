@@ -27,6 +27,10 @@ class ApiProvider {
       // If the call to the server was successful, parse the JSON
       await _saveUserIdent(result["data"]["user_ident"]);
       return UserClass.fromJson(result["data"]);
+    } else if (response.statusCode == 400) {
+      // If email or username already exist, throw an error
+      String error = result["message"];
+      throw Exception('$error');
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to register');

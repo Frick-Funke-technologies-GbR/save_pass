@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:save_pass/models/authentication/auth.dart';
+import 'package:save_pass/models/classes/userClass.dart';
+import 'package:save_pass/models/resources/api.dart';
 
 class RegisterLoginInputWidget extends StatefulWidget {
   @override
@@ -7,7 +11,16 @@ class RegisterLoginInputWidget extends StatefulWidget {
 }
 
 class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
+  User user;
   bool _showSecondRegisterInputWidget = false;
+  bool _googleRegisterButtonInfoVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    signOutGoogle();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,7 +53,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Container(
-                            constraints: BoxConstraints(minWidth: 100),
+                            // constraints: BoxConstraints(minWidth: 40),
                             alignment: Alignment.centerLeft,
                             margin: EdgeInsets.only(left: 3),
                             child: CircleAvatar(
@@ -51,7 +64,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: 7, right: 90),
+                            margin: EdgeInsets.only(left: 7, right: 117),
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Register',
@@ -91,7 +104,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                               radius: 15,
                               backgroundColor: Colors.white,
                               child: Padding(
-                                padding: EdgeInsets.only(left:2, right:2, top:2, bottom:2),
+                                padding: EdgeInsets.all(5),
                                 child: Image.asset('assets/google_logo.png'),
                               ),
                             ),
@@ -105,11 +118,68 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                               ),
                             ),
                           ),
+                          Container(
+                            margin: EdgeInsets.only(right: 7),
+                            child: IconButton(
+                              constraints:
+                                  BoxConstraints(maxHeight: 20, maxWidth: 20),
+                              padding: EdgeInsets.all(0),
+                              iconSize: 20,
+                              // constraints: BoxConstraints(maxHeight: 30),
+                              icon: Icon(
+                                Icons.info_outline,
+                                color: Colors.white,
+                                // size: 20,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _googleRegisterButtonInfoVisible =
+                                      !_googleRegisterButtonInfoVisible;
+                                });
+                              },
+                            ),
+                          ),
                         ],
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        // TODO: Add username textinput, finish code
+                        User user = await signInWithGoogle();
+                        this.user = user;
+                        print(user.toString());
+                        try {
+                          UserClass addedUser = await ApiProvider().registerUser(
+                              'username', user.displayName, '', user.email);
+                        } catch (e) {
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString().replaceAll('Exception', 'Error')),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Colors.grey[800],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
+                  AnimatedOpacity(
+                    duration: Duration(milliseconds: 500),
+                    opacity: _googleRegisterButtonInfoVisible ? 1.0 : 0.0,
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 230),
+                      child: Text(
+                        'Note: if you sign in with google, you will have access to online features later on. You encrypted data will not be stored in google servers though.',
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -146,7 +216,6 @@ class RegisterInputWidget extends StatefulWidget {
 }
 
 class _RegisterInputWidgetState extends State<RegisterInputWidget> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -160,9 +229,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
               borderRadius: BorderRadius.circular(5),
               color: Colors.white,
             ),
-            child: TextField(
-              
-            ),
+            child: TextField(),
           )
         ],
       ),
