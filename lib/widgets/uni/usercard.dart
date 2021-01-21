@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class UserCard extends StatefulWidget {
   final String username;
-
+  // TODO: Add firstname is full name identifying functionallity
   const UserCard({Key key, this.username}) : super(key: key);
 
   @override

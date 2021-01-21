@@ -5,22 +5,25 @@ import 'package:save_pass/widgets/uni/toplabel.dart';
 class HeadingGreetingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: EdgeInsets.only(right: 100),
-          child: Text(
-            'Welcome to',
-            style: GoogleFonts.oxygen(
-              fontWeight: FontWeight.w900,
-              color: Colors.grey[500],
-              fontSize: 20,
+    return Container(
+      margin: EdgeInsets.only(bottom: 80),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.only(right: 100),
+            child: Text(
+              'Welcome to',
+              style: GoogleFonts.oxygen(
+                fontWeight: FontWeight.w900,
+                color: Colors.grey[500],
+                fontSize: 20,
+              ),
             ),
           ),
-        ),
-        Toplabel()
-      ],
+          Toplabel()
+        ],
+      ),
     );
   }
 }

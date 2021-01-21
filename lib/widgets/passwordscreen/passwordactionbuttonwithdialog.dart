@@ -11,33 +11,34 @@ class PasswordActionButtonWithDialogWidget extends StatefulWidget {
 
 class _PasswordActionButtonWithDialogWidgetState
     extends State<PasswordActionButtonWithDialogWidget> {
-  bool aliasValidator = true;
-  bool urlValidator = true;
-  bool usernameValidator = true;
-  bool passwordMatchValidatorFalse = false;
+  bool _aliasValidator = true;
+  bool _urlValidator = true;
+  bool _usernameValidator = true;
+  bool _passwordMatchValidatorFalse = false;
 
-  final aliasFieldController = TextEditingController();
-  final urlFieldController = TextEditingController();
-  final usernameFieldController = TextEditingController();
-  final notesFieldController = TextEditingController();
-  final passwordFieldController = TextEditingController();
-  final passwordRepeatFieldController = TextEditingController();
+  final _aliasFieldController = TextEditingController();
+  final _urlFieldController = TextEditingController();
+  final _usernameFieldController = TextEditingController();
+  final _notesFieldController = TextEditingController();
+  final _passwordFieldController = TextEditingController();
+  final _passwordRepeatFieldController = TextEditingController();
 
-  final aliasFieldKey = GlobalKey<FormState>();
-  final urlFieldKey = GlobalKey<FormState>();
-  final usernameFieldKey = GlobalKey<FormState>();
-  final notesFieldKey = GlobalKey<FormState>();
-  final passwordFieldKey = GlobalKey<FormState>();
-  final passwordRepeatFieldKey = GlobalKey<FormState>();
+  final _aliasFieldKey = GlobalKey<FormState>();
+  final _urlFieldKey = GlobalKey<FormState>();
+  final _usernameFieldKey = GlobalKey<FormState>();
+  final _notesFieldKey = GlobalKey<FormState>();
+  final _passwordFieldKey = GlobalKey<FormState>();
+  final _passwordRepeatFieldKey = GlobalKey<FormState>();
+
 
   @override
   void dispose() {
-    aliasFieldController.dispose();
-    urlFieldController.dispose();
-    usernameFieldController.dispose();
-    notesFieldController.dispose();
-    passwordFieldController.dispose();
-    passwordRepeatFieldController.dispose();
+    _aliasFieldController.dispose();
+    _urlFieldController.dispose();
+    _usernameFieldController.dispose();
+    _notesFieldController.dispose();
+    _passwordFieldController.dispose();
+    _passwordRepeatFieldController.dispose();
 
     super.dispose();
   }
@@ -46,9 +47,9 @@ class _PasswordActionButtonWithDialogWidgetState
     ApiProvider api = ApiProvider();
     CacheHandler cache = CacheHandler();
 
-    if (passwordFieldController.text != passwordRepeatFieldController.text) {
-      passwordFieldKey.currentState.validate();
-      // passwordFieldKey.currentState.validate();
+    if (_passwordFieldController.text != _passwordRepeatFieldController.text) {
+      _passwordFieldKey.currentState.validate();
+      // _passwordFieldKey.currentState.validate();
     } else {
       String userIdent = await cache.getStringFromCache('user_ident');
       String masterPassword =
@@ -60,11 +61,11 @@ class _PasswordActionButtonWithDialogWidgetState
           .addUserPasswordEntry(
             userIdent,
             masterPassword,
-            aliasFieldController.text,
-            urlFieldController.text,
-            usernameFieldController.text,
-            passwordFieldController.text,
-            notesFieldController.text,
+            _aliasFieldController.text,
+            _urlFieldController.text,
+            _usernameFieldController.text,
+            _passwordFieldController.text,
+            _notesFieldController.text,
           )
           .catchError(
               (e) => e = exception == null ? null : exception.toString());
@@ -75,10 +76,10 @@ class _PasswordActionButtonWithDialogWidgetState
   void validateAddPasswordEntryFields(bool addGeneratedPassword) async {
     CacheHandler cache = CacheHandler();
 
-    String alias = aliasFieldController.text;
-    // String url = urlFieldController.text;
-    // String username = usernameFieldController.text;
-    // String notes = notesFieldController.text;
+    String alias = _aliasFieldController.text;
+    // String url = _urlFieldController.text;
+    // String username = _usernameFieldController.text;
+    // String notes = _notesFieldController.text;
 
     List<String> ids = await cache.getStringListFromCache('stored_ids');
 
@@ -89,15 +90,15 @@ class _PasswordActionButtonWithDialogWidgetState
 
       if (storedalias == alias) {
         setState(() {
-          aliasValidator = false;
+          _aliasValidator = false;
         });
       }
     }
 
-    bool aliasvalidate = aliasFieldKey.currentState.validate();
-    bool urlvalidate = urlFieldKey.currentState.validate();
-    bool usernamevalidate = usernameFieldKey.currentState.validate();
-    bool notesvalidate = notesFieldKey.currentState.validate();
+    bool aliasvalidate = _aliasFieldKey.currentState.validate();
+    bool urlvalidate = _urlFieldKey.currentState.validate();
+    bool usernamevalidate = _usernameFieldKey.currentState.validate();
+    bool notesvalidate = _notesFieldKey.currentState.validate();
 
     if (!addGeneratedPassword) {
       if (aliasvalidate && urlvalidate && usernamevalidate && notesvalidate) {
@@ -127,16 +128,16 @@ class _PasswordActionButtonWithDialogWidgetState
                         // color: Colors.grey[200]
                       ),
                       child: Form(
-                        key: passwordFieldKey,
+                        key: _passwordFieldKey,
                         child: TextFormField(
-                          controller: passwordFieldController,
+                          controller: _passwordFieldController,
                           obscureText: true,
                           decoration: InputDecoration(
                             filled: true,
                             labelText: 'password',
                           ),
                           validator: (value) {
-                            if (!passwordMatchValidatorFalse) {
+                            if (!_passwordMatchValidatorFalse) {
                               return 'passwords don\'t match';
                             }
                             return null;
@@ -152,16 +153,16 @@ class _PasswordActionButtonWithDialogWidgetState
                         // color: Colors.grey[200]
                       ),
                       child: Form(
-                        key: passwordRepeatFieldKey,
+                        key: _passwordRepeatFieldKey,
                         child: TextFormField(
-                          controller: passwordRepeatFieldController,
+                          controller: _passwordRepeatFieldController,
                           obscureText: true,
                           decoration: InputDecoration(
                             filled: true,
                             labelText: 'repeat password',
                           ),
                           validator: (value) {
-                            if (!passwordMatchValidatorFalse) {
+                            if (!_passwordMatchValidatorFalse) {
                               return 'passwords don\'t match';
                             }
                             return null;
@@ -286,9 +287,9 @@ class _PasswordActionButtonWithDialogWidgetState
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Form(
-                    key: aliasFieldKey,
+                    key: _aliasFieldKey,
                     child: TextFormField(
-                      controller: aliasFieldController,
+                      controller: _aliasFieldController,
                       decoration: InputDecoration(
                         helperText: 'Keyword for the entry.',
                         labelText: 'Alias',
@@ -298,9 +299,9 @@ class _PasswordActionButtonWithDialogWidgetState
                         if (value.isEmpty) {
                           return 'please enter a alias';
                         }
-                        if (!aliasValidator) {
+                        if (!_aliasValidator) {
                           setState(() {
-                            aliasValidator = true;
+                            _aliasValidator = true;
                           });
                           return 'already in use';
                         }
@@ -315,9 +316,9 @@ class _PasswordActionButtonWithDialogWidgetState
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Form(
-                    key: urlFieldKey,
+                    key: _urlFieldKey,
                     child: TextFormField(
-                      controller: urlFieldController,
+                      controller: _urlFieldController,
                       decoration: InputDecoration(
                         labelText: 'Url',
                         filled: true,
@@ -335,9 +336,9 @@ class _PasswordActionButtonWithDialogWidgetState
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Form(
-                    key: usernameFieldKey,
+                    key: _usernameFieldKey,
                     child: TextFormField(
-                      controller: usernameFieldController,
+                      controller: _usernameFieldController,
                       decoration: InputDecoration(
                         labelText: 'Username',
                         filled: true,
@@ -354,9 +355,9 @@ class _PasswordActionButtonWithDialogWidgetState
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Form(
-                    key: notesFieldKey,
+                    key: _notesFieldKey,
                     child: TextFormField(
-                      controller: notesFieldController,
+                      controller: _notesFieldController,
                       decoration: InputDecoration(
                         labelText: 'notes',
                         filled: true,

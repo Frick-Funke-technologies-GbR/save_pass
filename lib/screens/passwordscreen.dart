@@ -91,6 +91,8 @@ class PasswordScreen extends StatelessWidget {
         systemNavigationBarColor: Colors.transparent,
       ),
     );
+    // TODO: Add widget to display if no entry added yet
+    // FIXME: debug api if no entry added yet
     CustomScrollView _passwordEntryListView(data) {
       return CustomScrollView(
         // semanticChildCount: data.length,
