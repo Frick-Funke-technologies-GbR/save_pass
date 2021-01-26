@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -41,7 +42,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             // margin: EdgeInsets.zero,
 
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: AppDefaultColors.colorPrimaryBlue,
             ),
             child: Center(
               child: Toplabel(),
@@ -54,7 +55,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
               color: this._selectedPasswords
-                  ? Colors.blue[100]
+                  ? AppDefaultColors.colorPrimaryBlue[100]
                   : Colors.transparent,
             ),
             child: ListTile(
@@ -88,7 +89,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
               color:
-                  this._selectedWallet ? Colors.blue[100] : Colors.transparent,
+                  this._selectedWallet ? AppDefaultColors.colorPrimaryBlue[100] : Colors.transparent,
             ),
             child: ListTile(
               dense: true,
@@ -125,7 +126,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
               color: this._selectedSettings
-                  ? Colors.blue[100]
+                  ? AppDefaultColors.colorPrimaryBlue[100]
                   : Colors.transparent,
             ),
             child: ListTile(
@@ -152,7 +153,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
           ),
           // ListTile(
-          //   focusColor: Colors.blue[200],
+          //   focusColor: AppDefaultColors.colorPrimaryBlue[200],
           //   onTap: () {
           //     Navigator.of(context).pop();
           //   },
@@ -161,7 +162,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           // ),
 
           // ListTile(
-          //   focusColor: Colors.blue[200],
+          //   focusColor: AppDefaultColors.colorPrimaryBlue[200],
           //   onTap: () {
           //     Navigator.of(context).pop();
           //   },
@@ -179,11 +180,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
           //       Container(
           //         // height: 50,
           //         // width: ,
-          //         // : Colors.blue[100],
+          //         // : AppDefaultColors.colorPrimaryBlue[100],
           //         // alignment: Alignment.center,
           //         decoration: BoxDecoration(
           //           borderRadius: BorderRadius.circular(5),
-          //           color: Colors.blue[100],
+          //           color: AppDefaultColors.colorPrimaryBlue[100],
           //         ),
           //         child: Row(
           //           mainAxisAlignment: MainAxisAlignment.spaceBetween,

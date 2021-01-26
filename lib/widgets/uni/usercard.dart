@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 
 class UserCard extends StatefulWidget {
   final String username;
@@ -17,7 +18,7 @@ class _UserCardState extends State<UserCard> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      color: Colors.blue,
+      color: AppDefaultColors.colorPrimaryBlue,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

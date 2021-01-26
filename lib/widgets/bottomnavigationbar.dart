@@ -19,7 +19,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             //   alignment: Alignment.center,
             //   margin: EdgeInsets.only(left: 10, top: 3),
             //   decoration: BoxDecoration(
-            //     color: Colors.blue,
+            //     color: AppDefaultColors.colorPrimaryBlue,
             //     borderRadius: BorderRadius.circular(20)
             //   ),
             //   child: Row(
@@ -69,7 +69,7 @@ class CustomBottomNavigationBarWalletScr extends StatelessWidget {
             //   alignment: Alignment.center,
             //   margin: EdgeInsets.only(left: 10, top: 3),
             //   decoration: BoxDecoration(
-            //     color: Colors.blue,
+            //     color: AppDefaultColors.colorPrimaryBlue,
             //     borderRadius: BorderRadius.circular(20)
             //   ),
             //   child: Row(

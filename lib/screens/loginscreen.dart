@@ -2,6 +2,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
@@ -267,7 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 icon: Icon(
                                   Icons.remove_red_eye,
                                   color:
-                                      _showPassword ? Colors.blue : Colors.grey,
+                                      _showPassword ? AppDefaultColors.colorPrimaryBlue : Colors.grey,
                                 ),
                                 onPressed: () {
                                   togglePasswordVisibillity();
@@ -295,10 +296,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           key: passButtonKey,
                           child: Icon(
                             Icons.lock_open,
-                            color: Colors.blue,
+                            color: AppDefaultColors.colorPrimaryBlue,
                           ),
-                          // color: Colors.blue,
-                          // splashColor: Colors.blue,
+                          // color: AppDefaultColors.colorPrimaryBlue,
+                          // splashColor: AppDefaultColors.colorPrimaryBlue,
                           onPressed: () {
                             passInputValidator();
                           },
@@ -344,7 +345,7 @@ class BackgroundPainter extends CustomPainter {
         Offset(width * 0, height * 0.4),
         Offset(width * 0.9, height * 0.1),
         [
-          Colors.blue,
+          AppDefaultColors.colorPrimaryBlue,
           Colors.white,
         ],
       );
@@ -359,14 +360,14 @@ class BackgroundPainter extends CustomPainter {
       width * 1,
       height * 1.15,
     );
-    // paint.color = Colors.blue;
+    // paint.color = AppDefaultColors.colorPrimaryBlue;
     paint
       ..shader = ui.Gradient.linear(
         Offset(width * 0, height * 0.9),
         Offset(width * 0.9, height * 0.4),
         [
           Colors.white,
-          Colors.blue,
+          AppDefaultColors.colorPrimaryBlue,
         ],
       );
     canvas.drawPath(circlePathTwo, paint);

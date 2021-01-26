@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/authentication/auth.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 
@@ -97,7 +98,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                       child: RaisedButton(
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         padding: EdgeInsets.all(0),
-                        color: Colors.blue,
+                        color: AppDefaultColors.colorPrimaryBlue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
@@ -207,7 +208,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                   ),
                   RaisedButton(
                     child: Text('Login'),
-                    color: Colors.blue,
+                    color: AppDefaultColors.colorPrimaryBlue,
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7)),
@@ -549,7 +550,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
               ),
               RaisedButton(
                 child: Text('Submit'),
-                color: Colors.blue,
+                color: AppDefaultColors.colorPrimaryBlue,
                 textColor: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(7)),

@@ -8,6 +8,7 @@ import 'package:save_pass/screens/settingsscreen.dart';
 import 'package:save_pass/screens/walletscreen.dart';
 import 'package:save_pass/screens/notificationsscreen.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 
 // void main() {
 //   runApp(SavePass());
@@ -33,7 +34,7 @@ class SavePass extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: AppDefaultColors.colorPrimaryBlue),
       routes: <String, WidgetBuilder>{
         // "/mainscreen": (BuildContext context) => new MainScreen(),
         "/newpasswordscreen": (BuildContext context) => PasswordScreen(),

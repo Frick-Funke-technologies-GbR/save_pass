@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 
 import 'package:random_color/random_color.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 
 class PasswordEntry extends StatelessWidget {
   // TODO: Add recursive color change, remember notes icon
@@ -104,7 +105,7 @@ class PasswordEntry extends StatelessWidget {
                 children: [
                   // Icon(
                   //   Icons.vpn_key,
-                  //   color: Colors.blue,
+                  //   color: AppDefaultColors.colorPrimaryBlue,
                   // ),
                   CircleAvatar(
                     backgroundColor: Colors.transparent,
@@ -177,7 +178,7 @@ class PasswordEntry extends StatelessWidget {
                       child: Text(
                         storedusername == '' ? 'no username' : storedusername,
                         overflow: TextOverflow.fade,
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: AppDefaultColors.colorPrimaryBlue),
                       ),
                     ),
                     Container(
@@ -189,7 +190,7 @@ class PasswordEntry extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: Colors.blue[50],
+                        color: AppDefaultColors.colorPrimaryBlue[50],
                       ),
                       alignment: Alignment.center,
                       child: Row(
@@ -388,7 +389,7 @@ class PasswordEntry extends StatelessWidget {
                                   ),
                                 );
                               },
-                              color: Colors.blue,
+                              color: AppDefaultColors.colorPrimaryBlue,
                             ),
                           ),
                           Container(
@@ -414,7 +415,7 @@ class PasswordEntry extends StatelessWidget {
                                   ),
                                 );
                               },
-                              color: Colors.blue,
+                              color: AppDefaultColors.colorPrimaryBlue,
                             ),
                           ),
                           Container(
@@ -422,7 +423,7 @@ class PasswordEntry extends StatelessWidget {
                             // margin: EdgeInsets.symmetric(horizontal: 10),
                             child: IconButton(
                               icon: Icon(Icons.delete),
-                              color: Colors.blue,
+                              color: AppDefaultColors.colorPrimaryBlue,
                               onPressed: () {
                                 showDialog(
                                   context: context,
@@ -441,14 +442,14 @@ class PasswordEntry extends StatelessWidget {
                                         },
                                         child: Text(
                                           'No',
-                                          style: TextStyle(color: Colors.blue),
+                                          style: TextStyle(color: AppDefaultColors.colorPrimaryBlue),
                                         ),
                                       ),
                                       FlatButton(
                                         onPressed: null,
                                         child: Text(
                                           'Delete',
-                                          style: TextStyle(color: Colors.red),
+                                          style: TextStyle(color: AppDefaultColors.colorPrimaryRed),
                                         ),
                                       ),
                                     ],
@@ -483,7 +484,7 @@ class PasswordEntry extends StatelessWidget {
                             ),
                             child: Icon(
                               Icons.note,
-                              color: Colors.blue[200],
+                              color: AppDefaultColors.colorPrimaryBlue[200],
                             ),
                           ),
                           Container(
@@ -535,14 +536,14 @@ class PasswordEntry extends StatelessWidget {
 //           onPressed: null,
 //           child: Text(
 //             'No',
-//             style: TextStyle(color: Colors.red),
+//             style: TextStyle(color: AppDefaultColors.colorPrimaryRed),
 //           ),
 //         ),
 //         FlatButton(
 //           onPressed: null,
 //           child: Text(
 //             'No',
-//             // style: TextStyle(color: Colors.red),
+//             // style: TextStyle(color: AppDefaultColors.colorPrimaryRed),
 //           ),
 //         ),
 //       ],

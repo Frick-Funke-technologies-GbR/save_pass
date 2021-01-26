@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
 
@@ -217,7 +218,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        color: Colors.blue,
+                        color: AppDefaultColors.colorPrimaryBlue,
                         // textColor: Colors.white,
                         // color: Colors.grey[500],
                         onPressed: () async {
@@ -307,7 +308,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         ),
                         suffixIcon: IconButton(
                           splashColor: Colors.transparent,
-                          icon: Icon(Icons.info, color: Colors.blue),
+                          icon: Icon(Icons.info, color: AppDefaultColors.colorPrimaryBlue),
                           onPressed: () {
                             print(_showAliasInputInfoText);
                             setState(() {
@@ -347,7 +348,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     child: Text(
                       'keyword/title for the entry. Most commonly the name of the company/provider.',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: AppDefaultColors.colorPrimaryBlue,
                         fontSize: 12,
                       ),
                     ),
@@ -367,7 +368,7 @@ class _PasswordActionButtonWithDialogWidgetState
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           splashColor: Colors.transparent,
-                          icon: Icon(Icons.info, color: Colors.blue),
+                          icon: Icon(Icons.info, color: AppDefaultColors.colorPrimaryBlue),
                           onPressed: () {
                             setState(() {
                               _showUrlInputInfoText = !_showUrlInputInfoText;
@@ -449,7 +450,7 @@ class _PasswordActionButtonWithDialogWidgetState
               ButtonBar(
                 children: [
                   FlatButton(
-                    // textColor: Colors.blue,
+                    // textColor: AppDefaultColors.colorPrimaryBlue,
                     child: Text(
                       'Add own password',
                       style: TextStyle(
@@ -465,7 +466,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    color: Colors.blue,
+                    color: AppDefaultColors.colorPrimaryBlue,
                     // textColor: Colors.white,
                     // color: Colors.grey[500],
                     onPressed: () {
@@ -483,6 +484,7 @@ class _PasswordActionButtonWithDialogWidgetState
       elevation: 8,
       icon: Icon(Icons.add),
       label: Text('Add password'),
+      backgroundColor: AppDefaultColors.colorPrimaryBlue,
     );
   }
 }

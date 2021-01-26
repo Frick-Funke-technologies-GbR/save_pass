@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 
 void showAddPasswordDialog(BuildContext context) {
   final passwordFieldKey = GlobalKey<FormState>();
@@ -119,7 +120,7 @@ void showAddPasswordDialog(BuildContext context) {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
-              color: Colors.blue,
+              color: AppDefaultColors.colorPrimaryBlue,
               // textColor: Colors.white,
               // color: Colors.grey[500],
               onPressed: () async {},

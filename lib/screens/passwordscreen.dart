@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:path/path.dart' as Path;
 import 'package:loading_animations/loading_animations.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
@@ -74,7 +75,7 @@ class PasswordScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          // backgroundColor: Colors.blue,
+          // backgroundColor: AppDefaultColors.colorPrimaryBlue,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -209,7 +210,7 @@ class PasswordScreen extends StatelessWidget {
                     TextSpan(
                       text: 'Clearbit',
                       style: TextStyle(
-                          color: Colors.blue,
+                          color: AppDefaultColors.colorPrimaryBlue,
                           fontSize: 12,
                           decoration: TextDecoration.underline),
                       recognizer: TapGestureRecognizer()
@@ -264,10 +265,10 @@ class PasswordScreen extends StatelessWidget {
                 // decoration: BoxDecoration(
                 //   gradient: LinearGradient(
                 //     colors: [
-                //       Colors.blue[800],
-                //       Colors.blue[700],
-                //       Colors.blue[600],
-                //       Colors.blue[400],
+                //       AppDefaultColors.colorPrimaryBlue[800],
+                //       AppDefaultColors.colorPrimaryBlue[700],
+                //       AppDefaultColors.colorPrimaryBlue[600],
+                //       AppDefaultColors.colorPrimaryBlue[400],
                 //     ],
                 //     begin: FractionalOffset(0.0, 0.0),
                 //     end: FractionalOffset(1, 0),
@@ -344,7 +345,7 @@ class PasswordScreen extends StatelessWidget {
                                 child: Center(
                                   child: CircularProgressIndicator(
                                     // borderSize: 5,
-                                    // backgroundColor: Colors.blue,
+                                    // backgroundColor: AppDefaultColors.colorPrimaryBlue,
                                     strokeWidth: 7,
                                     // size: 30,
                                     // inverted: true,
@@ -358,7 +359,7 @@ class PasswordScreen extends StatelessWidget {
                       : Center(
                           child: LoadingBouncingGrid.circle(
                             borderSize: 5,
-                            backgroundColor: Colors.blue,
+                            backgroundColor: AppDefaultColors.colorPrimaryBlue,
                             size: 30,
                             inverted: true,
                             duration: Duration(milliseconds: 400),
@@ -455,7 +456,7 @@ class BackgroundPainter extends CustomPainter {
         Offset(width * 0, height * 0.4),
         Offset(width * 0.9, height * 0.1),
         [
-          Colors.blue,
+          AppDefaultColors.colorPrimaryBlue,
           Colors.white,
         ],
       );
@@ -470,14 +471,14 @@ class BackgroundPainter extends CustomPainter {
       width * 1,
       height * 0.9,
     );
-    // paint.color = Colors.blue;
+    // paint.color = AppDefaultColors.colorPrimaryBlue;
     paint
       ..shader = ui.Gradient.linear(
         Offset(width * 0, height * 0.9),
         Offset(width * 0.9, height * 0.4),
         [
           Colors.white,
-          Colors.blue,
+          AppDefaultColors.colorPrimaryBlue,
         ],
       );
     canvas.drawPath(circlePathTwo, paint);
