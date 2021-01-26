@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
-
 
 class PasswordActionButtonWithDialogWidget extends StatefulWidget {
   @override
@@ -15,6 +15,8 @@ class _PasswordActionButtonWithDialogWidgetState
   bool _urlValidator = true;
   bool _usernameValidator = true;
   bool _passwordMatchValidatorFalse = false;
+  bool _showAliasInputInfoText = false;
+  bool _showUrlInputInfoText = false;
 
   final _aliasFieldController = TextEditingController();
   final _urlFieldController = TextEditingController();
@@ -29,7 +31,6 @@ class _PasswordActionButtonWithDialogWidgetState
   final _notesFieldKey = GlobalKey<FormState>();
   final _passwordFieldKey = GlobalKey<FormState>();
   final _passwordRepeatFieldKey = GlobalKey<FormState>();
-
 
   @override
   void dispose() {
@@ -103,163 +104,169 @@ class _PasswordActionButtonWithDialogWidgetState
     if (!addGeneratedPassword) {
       if (aliasvalidate && urlvalidate && usernamevalidate && notesvalidate) {
         Navigator.of(context).pop();
-        showDialog(
+        await showDialog(
           barrierDismissible: false,
           // barrierColor:,
           context: context,
-          builder: (_) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            title: Text('Add own password'),
-            content: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
+          builder: (context) => StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                title: Text('Add own password'),
+                content: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      // padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        // color: Colors.grey[200]
-                      ),
-                      child: Form(
-                        key: _passwordFieldKey,
-                        child: TextFormField(
-                          controller: _passwordFieldController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            filled: true,
-                            labelText: 'password',
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          // padding: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            // color: Colors.grey[200]
                           ),
-                          validator: (value) {
-                            if (!_passwordMatchValidatorFalse) {
-                              return 'passwords don\'t match';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      // padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        // color: Colors.grey[200]
-                      ),
-                      child: Form(
-                        key: _passwordRepeatFieldKey,
-                        child: TextFormField(
-                          controller: _passwordRepeatFieldController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            filled: true,
-                            labelText: 'repeat password',
+                          child: Form(
+                            key: _passwordFieldKey,
+                            child: TextFormField(
+                              controller: _passwordFieldController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                filled: true,
+                                labelText: 'password',
+                              ),
+                              validator: (value) {
+                                if (!_passwordMatchValidatorFalse) {
+                                  return 'passwords don\'t match';
+                                }
+                                return null;
+                              },
+                            ),
                           ),
-                          validator: (value) {
-                            if (!_passwordMatchValidatorFalse) {
-                              return 'passwords don\'t match';
-                            }
-                            return null;
-                          },
                         ),
-                      ),
+                        Container(
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          // padding: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            // color: Colors.grey[200]
+                          ),
+                          child: Form(
+                            key: _passwordRepeatFieldKey,
+                            child: TextFormField(
+                              controller: _passwordRepeatFieldController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                filled: true,
+                                labelText: 'repeat password',
+                              ),
+                              validator: (value) {
+                                if (!_passwordMatchValidatorFalse) {
+                                  return 'passwords don\'t match';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        )
+                        // Container(
+                        //   margin: EdgeInsets.only(top: 20),
+                        //   child: Text(
+                        //     'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
+                        //     style: TextStyle(
+                        //       color: Colors.grey,
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
                     ),
-                    Text(
-                      'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    )
                     // Container(
-                    //   margin: EdgeInsets.only(top: 20),
-                    //   child: Text(
-                    //     'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
-                    //     style: TextStyle(
-                    //       color: Colors.grey,
+                    //   margin: EdgeInsets.symmetric(vertical: 10),
+                    //   // padding: EdgeInsets.symmetric(horizontal: 10),
+                    //   height: 50,
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(4),
+                    //     // color: Colors.grey[200]
+                    //   ),
+                    //   child: RichText(
+                    //     text: TextSpan(
+                    //       style: GoogleFonts.sourceCodePro(),
+                    //       children: <TextSpan>[
+                    //         TextSpan(text: '')
+                    //       ],
                     //     ),
                     //   ),
                     // ),
                   ],
                 ),
-                // Container(
-                //   margin: EdgeInsets.symmetric(vertical: 10),
-                //   // padding: EdgeInsets.symmetric(horizontal: 10),
-                //   height: 50,
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(4),
-                //     // color: Colors.grey[200]
-                //   ),
-                //   child: RichText(
-                //     text: TextSpan(
-                //       style: GoogleFonts.sourceCodePro(),
-                //       children: <TextSpan>[
-                //         TextSpan(text: '')
-                //       ],
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-            actions: [
-              ButtonBar(
-                children: [
-                  FlatButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    color: Colors.blue,
-                    // textColor: Colors.white,
-                    // color: Colors.grey[500],
-                    onPressed: () async {
-                      var error = await validatePasswordFields();
-                      Navigator.of(context).pop();
-                      final sucessSnackBar = SnackBar(
-                        content: Text('The entry was stored sucessfully!'),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: Colors.grey[800],
+                actions: [
+                  ButtonBar(
+                    children: [
+                      FlatButton(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                      );
-                      // sucess = sucess.toString();
-                      final unsucessSnackBar = SnackBar(
-                        content: Text(
-                          'An Error occured $error',
-                        ),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: Colors.grey[800],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                        ),
-                      );
-                      if (error == null) {
-                        error = false;
-                      }
-                      Scaffold.of(context).showSnackBar(
-                          error ? unsucessSnackBar : sucessSnackBar);
-                    },
-                    child: Text('Submit and create Entry'),
+                        color: Colors.blue,
+                        // textColor: Colors.white,
+                        // color: Colors.grey[500],
+                        onPressed: () async {
+                          var error = await validatePasswordFields();
+                          Navigator.of(context).pop();
+                          final sucessSnackBar = SnackBar(
+                            content: Text('The entry was stored sucessfully!'),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.grey[800],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                          );
+                          // sucess = sucess.toString();
+                          final unsucessSnackBar = SnackBar(
+                            content: Text(
+                              'An Error occured $error',
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.grey[800],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                          );
+                          if (error == null) {
+                            error = false;
+                          }
+                          Scaffold.of(context).showSnackBar(
+                              error ? unsucessSnackBar : sucessSnackBar);
+                        },
+                        child: Text('Submit and create Entry'),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
+              );
+            },
           ),
         );
       }
     }
 
-    if (addGeneratedPassword) {}
+    if (addGeneratedPassword) { 
+      // TODO: Add function for adding generated passwords (Backend change also required)
+    }
   }
 
   @override
@@ -271,18 +278,18 @@ class _PasswordActionButtonWithDialogWidgetState
         Navigator.of(context).pushNamed('/registerscreen');
         showDialog(
           context: context,
-          builder: (_) => AlertDialog(
+          builder: (context) => AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
             scrollable: true,
             content: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              // mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 15),
+                  margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -291,13 +298,32 @@ class _PasswordActionButtonWithDialogWidgetState
                     child: TextFormField(
                       controller: _aliasFieldController,
                       decoration: InputDecoration(
-                        helperText: 'Keyword for the entry.',
-                        labelText: 'Alias',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                        suffixIcon: IconButton(
+                          splashColor: Colors.transparent,
+                          icon: Icon(Icons.info, color: Colors.blue),
+                          onPressed: () {
+                            print(_showAliasInputInfoText);
+                            setState(() {
+                              _showAliasInputInfoText =
+                                  !_showAliasInputInfoText;
+                              print(_showAliasInputInfoText);
+                            });
+                          },
+                        ),
+                        // helperText: 'Keyword for the entry.',
+                        labelText: 'alias',
                         filled: true,
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'please enter a alias';
+                          return 'please enter an alias';
                         }
                         if (!_aliasValidator) {
                           setState(() {
@@ -310,17 +336,52 @@ class _PasswordActionButtonWithDialogWidgetState
                     ),
                   ),
                 ),
+                // FIXME: Fix animated info about Alias and url
+                AnimatedCrossFade(
+                  crossFadeState: !_showAliasInputInfoText
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild: Container(),
+                  secondChild: Container(
+                    margin: EdgeInsets.only(left: 12, bottom: 15),
+                    child: Text(
+                      'keyword/title for the entry. Most commonly the name of the company/provider.',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  duration: Duration(milliseconds: 200),
+                ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 15),
+                  margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Form(
+                    // TODO: Add info widget on how to add appropriate url
                     key: _urlFieldKey,
                     child: TextFormField(
                       controller: _urlFieldController,
                       decoration: InputDecoration(
-                        labelText: 'Url',
+                        suffixIcon: IconButton(
+                          splashColor: Colors.transparent,
+                          icon: Icon(Icons.info, color: Colors.blue),
+                          onPressed: () {
+                            setState(() {
+                              _showUrlInputInfoText = !_showUrlInputInfoText;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                        labelText: 'domain',
                         filled: true,
                       ),
                       validator: (value) {
@@ -331,7 +392,7 @@ class _PasswordActionButtonWithDialogWidgetState
                 ),
                 Container(
                   alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.symmetric(vertical: 15),
+                  margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -340,8 +401,15 @@ class _PasswordActionButtonWithDialogWidgetState
                     child: TextFormField(
                       controller: _usernameFieldController,
                       decoration: InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'username',
                         filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
                       ),
                       validator: (value) {
                         return null;
@@ -350,7 +418,7 @@ class _PasswordActionButtonWithDialogWidgetState
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 15),
+                  margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -361,6 +429,13 @@ class _PasswordActionButtonWithDialogWidgetState
                       decoration: InputDecoration(
                         labelText: 'notes',
                         filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
                       ),
                       validator: (value) {
                         return null;

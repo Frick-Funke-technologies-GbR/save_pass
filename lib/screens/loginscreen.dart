@@ -1,3 +1,5 @@
+// import 'dart:js';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
@@ -20,11 +22,24 @@ Future<String> getUserIdent() async {
 //   return passcheck;
 // }
 
-Future<bool> checkMasterPassword(String password) async {
+Future<bool> checkMasterPassword(String password, context) async {
   // TODO: Add get username from progreq.json
   // final _boolSubject = BehaviorSubject<bool>();
   ApiProvider api = ApiProvider();
-  api.loginUser('paulaner');
+  try {
+    api.loginUser('paulaner');
+  } catch (e) {
+    // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
+    // FIXME: Here, the state also doesnt change for Snackbar
+    print('ALALALALALALALALALA');
+    print(e.toString().replaceAll('Exception', 'Error'));
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.toString().replaceAll('Exception', 'Error')),
+      ),
+    );
+    return null;
+  }
   // bool _bool;
   // Future<String> userIdent = getUserIdent();
   // userIdent.then(
@@ -109,17 +124,23 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     void passInputValidator() async {
-      var response = await checkMasterPassword(textFieldController.text);
+      var response =
+          await checkMasterPassword(textFieldController.text, context);
 
-      setState(
-        () {
-          passwordValidator = response;
-        },
-      );
+      if (response == null) {
+        // No snackbar needed, because it is displayed already in checkMasterPassword()
+      } else {
+        setState(
+          () {
+            passwordValidator = response;
+          },
+        );
 
-      if (passinputKey.currentState.validate()) {
-        CacheHandler().addSecureStringToCache('master_password', textFieldController.text);
-        Navigator.of(context).pushNamed("/newpasswordscreen");
+        if (passinputKey.currentState.validate()) {
+          CacheHandler().addSecureStringToCache(
+              'master_password', textFieldController.text);
+          Navigator.of(context).pushNamed("/newpasswordscreen");
+        }
       }
 
       // if (passinputKey) {};
@@ -188,6 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: new TextFormField(
                             controller: textFieldController,
                             // key: passinputKey,
+                            // FIXME: Fix the state not updating
                             validator: (value) {
                               if (value.isEmpty) {
                                 return 'Please enter a Password';
@@ -224,8 +246,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               // // print(checked);
                               // // String delayedchecked = delay();
                               // // return delayedchecked;
-                              print('niunununun');
-                              print(passwordValidator);
+                              // print('niunununun');
+                              // print(passwordValidator);
                               if (passwordValidator) {
                                 return null;
                               }

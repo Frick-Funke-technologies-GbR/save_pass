@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +16,7 @@ class PasswordEntry extends StatelessWidget {
   final String storedusername;
   final String storedpassword;
   final String storednotes;
+  final String storedThumbnail;
   // final _passwordShowTimeIndicator = GlobalKey<FormState>();
 
   const PasswordEntry(
@@ -23,6 +26,7 @@ class PasswordEntry extends StatelessWidget {
     this.storedusername,
     this.storedpassword,
     this.storednotes,
+    this.storedThumbnail,
   );
 
   int randInt() {
@@ -105,11 +109,12 @@ class PasswordEntry extends StatelessWidget {
                   CircleAvatar(
                     backgroundColor: Colors.transparent,
                     // child: Image.asset('assets/save_pass_icon_placeholder.png'),
-                    backgroundImage: NetworkImage(randInt() == 1
-                        ? 'https://www.googlewatchblog.de/wp-content/uploads/google-icon-logo.jpg'
-                        : randInt() == 2
-                            ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
-                            : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
+                    // backgroundImage: NetworkImage(randInt() == 1
+                    //     ? 'https://www.googlewatchblog.de/wp-content/uploads/google-icon-logo.jpg'
+                    //     : randInt() == 2
+                    //         ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
+                    //         : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
+                    child: Image.memory(base64Decode(storedThumbnail)),              
                   ),
                   Container(
                     decoration: BoxDecoration(

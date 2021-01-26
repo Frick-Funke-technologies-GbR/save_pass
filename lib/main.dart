@@ -7,12 +7,17 @@ import 'package:save_pass/screens/registerscreen.dart';
 import 'package:save_pass/screens/settingsscreen.dart';
 import 'package:save_pass/screens/walletscreen.dart';
 import 'package:save_pass/screens/notificationsscreen.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 // void main() {
 //   runApp(SavePass());
 // }
 
-void main() => runApp(SavePass());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GlobalConfiguration().loadFromAsset("settings");
+  runApp(SavePass());
+}
 
 class SavePass extends StatelessWidget {
   @override
@@ -28,20 +33,16 @@ class SavePass extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
-      theme: ThemeData(
-        primarySwatch: Colors.blue
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       routes: <String, WidgetBuilder>{
         // "/mainscreen": (BuildContext context) => new MainScreen(),
         "/newpasswordscreen": (BuildContext context) => PasswordScreen(),
         "/passwordscreen": (BuildContext context) => PasswordScreen(),
         "/settingsscreen": (BuildContext context) => SettingsScreen(),
         "/walletscreen": (BuildContext context) => WalletScreen(),
-        "/registerscreen" : (BuildContext context) => RegisterScreen(), 
+        "/registerscreen": (BuildContext context) => RegisterScreen(),
         // "/notificationsscreen": (BuildContext context) => NotificationsScreen(),
       },
     );
   }
 }
-
-

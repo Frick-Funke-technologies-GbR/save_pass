@@ -16,6 +16,7 @@ import 'package:save_pass/widgets/passwordscreen/passwordactionbuttonwithdialog.
 import 'package:save_pass/widgets/uni/drawer.dart';
 import 'package:save_pass/widgets/passwordscreen/passwordentry.dart';
 import 'package:save_pass/widgets/uni/usercard.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:ui' as ui;
 
 Future<List<PasswordEntryClass>> getPasswordEntries() async {
@@ -67,8 +68,8 @@ class PasswordScreen extends StatelessWidget {
   //   };
   // )
 
-  void _showAccountDialog(BuildContext context)  {
-    String username = 'hallo'; 
+  void _showAccountDialog(BuildContext context) {
+    String username = 'hallo';
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -174,17 +175,52 @@ class PasswordScreen extends StatelessWidget {
             ),
           ),
           SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              // getPasswordEntries();
-              return PasswordEntry(
-                data[index].id,
-                data[index].url,
-                data[index].alias,
-                data[index].username,
-                data[index].password,
-                data[index].notes,
-              );
-            }, childCount: data.length),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                // getPasswordEntries();
+                return PasswordEntry(
+                  data[index].id,
+                  data[index].url,
+                  data[index].alias,
+                  data[index].username,
+                  data[index].password,
+                  data[index].notes,
+                  data[index].thumbnail,
+                );
+              },
+              childCount: data.length,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              constraints: BoxConstraints(minHeight: 100),
+              padding: EdgeInsets.only(top: 20),
+              alignment: Alignment.topCenter,
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Logos provided by ',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'Clearbit',
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 12,
+                          decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launch('https://clearbit.com');
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       );
@@ -342,7 +378,9 @@ class PasswordScreen extends StatelessWidget {
   //   }
   //   return contents;
   // }
+
 }
+
 
 // class _MainScreenState extends StatelessWidget {
 //   @override
@@ -390,7 +428,6 @@ class PasswordScreen extends StatelessWidget {
 //     );
 //   }
 // }
-
 
 class BackgroundPainter extends CustomPainter {
   @override

@@ -57,6 +57,9 @@ class ApiProvider {
       await _saveFirstName(result["data"]["first_name"]);
       await _saveLastName(result["data"]["last_name"]);
       await _saveEmailAdress(result["data"]["email_adress"]);
+    } else if (response.statusCode == 400) {
+      // print('ELELELELELELELEL');
+      throw Exception(result['message']);
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to login');
@@ -69,7 +72,7 @@ class ApiProvider {
       headers: {"user_ident": userIdent, "password": password},
     );
     final Map result = json.decode(response.body);
-    if (result['status'] == 'failure' && result['reason'] == 'wrong password') {
+    if (response.statusCode == 401) {
       return false;
     } else {
       _savePassword(password);

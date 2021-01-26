@@ -32,6 +32,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
       ),
       child: AnimatedCrossFade(
         duration: Duration(milliseconds: 200),
+        // TODO: Add the coose passwor widget 
         crossFadeState: CrossFadeState.showFirst,
         secondChild: ChoosePasswordWidget(),
         firstChild: Column(
@@ -158,7 +159,6 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                                 .registerUser('username', user.displayName, '',
                                     user.email);
                             // Navigator.of(context).pushNamed()
-
                           } catch (e) {
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -311,7 +311,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
             ),
           ),
         ),
-      );     
+      );
 
       return true;
     } catch (e) {
@@ -426,12 +426,13 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                     return 'type in an email';
                   }
                   if (_emailAlreadyAdded) {
-                    print('_emailAlreadyAdded');
-                    print(_emailAlreadyAdded);
+                    // print('_emailAlreadyAdded');
+                    // print(_emailAlreadyAdded);
                     return 'email already added';
                   }
                   return null;
                 },
+                keyboardType: TextInputType.emailAddress,
                 controller: _emailInputController,
                 decoration: InputDecoration(
                   // prefixIcon: Icon(Icons.security),
