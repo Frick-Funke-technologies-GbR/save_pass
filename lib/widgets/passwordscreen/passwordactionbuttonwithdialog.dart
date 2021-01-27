@@ -276,7 +276,7 @@ class _PasswordActionButtonWithDialogWidgetState
       isExtended: true,
       onPressed: () {
         // Only for debug:
-        Navigator.of(context).pushNamed('/registerscreen');
+        // Navigator.of(context).pushNamed('/registerscreen');
         showDialog(
           context: context,
           builder: (context) => AlertDialog(

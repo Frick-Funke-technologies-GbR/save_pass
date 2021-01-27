@@ -28,7 +28,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
     return Container(
       constraints: BoxConstraints(minHeight: 100, minWidth: 270),
       decoration: BoxDecoration(
-        color: AppDefaultColors.colorPrimaryGrey[100],
+        color: AppDefaultColors.colorPrimaryGrey[50],
         borderRadius: BorderRadius.circular(10),
       ),
       child: AnimatedCrossFade(

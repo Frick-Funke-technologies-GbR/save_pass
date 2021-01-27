@@ -341,16 +341,14 @@ class PasswordScreen extends StatelessWidget {
                               } else if (snapshot.hasError) {
                                 return Text('${snapshot.error}');
                               }
-                              return Expanded(
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    // borderSize: 5,
-                                    // backgroundColor: AppDefaultColors.colorPrimaryBlue,
-                                    strokeWidth: 7,
-                                    // size: 30,
-                                    // inverted: true,
-                                    // duration: Duration(milliseconds: 400),
-                                  ),
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  // borderSize: 5,
+                                  // backgroundColor: AppDefaultColors.colorPrimaryBlue,
+                                  strokeWidth: 7,
+                                  // size: 30,
+                                  // inverted: true,
+                                  // duration: Duration(milliseconds: 400),
                                 ),
                               );
                             },

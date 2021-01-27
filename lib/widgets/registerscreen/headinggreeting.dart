@@ -22,7 +22,7 @@ class HeadingGreetingWidget extends StatelessWidget {
               ),
             ),
           ),
-          Toplabel()
+          ToplabelRegister()
         ],
       ),
     );

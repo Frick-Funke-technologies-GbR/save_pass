@@ -55,7 +55,7 @@ class PasswordEntry extends StatelessWidget {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
     );
-    
+
     // Color _lightBlue = randombBlueTone();
 
     Color blueHue = UniqueColorGenerator.getColor();
@@ -115,7 +115,9 @@ class PasswordEntry extends StatelessWidget {
                     //     : randInt() == 2
                     //         ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
                     //         : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
-                    child: Image.memory(base64Decode(storedThumbnail)),              
+                    child: storedThumbnail != null
+                        ? Image.memory(base64Decode(storedThumbnail))
+                        : Image.asset('assets/save_pass_icon_placeholder.png'),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -172,13 +174,14 @@ class PasswordEntry extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         // color: Colors.deepOrange[50],
-                        color: AppDefaultColors.colorPrimaryGrey[100],
+                        color: AppDefaultColors.colorPrimaryGrey[50],
                       ),
                       padding: EdgeInsets.all(5),
                       child: Text(
                         storedusername == '' ? 'no username' : storedusername,
                         overflow: TextOverflow.fade,
-                        style: TextStyle(color: AppDefaultColors.colorPrimaryBlue),
+                        style:
+                            TextStyle(color: AppDefaultColors.colorPrimaryBlue),
                       ),
                     ),
                     Container(
@@ -247,13 +250,59 @@ class PasswordEntry extends StatelessWidget {
                                                 constraints: BoxConstraints(
                                                     minWidth: 500),
                                                 padding: EdgeInsets.all(5),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  // color: Colors.yellow[100],
+                                                  color: AppDefaultColors
+                                                      .colorPrimaryGrey[50],
+                                                  // border: Border.all(
+                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
+                                                  // ),
+                                                ),
+                                                child: RichText(
+                                                  text: TextSpan(
+                                                    text: 'password: ',
+                                                    style: GoogleFonts.firaCode(
+                                                      color: AppDefaultColors
+                                                              .colorPrimaryGrey[
+                                                          800],
+                                                      // color: Colors.yellow[700],
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    children: <TextSpan>[
+                                                      TextSpan(
+                                                        style: GoogleFonts
+                                                            .firaCode(
+                                                                color: Colors
+                                                                    .blue),
+                                                        text: storedpassword ==
+                                                                ''
+                                                            ? 'no password'
+                                                            : storedpassword,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Divider(
+                                                height: 20,
+                                                color: AppDefaultColors
+                                                    .colorPrimaryGrey,
+                                              ),
+                                              Container(
+                                                constraints: BoxConstraints(
+                                                    minWidth: 500),
+                                                padding: EdgeInsets.all(5),
                                                 margin:
                                                     EdgeInsets.only(bottom: 5),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                   // color: Colors.yellow[100],
-                                                  color: AppDefaultColors.colorPrimaryGrey[100],
+                                                  color: AppDefaultColors
+                                                      .colorPrimaryGrey[50],
                                                   // border: Border.all(
                                                   //   color: AppDefaultColors.colorPrimaryGrey[300],
                                                   // ),
@@ -264,7 +313,9 @@ class PasswordEntry extends StatelessWidget {
                                                   text: TextSpan(
                                                     text: 'url: ',
                                                     style: GoogleFonts.firaCode(
-                                                      color: AppDefaultColors.colorPrimaryGrey[800],
+                                                      color: AppDefaultColors
+                                                              .colorPrimaryGrey[
+                                                          800],
                                                       // color: Colors.yellow[700],
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -294,7 +345,8 @@ class PasswordEntry extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                   // color: Colors.yellow[100],
-                                                  color: AppDefaultColors.colorPrimaryGrey[100],
+                                                  color: AppDefaultColors
+                                                      .colorPrimaryGrey[50],
                                                   // border: Border.all(
                                                   //   color: AppDefaultColors.colorPrimaryGrey[300],
                                                   // ),
@@ -303,7 +355,9 @@ class PasswordEntry extends StatelessWidget {
                                                   text: TextSpan(
                                                     text: 'username: ',
                                                     style: GoogleFonts.firaCode(
-                                                      color: AppDefaultColors.colorPrimaryGrey[500],
+                                                      color: AppDefaultColors
+                                                              .colorPrimaryGrey[
+                                                          800],
                                                       // color: Colors.yellow[700],
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -318,43 +372,6 @@ class PasswordEntry extends StatelessWidget {
                                                                 ''
                                                             ? 'no username'
                                                             : storedusername,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                constraints: BoxConstraints(
-                                                    minWidth: 500),
-                                                padding: EdgeInsets.all(5),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  // color: Colors.yellow[100],
-                                                  color: AppDefaultColors.colorPrimaryGrey[100],
-                                                  // border: Border.all(
-                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
-                                                  // ),
-                                                ),
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    text: 'password: ',
-                                                    style: GoogleFonts.firaCode(
-                                                      color: AppDefaultColors.colorPrimaryGrey[500],
-                                                      // color: Colors.yellow[700],
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        style: GoogleFonts
-                                                            .firaCode(
-                                                                color: Colors
-                                                                    .blue),
-                                                        text: storedpassword ==
-                                                                ''
-                                                            ? 'no password'
-                                                            : storedpassword,
                                                       ),
                                                     ],
                                                   ),
@@ -406,7 +423,8 @@ class PasswordEntry extends StatelessWidget {
                                     content:
                                         Text('Password copied to clipboard.'),
                                     behavior: SnackBarBehavior.floating,
-                                    backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+                                    backgroundColor:
+                                        AppDefaultColors.colorPrimaryGrey[800],
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(10),
@@ -442,14 +460,18 @@ class PasswordEntry extends StatelessWidget {
                                         },
                                         child: Text(
                                           'No',
-                                          style: TextStyle(color: AppDefaultColors.colorPrimaryBlue),
+                                          style: TextStyle(
+                                              color: AppDefaultColors
+                                                  .colorPrimaryBlue),
                                         ),
                                       ),
                                       FlatButton(
                                         onPressed: null,
                                         child: Text(
                                           'Delete',
-                                          style: TextStyle(color: AppDefaultColors.colorPrimaryRed),
+                                          style: TextStyle(
+                                              color: AppDefaultColors
+                                                  .colorPrimaryRed),
                                         ),
                                       ),
                                     ],
@@ -468,7 +490,7 @@ class PasswordEntry extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: Colors.yellow[100],
+                    color: Colors.yellow[50],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,

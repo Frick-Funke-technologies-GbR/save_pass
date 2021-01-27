@@ -1,15 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' show Client;
+import 'package:http/http.dart' show Client, ClientException;
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/cache.dart';
+import 'package:retry/retry.dart';
+
+// typedef Future<T> FutureGenerator<T>();
+// Future<T> retry<T>(int retries, FutureGenerator aFuture) async {
+//   try {
+//     return await aFuture();
+//   } catch (e) {
+//     if (retries > 1) {
+//       return retry(retries - 1, aFuture);
+//     }
+//     rethrow;
+//   }
+// }
 
 class ApiProvider {
   Client client = Client();
 
-  Future<UserClass> registerUser(String username, String firstname,
-      String lastname, String emailadress) async {
+  Future<UserClass> registerUser(
+    String username,
+    String firstname,
+    String lastname,
+    String emailadress,
+  ) async {
     final response = await client.post(
       "http://10.0.2.2:5000/api/register",
       // headers: "",
@@ -37,7 +54,9 @@ class ApiProvider {
     }
   }
 
-  Future loginUser(String username) async {
+  Future loginUser(
+    String username,
+  ) async {
     final response = await client.post(
       "http://10.0.2.2:5000/api/login",
       // headers: {
@@ -66,7 +85,10 @@ class ApiProvider {
     }
   }
 
-  Future<bool> checkPass(String userIdent, String password) async {
+  Future<bool> checkPass(
+    String userIdent,
+    String password,
+  ) async {
     final response = await client.get(
       "http://10.0.2.2:5000/api/check_pass",
       headers: {"user_ident": userIdent, "password": password},
@@ -81,10 +103,17 @@ class ApiProvider {
   }
 
   Future<List<PasswordEntryClass>> getUserPasswordEntries(
-      String userIdent, String password) async {
-    final response = await client.get(
-      "http://10.0.2.2:5000/api/password_entry",
-      headers: {"user_ident": userIdent, "password": password},
+    String userIdent,
+    String password,
+  ) async {
+    // try {
+    // FIXME: Hardfix this ClientException 'connection closed while receiving data' bug
+    final response = await retry(
+      () => client.get(
+        "http://10.0.2.2:5000/api/password_entry",
+        headers: {"user_ident": userIdent, "password": password},
+      ).timeout(Duration(milliseconds: 2500),),
+      retryIf: (e) => e is ClientException || e is TimeoutException,
     );
     print('point1');
     final Map<String, dynamic> result = json.decode(response.body);
@@ -119,10 +148,28 @@ class ApiProvider {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load password entries');
     }
+    // } on ClientException catch (e) {
+    //   print('[DEBUG] Client exception occured:');
+    //   print(e.message);
+    //   print('[DEBUG] Retry in 2,5 seconds...');
+    //   // await new Future.delayed(const Duration(seconds: 5));
+    //   retryFuture(getUserPasswordEntries, 2500);
+    //   // this.getUserPasswordEntries(userIdent, password);
+    //   // print('LALALALLALALLA');
+    //   // ApiProvider().getUserPasswordEntries(userIdent, password);
+    //   // print('LALALALLALALLA2');
+    // }
   }
 
-  Future addUserPasswordEntry(String userIdent, String masterPassword, String alias, String url,
-      String username, String password, String notes) async {
+  Future addUserPasswordEntry(
+    String userIdent,
+    String masterPassword,
+    String alias,
+    String url,
+    String username,
+    String password,
+    String notes,
+  ) async {
     final response = await client.post(
       "http://10.0.2.2:5000/api/password_entry",
       headers: {"user_ident": userIdent, 'password': masterPassword},
@@ -143,8 +190,14 @@ class ApiProvider {
       var responsebody = json.decode(response.body);
       print(responsebody);
       if (responsebody['message'] == "Entry with given alias already exists")
-      throw Exception('Failed to add entry');
+        throw Exception('Failed to add entry');
     }
+  }
+
+  retryFuture(future, int delay) {
+    Future.delayed(Duration(milliseconds: delay), () {
+      future();
+    });
   }
 
   _saveUserIdent(String userIdent) {
