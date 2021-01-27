@@ -28,7 +28,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
     return Container(
       constraints: BoxConstraints(minHeight: 100, minWidth: 270),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: AppDefaultColors.colorPrimaryGrey[100],
         borderRadius: BorderRadius.circular(10),
       ),
       child: AnimatedCrossFade(
@@ -51,7 +51,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                       child: RaisedButton(
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         padding: EdgeInsets.all(0),
-                        color: Colors.grey,
+                        color: AppDefaultColors.colorPrimaryGrey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
@@ -167,7 +167,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                                     .toString()
                                     .replaceAll('Exception', 'Error')),
                                 behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.grey[800],
+                                backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
@@ -249,7 +249,7 @@ class RegisterWithGoogleInfoWidget extends StatelessWidget {
       child: Text(
         'Note: if you sign in with google, you will have access to online features later on. You encrypted data will not be stored in google servers though.',
         style: TextStyle(
-          color: Colors.grey[500],
+          color: AppDefaultColors.colorPrimaryGrey[500],
           fontSize: 13,
         ),
       ),
@@ -305,7 +305,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
         SnackBar(
           content: Text('Registretion progress successfully'),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.grey[800],
+          backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(10),
@@ -342,7 +342,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
         SnackBar(
           content: Text(e.toString().replaceAll('Exception', 'Error')),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.grey[800],
+          backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(10),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/widgets/bottomnavigationbar.dart';
 import 'package:save_pass/widgets/uni/drawer.dart';
 import 'package:flutter_speed_dial_material_design/flutter_speed_dial_material_design.dart';
@@ -9,11 +10,11 @@ class WalletScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // SystemChrome.setSystemUIOverlayStyle(
     //   SystemUiOverlayStyle(
-    //     systemNavigationBarColor: Colors.grey[300],
+    //     systemNavigationBarColor: AppDefaultColors.colorPrimaryGrey[300],
     //   ),
     // );
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: AppDefaultColors.colorPrimaryGrey[200],
       drawer: CustomDrawer(false, true, false),
       bottomNavigationBar: CustomBottomNavigationBarWalletScr(),
       floatingActionButton: FloatingActionButton(
@@ -31,7 +32,7 @@ class WalletScreen extends StatelessWidget {
       //         style: TextStyle(
       //           fontFamily: 'roboto_light',
       //           fontSize: 10,
-      //           color: Colors.grey[500], 
+      //           color: AppDefaultColors.colorPrimaryGrey[500], 
       //         ),
       //       ),
       //     ),

@@ -18,7 +18,7 @@ class ToplabelLogin extends StatelessWidget {
       decoration: BoxDecoration(
         // boxShadow: [
         //   BoxShadow(
-        //     color: Colors.grey[400],
+        //     color: AppDefaultColors.colorPrimaryGrey[400],
         //     blurRadius: 5,
         //     spreadRadius: 0,
         //     offset: Offset(3, 4),
@@ -26,14 +26,14 @@ class ToplabelLogin extends StatelessWidget {
         // ],
         // boxShadow: [
         //   BoxShadow(
-        //     color: Colors.grey[400],
+        //     color: AppDefaultColors.colorPrimaryGrey[400],
         //     blurRadius: 7,
         //     spreadRadius: 1,
         //     // offset: Offset(3, 4),
         //   ),
         // ],
 
-        // color: Colors.grey[100],
+        // color: AppDefaultColors.colorPrimaryGrey[100],
         color: Colors.white,
         borderRadius: BorderRadius.all(
           const Radius.circular(10),
@@ -57,7 +57,7 @@ class ToplabelLogin extends StatelessWidget {
             TextSpan(
               text: 'ogin',
           style: GoogleFonts.oxygen(
-              fontSize: 50, fontWeight: FontWeight.w900, color: Colors.grey[500]),
+              fontSize: 50, fontWeight: FontWeight.w900, color: AppDefaultColors.colorPrimaryGrey[500]),
             ),
             TextSpan(
               text: '.',
@@ -82,13 +82,13 @@ class ToplabelStartup extends StatelessWidget {
       decoration: BoxDecoration(
         // boxShadow: [
         //   BoxShadow(
-        //     color: Colors.grey[400],
+        //     color: AppDefaultColors.colorPrimaryGrey[400],
         //     blurRadius: 5,
         //     spreadRadius: 0,
         //     offset: Offset(3, 4),
         //   ),
         // ],
-        color: Colors.grey[100],
+        color: AppDefaultColors.colorToplabelGrey,
         borderRadius: BorderRadius.all(
           const Radius.circular(10),
         ),
@@ -113,7 +113,7 @@ class ToplabelStartup extends StatelessWidget {
               style: GoogleFonts.oxygen(
                   fontSize: 50,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[500]),
+                  color: AppDefaultColors.colorPrimaryGrey[500]),
             ),
             TextSpan(
               text: 'P',
@@ -125,7 +125,7 @@ class ToplabelStartup extends StatelessWidget {
               style: GoogleFonts.oxygen(
                   fontSize: 50,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[500]),
+                  color: AppDefaultColors.colorPrimaryGrey[500]),
             ),
             TextSpan(
               text: '.',
@@ -150,13 +150,13 @@ class Toplabel extends StatelessWidget {
       decoration: BoxDecoration(
         // boxShadow: [
         //   BoxShadow(
-        //     color: Colors.grey[400],
+        //     color: AppDefaultColors.colorPrimaryGrey[400],
         //     blurRadius: 7,
         //     spreadRadius: 1,
         //     // offset: Offset(3, 4),
         //   ),
         // ],
-        color: Colors.grey[100],
+        color: AppDefaultColors.colorToplabelGrey,
         borderRadius: BorderRadius.all(
           const Radius.circular(10),
         ),
@@ -181,7 +181,7 @@ class Toplabel extends StatelessWidget {
               style: GoogleFonts.oxygen(
                   fontSize: 50,
                   fontWeight: FontWeight.w900,
-                  color: Colors.grey[500]),
+                  color: AppDefaultColors.colorPrimaryGrey[500]),
             ),
             TextSpan(
               text: 'P',
@@ -193,7 +193,7 @@ class Toplabel extends StatelessWidget {
               style: GoogleFonts.oxygen(
                   fontSize: 50,
                   fontWeight: FontWeight.w900,
-                  color: Colors.grey[500]),
+                  color: AppDefaultColors.colorPrimaryGrey[500]),
             ),
             TextSpan(
               text: '.',

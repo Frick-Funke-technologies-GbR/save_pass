@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   @override
@@ -34,7 +35,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               icon: Icon(Icons.feedback),
               onPressed: null,
               // padding: EdgeInsets.symmetric(horizontal: 30),
-              color: Colors.grey,
+              color: AppDefaultColors.colorPrimaryGrey,
             ),
             IconButton(
               icon: Icon(Icons.menu),
@@ -42,7 +43,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                 Scaffold.of(context).openDrawer();
               },
               // padding: EdgeInsets.symmetric(horizontal: 30),
-              color: Colors.grey,
+              color: AppDefaultColors.colorPrimaryGrey,
             ),
           ],
         ),
@@ -84,7 +85,7 @@ class CustomBottomNavigationBarWalletScr extends StatelessWidget {
               icon: Icon(Icons.feedback),
               onPressed: null,
               // padding: EdgeInsets.symmetric(horizontal: 10),
-              color: Colors.grey,
+              color: AppDefaultColors.colorPrimaryGrey,
             ),
             IconButton(
               icon: Icon(Icons.menu),
@@ -92,7 +93,7 @@ class CustomBottomNavigationBarWalletScr extends StatelessWidget {
                 Scaffold.of(context).openDrawer();
               },
               // padding: EdgeInsets.symmetric(horizontal: 10),
-              color: Colors.grey,
+              color: AppDefaultColors.colorPrimaryGrey,
             ),
           ],
         ),

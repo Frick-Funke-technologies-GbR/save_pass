@@ -30,7 +30,7 @@ void showAddPasswordDialog(BuildContext context) {
                 // padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
-                  // color: Colors.grey[200]
+                  // color: AppDefaultColors.colorPrimaryGrey[200]
                 ),
                 child: Form(
                   key: passwordFieldKey,
@@ -55,7 +55,7 @@ void showAddPasswordDialog(BuildContext context) {
                 // padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
-                  // color: Colors.grey[200]
+                  // color: AppDefaultColors.colorPrimaryGrey[200]
                 ),
                 child: Form(
                   key: passwordRepeatFieldKey,
@@ -78,7 +78,7 @@ void showAddPasswordDialog(BuildContext context) {
               Text(
                 'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: AppDefaultColors.colorPrimaryGrey,
                   fontSize: 12,
                 ),
               )
@@ -87,7 +87,7 @@ void showAddPasswordDialog(BuildContext context) {
               //   child: Text(
               //     'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
               //     style: TextStyle(
-              //       color: Colors.grey,
+              //       color: AppDefaultColors.colorPrimaryGrey,
               //     ),
               //   ),
               // ),
@@ -99,7 +99,7 @@ void showAddPasswordDialog(BuildContext context) {
           //   height: 50,
           //   decoration: BoxDecoration(
           //     borderRadius: BorderRadius.circular(4),
-          //     // color: Colors.grey[200]
+          //     // color: AppDefaultColors.colorPrimaryGrey[200]
           //   ),
           //   child: RichText(
           //     text: TextSpan(
@@ -122,14 +122,14 @@ void showAddPasswordDialog(BuildContext context) {
               ),
               color: AppDefaultColors.colorPrimaryBlue,
               // textColor: Colors.white,
-              // color: Colors.grey[500],
+              // color: AppDefaultColors.colorPrimaryGrey[500],
               onPressed: () async {},
               // var error = await validatePasswordFields();
               //   Navigator.of(context).pop();
               //   final sucessSnackBar = SnackBar(
               //     content: Text('The entry was stored sucessfully!'),
               //     behavior: SnackBarBehavior.floating,
-              //     backgroundColor: Colors.grey[800],
+              //     backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
               //     shape: RoundedRectangleBorder(
               //       borderRadius: BorderRadius.all(
               //         Radius.circular(10),
@@ -142,7 +142,7 @@ void showAddPasswordDialog(BuildContext context) {
               //       'An Error occured $error',
               //     ),
               //     behavior: SnackBarBehavior.floating,
-              //     backgroundColor: Colors.grey[800],
+              //     backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
               //     shape: RoundedRectangleBorder(
               //       borderRadius: BorderRadius.all(
               //         Radius.circular(10),

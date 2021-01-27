@@ -129,7 +129,7 @@ class _PasswordActionButtonWithDialogWidgetState
                           // padding: EdgeInsets.symmetric(horizontal: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
-                            // color: Colors.grey[200]
+                            // color: AppDefaultColors.colorPrimaryGrey[200]
                           ),
                           child: Form(
                             key: _passwordFieldKey,
@@ -154,7 +154,7 @@ class _PasswordActionButtonWithDialogWidgetState
                           // padding: EdgeInsets.symmetric(horizontal: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
-                            // color: Colors.grey[200]
+                            // color: AppDefaultColors.colorPrimaryGrey[200]
                           ),
                           child: Form(
                             key: _passwordRepeatFieldKey,
@@ -177,7 +177,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         Text(
                           'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: AppDefaultColors.colorPrimaryGrey,
                             fontSize: 12,
                           ),
                         )
@@ -186,7 +186,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         //   child: Text(
                         //     'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
                         //     style: TextStyle(
-                        //       color: Colors.grey,
+                        //       color: AppDefaultColors.colorPrimaryGrey,
                         //     ),
                         //   ),
                         // ),
@@ -198,7 +198,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     //   height: 50,
                     //   decoration: BoxDecoration(
                     //     borderRadius: BorderRadius.circular(4),
-                    //     // color: Colors.grey[200]
+                    //     // color: AppDefaultColors.colorPrimaryGrey[200]
                     //   ),
                     //   child: RichText(
                     //     text: TextSpan(
@@ -220,14 +220,14 @@ class _PasswordActionButtonWithDialogWidgetState
                         ),
                         color: AppDefaultColors.colorPrimaryBlue,
                         // textColor: Colors.white,
-                        // color: Colors.grey[500],
+                        // color: AppDefaultColors.colorPrimaryGrey[500],
                         onPressed: () async {
                           var error = await validatePasswordFields();
                           Navigator.of(context).pop();
                           final sucessSnackBar = SnackBar(
                             content: Text('The entry was stored sucessfully!'),
                             behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.grey[800],
+                            backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(10),
@@ -240,7 +240,7 @@ class _PasswordActionButtonWithDialogWidgetState
                               'An Error occured $error',
                             ),
                             behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.grey[800],
+                            backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(10),
@@ -454,7 +454,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     child: Text(
                       'Add own password',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: AppDefaultColors.colorPrimaryGrey,
                       ),
                     ),
                     onPressed: () {
@@ -468,7 +468,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     ),
                     color: AppDefaultColors.colorPrimaryBlue,
                     // textColor: Colors.white,
-                    // color: Colors.grey[500],
+                    // color: AppDefaultColors.colorPrimaryGrey[500],
                     onPressed: () {
                       validateAddPasswordEntryFields(true);
                     },

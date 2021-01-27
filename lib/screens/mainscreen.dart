@@ -9,7 +9,7 @@
 //     return Scaffold(
 //       drawer: CustomDrawer(),
 //       // backgroundColor: Colors.transparent,
-//       backgroundColor: Colors.grey[200],
+//       backgroundColor: AppDefaultColors.colorPrimaryGrey[200],
 //       // bottomNavigationBar: BottomNavigationBar(
 //       //   currentIndex: 0,
 //       //   items: [
@@ -25,7 +25,7 @@
 //       //         icon: Icon(Icons.notification_important),
 //       //         title: Text('Notifications')),
 //       //   ],
-//       //   backgroundColor: Colors.grey[200],
+//       //   backgroundColor: AppDefaultColors.colorPrimaryGrey[200],
 //       // ),
 
 //       bottomNavigationBar: CustomBottomNavigationBar(),

@@ -112,7 +112,7 @@ class PasswordScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(7),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey[400],
+                      color: AppDefaultColors.colorPrimaryGrey[400],
                       blurRadius: 3,
                       spreadRadius: 0.01,
                     )
@@ -126,14 +126,14 @@ class PasswordScreen extends StatelessWidget {
                       margin: EdgeInsets.only(left: 10),
                       child: Icon(
                         Icons.search,
-                        color: Colors.grey[500],
+                        color: AppDefaultColors.colorPrimaryGrey[500],
                       ),
                     ),
                     Expanded(
                       child: TextField(
                         // controller: editingController,
                         decoration: InputDecoration(
-                          // fillColor: Colors.grey[100],
+                          // fillColor: AppDefaultColors.colorPrimaryGrey[100],
                           // hintText: "Search",
                           // labelText: 'Search',
                           hintText: 'Search passwords',
@@ -230,7 +230,7 @@ class PasswordScreen extends StatelessWidget {
     return Scaffold(
       drawer: CustomDrawer(true, false, false),
       backgroundColor: Colors.white,
-      // backgroundColor: Colors.grey[200],
+      // backgroundColor: AppDefaultColors.colorPrimaryGrey[200],
       // bottomNavigationBar: BottomNavigationBar(
       //   currentIndex: 0,
       //   items: [
@@ -246,7 +246,7 @@ class PasswordScreen extends StatelessWidget {
       //         icon: Icon(Icons.notification_important),
       //         title: Text('Notifications')),
       //   ],
-      //   backgroundColor: Colors.grey[200],
+      //   backgroundColor: AppDefaultColors.colorPrimaryGrey[200],
       // ),
 
       bottomNavigationBar: CustomBottomNavigationBar(),
@@ -290,7 +290,7 @@ class PasswordScreen extends StatelessWidget {
                 //     borderRadius: BorderRadius.circular(5),
                 //     boxShadow: [
                 //       BoxShadow(
-                //         color: Colors.grey[300],
+                //         color: AppDefaultColors.colorPrimaryGrey[300],
                 //         blurRadius: 3,
                 //         spreadRadius: 1,
                 //       )
@@ -304,7 +304,7 @@ class PasswordScreen extends StatelessWidget {
                 //   child: TextField(
                 //     // controller: editingController,
                 //     decoration: InputDecoration(
-                //       // fillColor: Colors.grey[100],
+                //       // fillColor: AppDefaultColors.colorPrimaryGrey[100],
                 //       // hintText: "Search",
                 //       labelText: 'Search',
                 //       border: OutlineInputBorder(
@@ -322,8 +322,8 @@ class PasswordScreen extends StatelessWidget {
                   // height: 422,
                   // margin: EdgeInsets.symmetric(horizontal: 10),
                   // decoration: BoxDecoration(
-                  // border: Border.all(color: Colors.grey[300], width: 3),
-                  // color: Colors.grey[100],
+                  // border: Border.all(color: AppDefaultColors.colorPrimaryGrey[300], width: 3),
+                  // color: AppDefaultColors.colorPrimaryGrey[100],
                   // borderRadius: BorderRadius.circular(10)),
 
                   // TODO: Add no data handler
@@ -439,7 +439,7 @@ class BackgroundPainter extends CustomPainter {
 
     Path mainBackground = Path();
     mainBackground.addRect(Rect.fromLTRB(0, 0, width, height));
-    paint.color = Colors.grey[300];
+    paint.color = AppDefaultColors.colorPrimaryGrey[300];
     canvas.drawPath(mainBackground, paint);
 
     Path circlePathOne = Path();

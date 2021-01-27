@@ -75,7 +75,7 @@ class PasswordEntry extends StatelessWidget {
           //   // offset: Offset(2, 2),
           // ),
           // BoxShadow(
-          //   color: Colors.grey.withOpacity(0.5),
+          //   color: AppDefaultColors.colorPrimaryGrey.withOpacity(0.5),
           //   spreadRadius: 2.5,
           //   blurRadius: 5,
           //   offset: Offset(0, 2), // changes position of shadow
@@ -120,7 +120,7 @@ class PasswordEntry extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      // color: Colors.grey[200],
+                      // color: AppDefaultColors.colorPrimaryGrey[200],
                     ),
                     constraints: BoxConstraints(
                       maxWidth: 228,
@@ -140,7 +140,7 @@ class PasswordEntry extends StatelessWidget {
                           // color: _lightBlue.withOpacity(1),
                           // color: blueHue.withGreen(250).withRed(250),
                           // color: Colors.white,
-                          // color: Colors.grey[700],
+                          // color: AppDefaultColors.colorPrimaryGrey[700],
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
                         ),
@@ -172,7 +172,7 @@ class PasswordEntry extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         // color: Colors.deepOrange[50],
-                        color: Colors.grey[200],
+                        color: AppDefaultColors.colorPrimaryGrey[100],
                       ),
                       padding: EdgeInsets.all(5),
                       child: Text(
@@ -223,7 +223,7 @@ class PasswordEntry extends StatelessWidget {
                                             // boxShadow: [
                                             //   BoxShadow(
                                             //     color:
-                                            //         Colors.grey.withOpacity(0.5),
+                                            //         AppDefaultColors.colorPrimaryGrey.withOpacity(0.5),
                                             //     spreadRadius: 2.5,
                                             //     blurRadius: 5,
                                             //     offset: Offset(0, 2),
@@ -231,7 +231,7 @@ class PasswordEntry extends StatelessWidget {
                                             // ],
 
                                             // border: Border.all(
-                                            //   color: Colors.grey[300],
+                                            //   color: AppDefaultColors.colorPrimaryGrey[300],
                                             //   // width: 2,
                                             // ),
                                           ),
@@ -253,9 +253,9 @@ class PasswordEntry extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                   // color: Colors.yellow[100],
-                                                  color: Colors.grey[200],
+                                                  color: AppDefaultColors.colorPrimaryGrey[100],
                                                   // border: Border.all(
-                                                  //   color: Colors.grey[300],
+                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
                                                   // ),
                                                 ),
                                                 child: RichText(
@@ -264,7 +264,7 @@ class PasswordEntry extends StatelessWidget {
                                                   text: TextSpan(
                                                     text: 'url: ',
                                                     style: GoogleFonts.firaCode(
-                                                      color: Colors.grey[500],
+                                                      color: AppDefaultColors.colorPrimaryGrey[800],
                                                       // color: Colors.yellow[700],
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -294,16 +294,16 @@ class PasswordEntry extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                   // color: Colors.yellow[100],
-                                                  color: Colors.grey[200],
+                                                  color: AppDefaultColors.colorPrimaryGrey[100],
                                                   // border: Border.all(
-                                                  //   color: Colors.grey[300],
+                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
                                                   // ),
                                                 ),
                                                 child: RichText(
                                                   text: TextSpan(
                                                     text: 'username: ',
                                                     style: GoogleFonts.firaCode(
-                                                      color: Colors.grey[500],
+                                                      color: AppDefaultColors.colorPrimaryGrey[500],
                                                       // color: Colors.yellow[700],
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -331,16 +331,16 @@ class PasswordEntry extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                   // color: Colors.yellow[100],
-                                                  color: Colors.grey[200],
+                                                  color: AppDefaultColors.colorPrimaryGrey[100],
                                                   // border: Border.all(
-                                                  //   color: Colors.grey[300],
+                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
                                                   // ),
                                                 ),
                                                 child: RichText(
                                                   text: TextSpan(
                                                     text: 'password: ',
                                                     style: GoogleFonts.firaCode(
-                                                      color: Colors.grey[500],
+                                                      color: AppDefaultColors.colorPrimaryGrey[500],
                                                       // color: Colors.yellow[700],
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -406,7 +406,7 @@ class PasswordEntry extends StatelessWidget {
                                     content:
                                         Text('Password copied to clipboard.'),
                                     behavior: SnackBarBehavior.floating,
-                                    backgroundColor: Colors.grey[800],
+                                    backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(10),
@@ -505,7 +505,7 @@ class PasswordEntry extends StatelessWidget {
                               // ),
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey[600],
+                                color: AppDefaultColors.colorPrimaryGrey[900],
                               ),
                               softWrap: true,
                               overflow: TextOverflow.clip,

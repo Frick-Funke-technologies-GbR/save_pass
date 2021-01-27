@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
 
 class HeadingGreetingWidget extends StatelessWidget {
@@ -16,7 +17,7 @@ class HeadingGreetingWidget extends StatelessWidget {
               'Welcome to',
               style: GoogleFonts.oxygen(
                 fontWeight: FontWeight.w900,
-                color: Colors.grey[500],
+                color: AppDefaultColors.colorPrimaryGrey[500],
                 fontSize: 20,
               ),
             ),

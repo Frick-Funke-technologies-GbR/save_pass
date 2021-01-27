@@ -179,13 +179,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                     boxShadow: [
                       // BoxShadow(
-                      //   color: Colors.grey[100],
+                      //   color: AppDefaultColors.colorPrimaryGrey[100],
                       //   blurRadius: 10,
                       //   spreadRadius: 3,
                       //   // offset: Offset(3, 4),
                       // ),
                     ],
-                    // color: Colors.grey[100],
+                    // color: AppDefaultColors.colorPrimaryGrey[100],
                     color: Colors.white,
                     borderRadius: BorderRadius.all(
                       const Radius.circular(10),
@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Expanded(
                       Container(
                         decoration: BoxDecoration(
-                          // color: Colors.grey[100],
+                          // color: AppDefaultColors.colorPrimaryGrey[100],
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),
                           ),
@@ -268,7 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 icon: Icon(
                                   Icons.remove_red_eye,
                                   color:
-                                      _showPassword ? AppDefaultColors.colorPrimaryBlue : Colors.grey,
+                                      _showPassword ? AppDefaultColors.colorPrimaryBlue : AppDefaultColors.colorPrimaryGrey,
                                 ),
                                 onPressed: () {
                                   togglePasswordVisibillity();
@@ -303,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             passInputValidator();
                           },
-                          color: Colors.grey[100],
+                          color: AppDefaultColors.colorPrimaryGrey[100],
                           // elevation: 6,
                         ),
                       ),
