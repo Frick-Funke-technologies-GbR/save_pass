@@ -116,7 +116,17 @@ class PasswordEntry extends StatelessWidget {
                     //         ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
                     //         : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
                     child: storedThumbnail != null
-                        ? Image.memory(base64Decode(storedThumbnail))
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(5),
+                            // ),
+                            child: Image.memory(
+                              base64Decode(storedThumbnail),
+
+                            ),
+                          )
                         : Image.asset('assets/save_pass_icon_placeholder.png'),
                   ),
                   Container(

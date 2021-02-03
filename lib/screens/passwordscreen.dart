@@ -252,7 +252,11 @@ class PasswordScreen extends StatelessWidget {
       bottomNavigationBar: CustomBottomNavigationBar(),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: PasswordActionButtonWithDialogWidget(),
+      floatingActionButton: Builder(
+        builder: (BuildContext context) {
+          return PasswordActionButtonWithDialogWidget();
+        },
+      ),
       body: Builder(
         builder: (BuildContext context) {
           return SafeArea(
@@ -339,7 +343,9 @@ class PasswordScreen extends StatelessWidget {
                                 List<PasswordEntryClass> data = snapshot.data;
                                 return _passwordEntryListView(data);
                               } else if (snapshot.hasError) {
-                                return Text('${snapshot.error}');
+                                return Center(
+                                  child: Text('${snapshot.error}'),
+                                );
                               }
                               return Center(
                                 child: CircularProgressIndicator(
@@ -379,7 +385,6 @@ class PasswordScreen extends StatelessWidget {
   // }
 
 }
-
 
 // class _MainScreenState extends StatelessWidget {
 //   @override

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' show Client, ClientException;
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/classes/userClass.dart';
@@ -28,7 +29,8 @@ class ApiProvider {
     String emailadress,
   ) async {
     final response = await client.post(
-      "http://10.0.2.2:5000/api/register",
+      // "http://10.0.2.2:5000/api/register",
+      'https://savepass.frifu.de/api/register',
       // headers: "",
       body: jsonEncode(
         {
@@ -39,6 +41,9 @@ class ApiProvider {
         },
       ),
     );
+    print('[DEBUG] Status of POST request (/api/register):' +
+        response.statusCode.toString());
+    stdout.write(response.statusCode);
     final Map result = json.decode(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
@@ -58,7 +63,8 @@ class ApiProvider {
     String username,
   ) async {
     final response = await client.post(
-      "http://10.0.2.2:5000/api/login",
+      // "http://10.0.2.2:5000/api/login",
+      'https://savepass.frifu.de/api/login',
       // headers: {
       //   "Authorization" : userIdent
       // },
@@ -68,6 +74,8 @@ class ApiProvider {
         },
       ),
     );
+    print('[DEBUG] Status of POST request (/api/login): ' +
+        response.statusCode.toString());
     final Map result = json.decode(response.body);
     if (response.statusCode == 201) {
       // If the call to the server was successful, parse the JSON
@@ -89,10 +97,14 @@ class ApiProvider {
     String userIdent,
     String password,
   ) async {
+    print('[DEBUG] userIdent: ' + userIdent.toString());
     final response = await client.get(
-      "http://10.0.2.2:5000/api/check_pass",
+      // "http://10.0.2.2:5000/api/check_pass",
+      'https://savepass.frifu.de/api/check_pass',
       headers: {"user_ident": userIdent, "password": password},
     );
+    print('[DEBUG] Status of GET request (/api/check_pass):' +
+        response.statusCode.toString());
     final Map result = json.decode(response.body);
     if (response.statusCode == 401) {
       return false;
@@ -108,35 +120,40 @@ class ApiProvider {
   ) async {
     // try {
     // FIXME: Hardfix this ClientException 'connection closed while receiving data' bug
+    print('[DEBUG] userIdent ' + userIdent);
     final response = await retry(
       () => client.get(
-        "http://10.0.2.2:5000/api/password_entry",
+        // "http://10.0.2.2:5000/api/password_entry",
+        'https://savepass.frifu.de/api/password_entry',
         headers: {"user_ident": userIdent, "password": password},
-      ).timeout(Duration(milliseconds: 2500),),
-      retryIf: (e) => e is ClientException || e is TimeoutException,
+      ),
+      // .then((resp) {
+      //   print('[DEBUG] Status of GET request (/api/password_entry): ' + resp.statusCode.toString());
+      // }),
+      retryIf: (e) => e is ClientException,
     );
-    print('point1');
+    // final response = await
+    print(response.body);
     final Map<String, dynamic> result = json.decode(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       List<PasswordEntryClass> passwordEntries = [];
-      print('point2');
       // check if password is correct. May be unnecessary because password is already checked within login progress
       if (result.containsKey('status') &&
           result['status'] == 'failure' &&
           result['reason'] == 'wrong password') {
-        print('point3');
         throw Exception('Wrong password');
       }
-      print('following is result[\'data\']');
-      print(result['data'].toString());
+      // print('following is result[\'data\']');
+      // print(result['data'].toString());
       for (Map<String, dynamic> json_ in result["data"]) {
         try {
-          print('point3.5');
-          print(PasswordEntryClass.fromJson(json_).toString());
+          // print(PasswordEntryClass.fromJson(json_).toString());
           passwordEntries.add(PasswordEntryClass.fromJson(json_));
         } catch (Exception) {
-          print(Exception);
+          print(
+              '[DEBUG] Exception occured while GET request (/api/password_entry): ' +
+                  Exception.toString());
           return null;
         }
       }
@@ -171,8 +188,12 @@ class ApiProvider {
     String notes,
   ) async {
     final response = await client.post(
-      "http://10.0.2.2:5000/api/password_entry",
-      headers: {"user_ident": userIdent, 'password': masterPassword},
+      // "http://10.0.2.2:5000/api/password_entry",
+      'https://savepass.frifu.de/api/password_entry',
+      headers: {
+        "user_ident": userIdent,
+        'password': masterPassword,
+      },
       body: jsonEncode(
         {
           'alias': alias,
@@ -183,22 +204,56 @@ class ApiProvider {
         },
       ),
     );
+    print('[DEBUG] Status of POST request (/api/register): ' +
+        response.statusCode.toString());
     if (response.statusCode == 200) {
-      print("entry added");
+      print("[DEBUG] ^ Entry added");
     } else {
       // If that call was not successful, throw an error.
       var responsebody = json.decode(response.body);
-      print(responsebody);
+      // print(responsebody.toString());
       if (responsebody['message'] == "Entry with given alias already exists")
         throw Exception('Failed to add entry');
     }
   }
 
-  retryFuture(future, int delay) {
-    Future.delayed(Duration(milliseconds: delay), () {
-      future();
-    });
+  Future<Map<String, dynamic>> getGeneratedPassword(
+    int length,
+    int complexity,
+    bool words,
+    bool specialchar,
+    bool uppercase,
+    bool lowercase,
+    bool numbers,
+  ) async {
+    final response = await client.get(
+      'https://savepass.frifu.de/api/generate_password',
+      headers: {
+        'length' : length.toString(),
+        'complexity' : complexity.toString(),
+        'words' : words.toString(),
+        'specialchar' : specialchar.toString(),
+        'uppercase' : uppercase.toString(),
+        'lowercase' : lowercase.toString(),
+        'numbers' : numbers.toString(),
+      },
+    );
+    print('[DEBUG] Status of GET request (/api/generate_password): ' +
+        response.statusCode.toString());
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body)['data'];
+      return data;
+    } else {
+      final Map<String, dynamic> message = json.decode(response.body)['message'];
+      throw Exception(message);
+    }
   }
+
+  // retryFuture(future, int delay) {
+  //   Future.delayed(Duration(milliseconds: delay), () {
+  //     future();
+  //   });
+  // }
 
   _saveUserIdent(String userIdent) {
     CacheHandler cache = CacheHandler();

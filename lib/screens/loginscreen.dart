@@ -32,8 +32,8 @@ Future<bool> checkMasterPassword(String password, context) async {
   } catch (e) {
     // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
     // FIXME: Here, the state also doesnt change for Snackbar
-    print('ALALALALALALALALALA');
-    print(e.toString().replaceAll('Exception', 'Error'));
+    // print('ALALALALALALALALALA');
+    // print(e.toString().replaceAll('Exception', 'Error'));
     Scaffold.of(context).showSnackBar(
       SnackBar(
         content: Text(e.toString().replaceAll('Exception', 'Error')),
@@ -61,6 +61,7 @@ Future<bool> checkMasterPassword(String password, context) async {
   // return stream;
 
   String userIdent = await getUserIdent();
+  // TODO: Add route when checkPass receaves 404 (list empty)
   bool check = await api.checkPass(userIdent, password);
   return check;
 }

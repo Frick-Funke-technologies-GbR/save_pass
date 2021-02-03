@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
@@ -75,7 +77,36 @@ class _PasswordActionButtonWithDialogWidgetState
     }
   }
 
-  void validateAddPasswordEntryFields(bool addGeneratedPassword) async {
+  Row _generatedPasswordRow(Map<String, dynamic> data) {
+    print(data.toString());
+    List<Widget> chunks = new List<Widget>();
+    for (String count in data.keys) {
+      for (String chunk in data[count].keys) {
+        chunks.add(
+          Text(
+            chunk,
+            style: TextStyle(
+              color: data[count][chunk] == 'grey'
+                  ? AppDefaultColors.colorPrimaryGrey[900]
+                  : data[count][chunk] == 'blue'
+                      ? AppDefaultColors.colorPrimaryBlue
+                      : data[count][chunk] == 'red'
+                          ? AppDefaultColors.colorPrimaryRed
+                          : data[count][chunk] == 'grey_bright'
+                              ? AppDefaultColors.colorPrimaryGrey[500]
+                              : Colors.green,
+            ),
+          ),
+        );
+      }
+    }
+    return Row(
+      children: chunks,
+    );
+  }
+
+  void validateAddPasswordEntryFields(
+      bool addGeneratedPassword, BuildContext context) async {
     CacheHandler cache = CacheHandler();
 
     String alias = _aliasFieldController.text;
@@ -101,6 +132,17 @@ class _PasswordActionButtonWithDialogWidgetState
     bool urlvalidate = _urlFieldKey.currentState.validate();
     bool usernamevalidate = _usernameFieldKey.currentState.validate();
     bool notesvalidate = _notesFieldKey.currentState.validate();
+
+    // Only for generated password widget:
+    int _passwordLength = 5;
+    int _passwordComplexity = 3;
+    bool _containWords = true;
+    bool _containNumbers = true;
+    bool _containSpecialchar = true;
+    bool _containUppercase = true;
+    bool _containLowercase = true;
+    double _lengthSliderValue = 5;
+    double _complexitySliderValue = 3;
 
     if (!addGeneratedPassword) {
       if (aliasvalidate && urlvalidate && usernamevalidate && notesvalidate) {
@@ -227,7 +269,8 @@ class _PasswordActionButtonWithDialogWidgetState
                           final sucessSnackBar = SnackBar(
                             content: Text('The entry was stored sucessfully!'),
                             behavior: SnackBarBehavior.floating,
-                            backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+                            backgroundColor:
+                                AppDefaultColors.colorPrimaryGrey[800],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(10),
@@ -240,7 +283,8 @@ class _PasswordActionButtonWithDialogWidgetState
                               'An Error occured $error',
                             ),
                             behavior: SnackBarBehavior.floating,
-                            backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+                            backgroundColor:
+                                AppDefaultColors.colorPrimaryGrey[800],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(10),
@@ -251,7 +295,8 @@ class _PasswordActionButtonWithDialogWidgetState
                             error = false;
                           }
                           Scaffold.of(context).showSnackBar(
-                              error ? unsucessSnackBar : sucessSnackBar);
+                            error ? unsucessSnackBar : sucessSnackBar,
+                          );
                         },
                         child: Text('Submit and create Entry'),
                       ),
@@ -265,8 +310,105 @@ class _PasswordActionButtonWithDialogWidgetState
       }
     }
 
-    if (addGeneratedPassword) { 
+    if (addGeneratedPassword) {
       // TODO: Add function for adding generated passwords (Backend change also required)
+      Navigator.of(context).pop();
+      await showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              title: Text('Generate Pasword'),
+              // TODO: Add buttons with functionality
+              actions: [],
+              content: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        constraints: BoxConstraints(minWidth: 230),
+                        decoration: BoxDecoration(
+                          color: AppDefaultColors.colorPrimaryGrey[100],
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        alignment: Alignment.center,
+                        // TODO: Fix overflow bug
+                        child: ClipRect(
+                          child: FutureBuilder(
+                            future: ApiProvider().getGeneratedPassword(
+                              _passwordLength,
+                              _passwordComplexity,
+                              _containWords,
+                              _containSpecialchar,
+                              _containUppercase,
+                              _containLowercase,
+                              _containNumbers,
+                            ),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                print(snapshot.data);
+                                return _generatedPasswordRow(snapshot.data);
+                              } else if (snapshot.hasError) {
+                                print(snapshot.error);
+                                return Center(child: Text(snapshot.error));
+                              }
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    constraints: BoxConstraints(minWidth: 280),
+                    child: Slider(
+                      value: _lengthSliderValue,
+                      min: 1,
+                      max: 15,
+                      divisions: 3,
+                      label: _lengthSliderValue.round().toString(),
+                      onChanged: (double value) {
+                        setState(() {
+                          _lengthSliderValue = value;
+                          _passwordLength = value.toInt();
+                        });
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    child: Slider(
+                      value: _complexitySliderValue,
+                      min: 1,
+                      max: 15,
+                      divisions: 3,
+                      // label: _lengthSliderValue.round().toString()
+                      onChanged: (double value) {
+                        setState(() {
+                          _complexitySliderValue = value;
+                          _passwordComplexity = value.toInt();
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      );
     }
   }
 
@@ -308,7 +450,8 @@ class _PasswordActionButtonWithDialogWidgetState
                         ),
                         suffixIcon: IconButton(
                           splashColor: Colors.transparent,
-                          icon: Icon(Icons.info, color: AppDefaultColors.colorPrimaryBlue),
+                          icon: Icon(Icons.info,
+                              color: AppDefaultColors.colorPrimaryBlue),
                           onPressed: () {
                             print(_showAliasInputInfoText);
                             setState(() {
@@ -368,7 +511,8 @@ class _PasswordActionButtonWithDialogWidgetState
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           splashColor: Colors.transparent,
-                          icon: Icon(Icons.info, color: AppDefaultColors.colorPrimaryBlue),
+                          icon: Icon(Icons.info,
+                              color: AppDefaultColors.colorPrimaryBlue),
                           onPressed: () {
                             setState(() {
                               _showUrlInputInfoText = !_showUrlInputInfoText;
@@ -459,7 +603,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     ),
                     onPressed: () {
                       // Navigator.of(context).pop();
-                      validateAddPasswordEntryFields(false);
+                      validateAddPasswordEntryFields(false, context);
                     },
                   ),
                   FlatButton(
@@ -470,7 +614,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     // textColor: Colors.white,
                     // color: AppDefaultColors.colorPrimaryGrey[500],
                     onPressed: () {
-                      validateAddPasswordEntryFields(true);
+                      validateAddPasswordEntryFields(true, context);
                     },
                     child: Text('Add generated password'),
                   ),
