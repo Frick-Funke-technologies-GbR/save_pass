@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' show Client, ClientException;
+import 'package:http/http.dart' show Client, ClientException, Request;
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/cache.dart';
@@ -217,24 +217,31 @@ class ApiProvider {
     }
   }
 
-  // Future deleteUserPasswordEntry(
-  //   int where,
-  //   bool all,
-  //   String userIdent,
-  //   String masterPassword,
-  // ) async {
-  //   final client = http.Client()
-  //   try {
-  //     final response = await client.send(
-  //         http.Request("DELETE", Uri.parse("${config.basicUrl}removeFavorite"))
-  //           ..headers["authorization"] = "Bearer $bearer"
-  //           ..body = "...");
-  //     //
-  //   } finally {
-  //     client.close();
-  //   }
-
-  // }
+  Future deleteUserPasswordEntry(
+    int where,
+    bool all,
+    String userIdent,
+    String masterPassword,
+  ) async {
+    try {
+      final response = await client.send(Request(
+          "DELETE", Uri.parse("https://savepass.frifu.de/api/password_entry"))
+        ..headers['user_ident'] = userIdent
+        ..headers['password'] = masterPassword
+        ..body = jsonEncode({
+          "where": where,
+          "what": all ? 'all' : "only",
+          "alias": "None",
+        }));
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        throw Exception('Error: delete failed');
+      }
+    } finally {
+      client.close();
+    }
+  }
 
   Future<Map<String, dynamic>> getGeneratedPassword(
     int length,
@@ -251,13 +258,13 @@ class ApiProvider {
     final response = await client.get(
       'https://savepass.frifu.de/api/generate_password',
       headers: {
-        'length' : length.toString(),
-        'complexity' : complexity.toString(),
-        'words' : words.toString(),
-        'specialchar' : specialchar.toString(),
-        'uppercase' : uppercase.toString(),
-        'lowercase' : lowercase.toString(),
-        'numbers' : numbers.toString(),
+        'length': length.toString(),
+        'complexity': complexity.toString(),
+        'words': words.toString(),
+        'specialchar': specialchar.toString(),
+        'uppercase': uppercase.toString(),
+        'lowercase': lowercase.toString(),
+        'numbers': numbers.toString(),
       },
     );
     print('[DEBUG] Status of GET request (/api/generate_password): ' +
@@ -266,7 +273,8 @@ class ApiProvider {
       final Map<String, dynamic> data = json.decode(response.body)['data'];
       return data;
     } else {
-      final Map<String, dynamic> message = json.decode(response.body)['message'];
+      final Map<String, dynamic> message =
+          json.decode(response.body)['message'];
       throw Exception(message);
     }
   }

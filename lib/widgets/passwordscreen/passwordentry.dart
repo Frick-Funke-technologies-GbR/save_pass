@@ -7,6 +7,8 @@ import 'dart:math';
 
 import 'package:random_color/random_color.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
+import 'package:save_pass/models/resources/api.dart';
+import 'package:save_pass/models/resources/cache.dart';
 
 class PasswordEntry extends StatelessWidget {
   // TODO: Add recursive color change, remember notes icon
@@ -124,7 +126,6 @@ class PasswordEntry extends StatelessWidget {
                             // ),
                             child: Image.memory(
                               base64Decode(storedThumbnail),
-
                             ),
                           )
                         : Image.asset('assets/save_pass_icon_placeholder.png'),
@@ -476,7 +477,17 @@ class PasswordEntry extends StatelessWidget {
                                         ),
                                       ),
                                       FlatButton(
-                                        onPressed: null,
+                                        onPressed: () async {
+                                          bool result = await ApiProvider()
+                                              .deleteUserPasswordEntry(
+                                            passwordId,
+                                            false,
+                                            storedusername,
+                                            await CacheHandler()
+                                                .getSecureStringFromCache(
+                                                    'master_password'),
+                                          );
+                                        },
                                         child: Text(
                                           'Delete',
                                           style: TextStyle(
