@@ -217,6 +217,25 @@ class ApiProvider {
     }
   }
 
+  // Future deleteUserPasswordEntry(
+  //   int where,
+  //   bool all,
+  //   String userIdent,
+  //   String masterPassword,
+  // ) async {
+  //   final client = http.Client()
+  //   try {
+  //     final response = await client.send(
+  //         http.Request("DELETE", Uri.parse("${config.basicUrl}removeFavorite"))
+  //           ..headers["authorization"] = "Bearer $bearer"
+  //           ..body = "...");
+  //     //
+  //   } finally {
+  //     client.close();
+  //   }
+
+  // }
+
   Future<Map<String, dynamic>> getGeneratedPassword(
     int length,
     int complexity,
@@ -226,6 +245,9 @@ class ApiProvider {
     bool lowercase,
     bool numbers,
   ) async {
+    print(length.toString());
+    print('______');
+    print(words.toString());
     final response = await client.get(
       'https://savepass.frifu.de/api/generate_password',
       headers: {

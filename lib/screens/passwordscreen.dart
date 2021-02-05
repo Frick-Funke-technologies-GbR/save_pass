@@ -85,6 +85,8 @@ class PasswordScreen extends StatelessWidget {
     );
   }
 
+  final GlobalKey<ScaffoldState> _passwordscreenScaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     // task
@@ -228,6 +230,7 @@ class PasswordScreen extends StatelessWidget {
     }
 
     return Scaffold(
+      key: _passwordscreenScaffoldKey,
       drawer: CustomDrawer(true, false, false),
       backgroundColor: Colors.white,
       // backgroundColor: AppDefaultColors.colorPrimaryGrey[200],
@@ -254,7 +257,7 @@ class PasswordScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Builder(
         builder: (BuildContext context) {
-          return PasswordActionButtonWithDialogWidget();
+          return PasswordActionButtonWithDialogWidget(_passwordscreenScaffoldKey);
         },
       ),
       body: Builder(

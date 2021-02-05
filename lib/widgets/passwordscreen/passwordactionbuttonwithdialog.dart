@@ -7,13 +7,23 @@ import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
 
 class PasswordActionButtonWithDialogWidget extends StatefulWidget {
+  GlobalKey<ScaffoldState> _passwordscreenScaffoldKey;
+  PasswordActionButtonWithDialogWidget(
+    this._passwordscreenScaffoldKey,
+  );
   @override
   _PasswordActionButtonWithDialogWidgetState createState() =>
-      _PasswordActionButtonWithDialogWidgetState();
+      _PasswordActionButtonWithDialogWidgetState(_passwordscreenScaffoldKey);
 }
 
 class _PasswordActionButtonWithDialogWidgetState
     extends State<PasswordActionButtonWithDialogWidget> {
+  GlobalKey<ScaffoldState> _passwordscreenScaffoldKey;
+
+  _PasswordActionButtonWithDialogWidgetState(
+    this._passwordscreenScaffoldKey,
+  );
+
   bool _aliasValidator = true;
   bool _urlValidator = true;
   bool _usernameValidator = true;
@@ -294,7 +304,8 @@ class _PasswordActionButtonWithDialogWidgetState
                           if (error == null) {
                             error = false;
                           }
-                          Scaffold.of(context).showSnackBar(
+                          // Navigator.of(context).pop();
+                          _passwordscreenScaffoldKey.currentState.showSnackBar(
                             error ? unsucessSnackBar : sucessSnackBar,
                           );
                         },
@@ -370,38 +381,160 @@ class _PasswordActionButtonWithDialogWidgetState
                       ),
                     ],
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 5),
-                    constraints: BoxConstraints(minWidth: 280),
-                    child: Slider(
-                      value: _lengthSliderValue,
-                      min: 1,
-                      max: 15,
-                      divisions: 3,
-                      label: _lengthSliderValue.round().toString(),
-                      onChanged: (double value) {
-                        setState(() {
-                          _lengthSliderValue = value;
-                          _passwordLength = value.toInt();
-                        });
-                      },
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 20, left: 20),
+                          child: Text('Length'),
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 5),
-                    child: Slider(
-                      value: _complexitySliderValue,
-                      min: 1,
-                      max: 15,
-                      divisions: 3,
-                      // label: _lengthSliderValue.round().toString()
-                      onChanged: (double value) {
-                        setState(() {
-                          _complexitySliderValue = value;
-                          _passwordComplexity = value.toInt();
-                        });
-                      },
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          constraints: BoxConstraints(minWidth: 250),
+                          child: Slider(
+                            value: _lengthSliderValue,
+                            min: 1,
+                            max: 15,
+                            divisions: 3,
+                            label: _lengthSliderValue.round().toString(),
+                            onChanged: (double value) {
+                              setState(() {
+                                _lengthSliderValue = value;
+                                _passwordLength = value.toInt();
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 10, left: 20),
+                          child: Text('Complexity'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Slider(
+                            value: _complexitySliderValue,
+                            min: 1,
+                            max: 15,
+                            divisions: 3,
+                            label: _lengthSliderValue.round().toString(),
+                            onChanged: (double value) {
+                              setState(() {
+                                _complexitySliderValue = value;
+                                _passwordComplexity = value.toInt();
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: CheckboxListTile(
+                            title: Text('Contain words'),
+                            value: _containWords,
+                            onChanged: (value) {
+                              setState((){
+                                _containWords = value;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: CheckboxListTile(
+                            title: Text('Contain numbers'),
+                            value: _containNumbers,
+                            onChanged: (value) {
+                              setState((){
+                                _containNumbers = value;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: CheckboxListTile(
+                            title: Text('Contain special characters'),
+                            value: _containSpecialchar,
+                            onChanged: (value) {
+                              setState((){
+                                _containSpecialchar = value;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: CheckboxListTile(
+                            title: Text('Contain uppercase letters'),
+                            value: _containUppercase,
+                            onChanged: (value) {
+                              setState((){
+                                _containUppercase = value;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: CheckboxListTile(
+                            title: Text('Contain lowercase letters'),
+                            value: _containLowercase,
+                            onChanged: (value) {
+                              setState((){
+                                _containLowercase = value;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
                   )
                 ],
               ),
@@ -507,6 +640,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     // TODO: Add info widget on how to add appropriate url
                     key: _urlFieldKey,
                     child: TextFormField(
+                      keyboardType: TextInputType.url,
                       controller: _urlFieldController,
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
