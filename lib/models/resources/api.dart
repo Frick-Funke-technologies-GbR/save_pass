@@ -233,9 +233,19 @@ class ApiProvider {
           "what": all ? 'all' : "only",
           "alias": "None",
         }));
+      print('[DEBUG] Status of POST request (/api/register): ' +
+          response.statusCode.toString());
       if (response.statusCode == 204) {
         return true;
       } else {
+        // Map<String, dynamic> result = json.decode(response.reasonPhrase);
+        // Stream result = response.stream;
+        // var sum = {};
+        // await for (var value in result) {
+        //   sum.addEntries(value);
+        // }
+        // dynamic resultPrintbable = await json.decode(sum);
+        // print(resultPrintbable);
         throw Exception('Error: delete failed');
       }
     } finally {

@@ -461,9 +461,12 @@ class PasswordEntry extends StatelessWidget {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    title: Text('Move to bin?'),
-                                    content: Text(
-                                        'The entry will only be available for 30 days'),
+                                    // title: Text('Move to bin?'),
+                                    title: Text('Delete?'),
+                                    // content: Text(
+                                    //     'The entry will only be available for 30 days'),
+                                    content:
+                                        Text('The data can not be recovered.'),
                                     actions: [
                                       FlatButton(
                                         onPressed: () {
@@ -478,15 +481,45 @@ class PasswordEntry extends StatelessWidget {
                                       ),
                                       FlatButton(
                                         onPressed: () async {
-                                          bool result = await ApiProvider()
-                                              .deleteUserPasswordEntry(
-                                            passwordId,
-                                            false,
-                                            storedusername,
-                                            await CacheHandler()
-                                                .getSecureStringFromCache(
-                                                    'master_password'),
-                                          );
+                                          bool result;
+                                          String exc;
+                                          try {
+                                            result = await ApiProvider()
+                                                .deleteUserPasswordEntry(
+                                              passwordId,
+                                              false,
+                                              await CacheHandler()
+                                                  .getStringFromCache(
+                                                      'user_ident'),
+                                              await CacheHandler()
+                                                  .getSecureStringFromCache(
+                                                      'master_password'),
+                                            );
+                                          } catch (e) {
+                                            result = false;
+                                            exc = e;
+                                          } finally {
+                                            Navigator.of(context).pop();
+                                            Scaffold.of(context).showSnackBar(
+                                              // TODO: Add screen reload here
+                                              SnackBar(
+                                                content: Text(result
+                                                    ? 'deleted sucessfully'
+                                                    : exc),
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                backgroundColor:
+                                                    AppDefaultColors
+                                                        .colorPrimaryGrey[800],
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
                                         },
                                         child: Text(
                                           'Delete',
