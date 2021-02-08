@@ -275,7 +275,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         // color: AppDefaultColors.colorPrimaryGrey[500],
                         onPressed: () async {
                           var error = await validatePasswordFields();
-                          Navigator.of(context).pop();
+                          Navigator.of(context).popAndPushNamed('/passwordscreen');
                           final sucessSnackBar = SnackBar(
                             content: Text('The entry was stored sucessfully!'),
                             behavior: SnackBarBehavior.floating,
@@ -452,6 +452,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         child: Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: CheckboxListTile(
+                            dense: true,
                             title: Text('Contain words'),
                             value: _containWords,
                             onChanged: (value) {
@@ -470,6 +471,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         child: Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: CheckboxListTile(
+                            dense: true,
                             title: Text('Contain numbers'),
                             value: _containNumbers,
                             onChanged: (value) {
@@ -488,6 +490,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         child: Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: CheckboxListTile(
+                            dense: true,
                             title: Text('Contain special characters'),
                             value: _containSpecialchar,
                             onChanged: (value) {
@@ -506,6 +509,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         child: Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: CheckboxListTile(
+                            dense: true,
                             title: Text('Contain uppercase letters'),
                             value: _containUppercase,
                             onChanged: (value) {
@@ -524,6 +528,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         child: Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: CheckboxListTile(
+                            dense: true,
                             title: Text('Contain lowercase letters'),
                             value: _containLowercase,
                             onChanged: (value) {

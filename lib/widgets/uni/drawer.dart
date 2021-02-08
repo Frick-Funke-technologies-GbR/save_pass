@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
 
-class CustomDrawer extends StatefulWidget {
 
+class CustomDrawer extends StatefulWidget {
   final bool _selectedPasswords;
   final bool _selectedWallet;
   final bool _selectedSettings;
-  
+
   const CustomDrawer(
     this._selectedPasswords,
     this._selectedWallet,
@@ -15,15 +16,16 @@ class CustomDrawer extends StatefulWidget {
   );
 
   @override
-  _CustomDrawerState createState() => _CustomDrawerState(this._selectedPasswords, this._selectedWallet, this._selectedSettings);
+  _CustomDrawerState createState() => _CustomDrawerState(
+      this._selectedPasswords, this._selectedWallet, this._selectedSettings);
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-
   bool _selectedPasswords = false;
+  // bool _selectedPasswordsFirst = false;
   bool _selectedWallet = false;
   bool _selectedSettings = false;
-  
+
   _CustomDrawerState(
     this._selectedPasswords,
     this._selectedWallet,
@@ -67,6 +69,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               onTap: () {
                 Navigator.of(context).pop();
+                if (!_selectedPasswords) {
+                  Navigator.of(context).pushReplacementNamed('/passwordscreen');
+                } else {
+                  Navigator.of(context).pushNamed('/passwordscreen');
+                }
                 setState(() {
                   this._selectedPasswords = true;
                   this._selectedSettings
@@ -76,7 +83,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       ? this._selectedWallet = !this._selectedWallet
                       : null;
                 });
-                Navigator.of(context).pushNamed('/passwordscreen');
               },
               title: Text('Passwords'),
             ),
@@ -88,8 +94,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
             margin: EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              color:
-                  this._selectedWallet ? AppDefaultColors.colorPrimaryBlue[100] : Colors.transparent,
+              color: this._selectedWallet
+                  ? AppDefaultColors.colorPrimaryBlue[100]
+                  : Colors.transparent,
             ),
             child: ListTile(
               dense: true,

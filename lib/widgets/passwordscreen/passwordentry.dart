@@ -10,7 +10,7 @@ import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
 
-class PasswordEntry extends StatelessWidget {
+class PasswordEntry extends StatefulWidget {
   // TODO: Add recursive color change, remember notes icon
 
   final int passwordId;
@@ -32,24 +32,12 @@ class PasswordEntry extends StatelessWidget {
     this.storedThumbnail,
   );
 
-  int randInt() {
-    int randomint = Random().nextInt(3);
-    return randomint;
-  }
+  @override
+  _PasswordEntryState createState() => _PasswordEntryState();
+}
 
-  // Color randombBlueTone() {
-  //   RandomColor _randomColor = RandomColor();
-  //   Color blueTone = _randomColor.randomColor(
-  //     colorHue: ColorHue.custom(Range(200, 225)),
-  //     colorBrightness: ColorBrightness.random,
-  //     // colorSaturation: ColorSaturation.highSaturation,
-  //   );
-  //   return blueTone;
-  // }
+class _PasswordEntryState extends State<PasswordEntry> {
 
-  // const PasswordEntry(this.storedusername);
-  // PasswordEntry(this.storedalias);
-  // PasswordEntry(this.storednotes);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).copyWith(
@@ -117,7 +105,7 @@ class PasswordEntry extends StatelessWidget {
                     //     : randInt() == 2
                     //         ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
                     //         : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
-                    child: storedThumbnail != null
+                    child: widget.storedThumbnail != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             // decoration: BoxDecoration(
@@ -125,7 +113,7 @@ class PasswordEntry extends StatelessWidget {
                             //   borderRadius: BorderRadius.circular(5),
                             // ),
                             child: Image.memory(
-                              base64Decode(storedThumbnail),
+                              base64Decode(widget.storedThumbnail),
                             ),
                           )
                         : Image.asset('assets/save_pass_icon_placeholder.png'),
@@ -146,7 +134,7 @@ class PasswordEntry extends StatelessWidget {
                     child: OverflowBox(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        storedalias,
+                        widget.storedalias,
                         // maxLines: 1,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -189,7 +177,7 @@ class PasswordEntry extends StatelessWidget {
                       ),
                       padding: EdgeInsets.all(5),
                       child: Text(
-                        storedusername == '' ? 'no username' : storedusername,
+                        widget.storedusername == '' ? 'no username' : widget.storedusername,
                         overflow: TextOverflow.fade,
                         style:
                             TextStyle(color: AppDefaultColors.colorPrimaryBlue),
@@ -288,10 +276,10 @@ class PasswordEntry extends StatelessWidget {
                                                             .firaCode(
                                                                 color: Colors
                                                                     .blue),
-                                                        text: storedpassword ==
+                                                        text: widget.storedpassword ==
                                                                 ''
                                                             ? 'no password'
-                                                            : storedpassword,
+                                                            : widget.storedpassword,
                                                       ),
                                                     ],
                                                   ),
@@ -337,10 +325,10 @@ class PasswordEntry extends StatelessWidget {
                                                             .firaCode(
                                                                 color: Colors
                                                                     .blue),
-                                                        text: storedwebadress ==
+                                                        text: widget.storedwebadress ==
                                                                 ''
                                                             ? 'no url'
-                                                            : storedwebadress,
+                                                            : widget.storedwebadress,
                                                       ),
                                                     ],
                                                   ),
@@ -379,10 +367,10 @@ class PasswordEntry extends StatelessWidget {
                                                             .firaCode(
                                                                 color: Colors
                                                                     .blue),
-                                                        text: storedusername ==
+                                                        text: widget.storedusername ==
                                                                 ''
                                                             ? 'no username'
-                                                            : storedusername,
+                                                            : widget.storedusername,
                                                       ),
                                                     ],
                                                   ),
@@ -427,7 +415,7 @@ class PasswordEntry extends StatelessWidget {
                               icon: Icon(Icons.content_copy),
                               onPressed: () {
                                 Clipboard.setData(
-                                  new ClipboardData(text: storedpassword),
+                                  new ClipboardData(text: widget.storedpassword),
                                 );
                                 Scaffold.of(context).showSnackBar(
                                   SnackBar(
@@ -486,7 +474,7 @@ class PasswordEntry extends StatelessWidget {
                                           try {
                                             result = await ApiProvider()
                                                 .deleteUserPasswordEntry(
-                                              passwordId,
+                                              widget.passwordId,
                                               false,
                                               await CacheHandler()
                                                   .getStringFromCache(
@@ -499,7 +487,7 @@ class PasswordEntry extends StatelessWidget {
                                             result = false;
                                             exc = e;
                                           } finally {
-                                            Navigator.of(context).pop();
+                                            Navigator.of(context).popAndPushNamed('/passwordscreen');
                                             Scaffold.of(context).showSnackBar(
                                               // TODO: Add screen reload here
                                               SnackBar(
@@ -574,7 +562,7 @@ class PasswordEntry extends StatelessWidget {
                             ),
                             alignment: Alignment.topLeft,
                             child: Text(
-                              storednotes == '' ? 'no notes' : storednotes,
+                              widget.storednotes == '' ? 'no notes' : widget.storednotes,
                               // textHeightBehavior: TextHeightBehavior(
                               //   applyHeightToLastDescent: true,
                               //   applyHeightToFirstAscent: true,

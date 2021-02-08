@@ -35,7 +35,8 @@ class SavePass extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
       theme: ThemeData(primarySwatch: AppDefaultColors.colorPrimaryBlue),
-      routes: <String, WidgetBuilder>{
+      darkTheme: ThemeData.dark(),
+      routes: <String, WidgetBuilder> {
         // "/mainscreen": (BuildContext context) => new MainScreen(),
         "/newpasswordscreen": (BuildContext context) => PasswordScreen(),
         "/passwordscreen": (BuildContext context) => PasswordScreen(),
