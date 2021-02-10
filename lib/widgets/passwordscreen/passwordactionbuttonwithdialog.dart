@@ -401,7 +401,7 @@ class _PasswordActionButtonWithDialogWidgetState
                             value: _lengthSliderValue,
                             min: 1,
                             max: 15,
-                            divisions: 3,
+                            divisions: 10,
                             label: _lengthSliderValue.round().toString(),
                             onChanged: (double value) {
                               setState(() {
@@ -433,7 +433,7 @@ class _PasswordActionButtonWithDialogWidgetState
                             value: _complexitySliderValue,
                             min: 1,
                             max: 15,
-                            divisions: 3,
+                            divisions: 10,
                             label: _lengthSliderValue.round().toString(),
                             onChanged: (double value) {
                               setState(() {
