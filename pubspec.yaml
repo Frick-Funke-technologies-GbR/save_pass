@@ -32,7 +32,6 @@ dependencies:
   flutter_secure_storage: ^3.3.5
   firebase_auth: ^0.20.0+1
   google_sign_in: ^4.5.9
-  global_configuration: ^1.6.0
   url_launcher: ^5.7.10
   retry: ^3.0.1
   # The following adds the Cupertino Icons font to your application.
@@ -68,7 +67,6 @@ flutter:
     - assets/icon.png
     - assets/save_pass_icon_placeholder.png
     - assets/google_logo.png
-    - assets/cfg/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

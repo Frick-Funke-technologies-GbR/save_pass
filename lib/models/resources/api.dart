@@ -59,20 +59,16 @@ class ApiProvider {
     }
   }
 
-  Future loginUser(
+  Future getUserData(
     String username,
   ) async {
-    final response = await client.post(
+    final response = await client.get(
       // "http://10.0.2.2:5000/api/login",
-      'https://savepass.frifu.de/api/login',
+      'https://savepass.frifu.de/api/user_data',
       // headers: {
       //   "Authorization" : userIdent
       // },
-      body: jsonEncode(
-        {
-          "username": username,
-        },
-      ),
+      headers: {"username": username},
     );
     print('[DEBUG] Status of POST request (/api/login): ' +
         response.statusCode.toString());
@@ -80,27 +76,28 @@ class ApiProvider {
     if (response.statusCode == 201) {
       // If the call to the server was successful, parse the JSON
       await _saveUserIdent(result["data"]["user_ident"]);
-      await _saveUserName(result["data"]["user_name"]);
-      await _saveFirstName(result["data"]["first_name"]);
-      await _saveLastName(result["data"]["last_name"]);
-      await _saveEmailAdress(result["data"]["email_adress"]);
+      await _saveUserName(result["data"]["username"]);
+      await _saveFirstName(result["data"]["firstname"]);
+      await _saveLastName(result["data"]["lastname"]);
+      await _saveEmailAdress(result["data"]["emailadress"]);
     } else if (response.statusCode == 400) {
       // print('ELELELELELELELEL');
       throw Exception(result['message']);
     } else {
       // If that call was not successful, throw an error.
-      throw Exception('Failed to login');
+      print(json.decode(response.body).toString());
+      throw Exception('Failed to get user data');
     }
   }
 
-  Future<bool> checkPass(
+  Future<bool> login(
     String userIdent,
     String password,
   ) async {
     print('[DEBUG] userIdent: ' + userIdent.toString());
     final response = await client.get(
       // "http://10.0.2.2:5000/api/check_pass",
-      'https://savepass.frifu.de/api/check_pass',
+      'https://savepass.frifu.de/api/login',
       headers: {"user_ident": userIdent, "password": password},
     );
     print('[DEBUG] Status of GET request (/api/check_pass):' +
@@ -297,31 +294,32 @@ class ApiProvider {
 
   _saveUserIdent(String userIdent) {
     CacheHandler cache = CacheHandler();
-    cache.addStringToCache('user_ident', userIdent);
+    cache.addSecureStringToCache('user_ident', userIdent);
   }
 
   _saveUserName(String userName) {
     CacheHandler cache = CacheHandler();
-    cache.addStringToCache('user_name', userName);
+    // print(userName.toString() + '_________________________________________________________________________');
+    cache.addSecureStringToCache('user_name', userName);
   }
 
   _saveFirstName(String firstName) {
     CacheHandler cache = CacheHandler();
-    cache.addStringToCache('first_name', firstName);
+    cache.addSecureStringToCache('first_name', firstName);
   }
 
   _saveLastName(String lastName) {
     CacheHandler cache = CacheHandler();
-    cache.addStringToCache('last_name', lastName);
+    cache.addSecureStringToCache('last_name', lastName);
   }
 
   _saveEmailAdress(String emailAdress) {
     CacheHandler cache = CacheHandler();
-    cache.addStringToCache('last_name', emailAdress);
+    cache.addSecureStringToCache('email_adress', emailAdress);
   }
 
   _savePassword(String password) {
     CacheHandler cache = CacheHandler();
-    cache.addStringToCache('master_password', password);
+    cache.addSecureStringToCache('master_password', password);
   }
 }

@@ -10,7 +10,7 @@ import 'dart:ui' as ui;
 
 Future<String> getUserIdent() async {
   CacheHandler cache = CacheHandler();
-  String value = await cache.getStringFromCache('user_ident');
+  String value = await cache.getSecureStringFromCache('user_ident');
   return value;
 }
 
@@ -28,7 +28,8 @@ Future<bool> checkMasterPassword(String password, context) async {
   // final _boolSubject = BehaviorSubject<bool>();
   ApiProvider api = ApiProvider();
   try {
-    api.loginUser('paulaner');
+    // FIXME: The followong schould only be called after register
+    api.getUserData('paulaner');
   } catch (e) {
     // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
     // FIXME: Here, the state also doesnt change for Snackbar
@@ -62,7 +63,7 @@ Future<bool> checkMasterPassword(String password, context) async {
 
   String userIdent = await getUserIdent();
   // TODO: Add route when checkPass receaves 404 (list empty)
-  bool check = await api.checkPass(userIdent, password);
+  bool check = await api.login(userIdent, password);
   return check;
 }
 

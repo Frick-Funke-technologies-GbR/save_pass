@@ -477,7 +477,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                               widget.passwordId,
                                               false,
                                               await CacheHandler()
-                                                  .getStringFromCache(
+                                                  .getSecureStringFromCache(
                                                       'user_ident'),
                                               await CacheHandler()
                                                   .getSecureStringFromCache(
@@ -527,7 +527,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                     ),
                   ],
                 ),
-                Container(
+                widget.storednotes == '' ? Container() : Container(
                   height: 50,
                   margin: EdgeInsets.only(bottom: 7),
                   decoration: BoxDecoration(

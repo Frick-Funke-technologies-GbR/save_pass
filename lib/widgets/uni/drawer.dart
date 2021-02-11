@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
 

@@ -24,8 +24,9 @@ Future<List<PasswordEntryClass>> getPasswordEntries() async {
   CacheHandler cache = CacheHandler();
   ApiProvider api = ApiProvider();
 
-  String userIdent = await cache.getStringFromCache('user_ident');
-  String password = await cache.getStringFromCache('master_password');
+  // TODO: Add user_ident to cache before this lines. probably on register.
+  String userIdent = await cache.getSecureStringFromCache('user_ident');
+  String password = await cache.getSecureStringFromCache('master_password');
 
   List<PasswordEntryClass> entries =
       await api.getUserPasswordEntries(userIdent, password);
@@ -70,7 +71,7 @@ class PasswordScreen extends StatelessWidget {
   // )
 
   void _showAccountDialog(BuildContext context) {
-    String username = 'hallo';
+    // String username = 'hallo';
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -79,7 +80,7 @@ class PasswordScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          content: UserCard(username: username),
+          content: UserCard(),
         );
       },
     );

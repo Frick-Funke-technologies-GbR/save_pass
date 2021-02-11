@@ -65,7 +65,7 @@ class _PasswordActionButtonWithDialogWidgetState
       _passwordFieldKey.currentState.validate();
       // _passwordFieldKey.currentState.validate();
     } else {
-      String userIdent = await cache.getStringFromCache('user_ident');
+      String userIdent = await cache.getSecureStringFromCache('user_ident');
       String masterPassword =
           await cache.getSecureStringFromCache('master_password');
 
@@ -129,7 +129,7 @@ class _PasswordActionButtonWithDialogWidgetState
     // check if alias already exists
     for (String id in ids) {
       String storedalias = await cache
-          .getStringFromCache('stored_alias_with_id_' + id.toString());
+          .getSecureStringFromCache('stored_alias_with_id_' + id.toString());
 
       if (storedalias == alias) {
         setState(() {

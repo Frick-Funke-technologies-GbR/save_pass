@@ -7,7 +7,6 @@ import 'package:save_pass/screens/registerscreen.dart';
 import 'package:save_pass/screens/settingsscreen.dart';
 import 'package:save_pass/screens/walletscreen.dart';
 import 'package:save_pass/screens/notificationsscreen.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 
 // void main() {
@@ -15,8 +14,6 @@ import 'package:save_pass/models/classes/defaultcolors.dart';
 // }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await GlobalConfiguration().loadFromAsset("settings");
   runApp(SavePass());
 }
 
