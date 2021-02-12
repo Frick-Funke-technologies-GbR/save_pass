@@ -132,6 +132,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response == null) {
         // No snackbar needed, because it is displayed already in checkMasterPassword()
+        if (passinputKey.currentState.validate()) {
+          CacheHandler().addSecureStringToCache(
+              'master_password', textFieldController.text);
+          Navigator.of(context).pushNamed("/newpasswordscreen");
+        }
       } else {
         setState(
           () {
@@ -269,8 +274,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   Icons.remove_red_eye,
-                                  color:
-                                      _showPassword ? AppDefaultColors.colorPrimaryBlue : AppDefaultColors.colorPrimaryGrey,
+                                  color: _showPassword
+                                      ? AppDefaultColors.colorPrimaryBlue
+                                      : AppDefaultColors.colorPrimaryGrey,
                                 ),
                                 onPressed: () {
                                   togglePasswordVisibillity();

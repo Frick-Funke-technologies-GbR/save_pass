@@ -1,14 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
+import 'package:save_pass/models/resources/api.dart';
+import 'package:save_pass/models/resources/cache.dart';
 
-void showAddPasswordDialog(BuildContext context) {
-  final passwordFieldKey = GlobalKey<FormState>();
-  final passwordFieldController = TextEditingController();
-  bool passwordMatchValidatorFalse;
+final _passwordFieldController = TextEditingController();
+final _passwordRepeatFieldController = TextEditingController();
 
-  final passwordRepeatFieldKey = GlobalKey<FormState>();
-  var passwordRepeatFieldController = TextEditingController();
-  showDialog(
+final _passwordFieldKey = GlobalKey<FormState>();
+final _passwordRepeatFieldKey = GlobalKey<FormState>();
+
+bool passwordMatchValidatorFalse;
+
+
+Future<String> validatePasswordFields() async {
+  ApiProvider api = ApiProvider();
+  CacheHandler cache = CacheHandler();
+
+  if (_passwordFieldController.text != _passwordRepeatFieldController.text) {
+    _passwordFieldKey.currentState.validate();
+    // _passwordFieldKey.currentState.validate();
+  } else {
+    String userIdent = await cache.getSecureStringFromCache('user_ident');
+    String masterPassword =
+        await cache.getSecureStringFromCache('master_password');
+
+    String exception = null;
+
+    await api
+        .login(userIdent, masterPassword)
+        .catchError(
+            (e) => e = exception == null ? null : exception.toString());
+    
+    await CacheHandler().addSecureStringToCache('master_password', masterPassword);
+    return exception;
+  }
+}
+
+Future showAddPasswordDialog(BuildContext context, bool register) async {
+  await showDialog(
     barrierDismissible: false,
     // barrierColor:,
     context: context,
@@ -16,7 +45,7 @@ void showAddPasswordDialog(BuildContext context) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      title: Text('Add own password'),
+      title: Text('Add password'),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -33,9 +62,9 @@ void showAddPasswordDialog(BuildContext context) {
                   // color: AppDefaultColors.colorPrimaryGrey[200]
                 ),
                 child: Form(
-                  key: passwordFieldKey,
+                  key: _passwordFieldKey,
                   child: TextFormField(
-                    controller: passwordFieldController,
+                    controller: _passwordFieldController,
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -58,9 +87,9 @@ void showAddPasswordDialog(BuildContext context) {
                   // color: AppDefaultColors.colorPrimaryGrey[200]
                 ),
                 child: Form(
-                  key: passwordRepeatFieldKey,
+                  key: _passwordRepeatFieldKey,
                   child: TextFormField(
-                    controller: passwordRepeatFieldController,
+                    controller: _passwordRepeatFieldController,
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -75,13 +104,15 @@ void showAddPasswordDialog(BuildContext context) {
                   ),
                 ),
               ),
-              Text(
-                'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
-                style: TextStyle(
-                  color: AppDefaultColors.colorPrimaryGrey,
-                  fontSize: 12,
-                ),
-              )
+              register
+                  ? Container()
+                  : Text(
+                      'Tipp: you can also add randomly generated passwords with words that you can easily remember. Try it out!',
+                      style: TextStyle(
+                        color: AppDefaultColors.colorPrimaryGrey,
+                        fontSize: 12,
+                      ),
+                    ),
               // Container(
               //   margin: EdgeInsets.only(top: 20),
               //   child: Text(
@@ -121,9 +152,17 @@ void showAddPasswordDialog(BuildContext context) {
                 borderRadius: BorderRadius.circular(5),
               ),
               color: AppDefaultColors.colorPrimaryBlue,
+              // key: _submitButtonKey,
               // textColor: Colors.white,
               // color: AppDefaultColors.colorPrimaryGrey[500],
-              onPressed: () async {},
+              onPressed: () async {
+                String goFurther = await validatePasswordFields();
+                if (goFurther == null) {
+                  Navigator.of(context).pop();
+                } else {
+                  return false;
+                }
+              },
               // var error = await validatePasswordFields();
               //   Navigator.of(context).pop();
               //   final sucessSnackBar = SnackBar(

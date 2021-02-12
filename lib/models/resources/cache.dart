@@ -18,6 +18,11 @@ class CacheHandler {
     prefs.setStringList(key, stringList);
   }
 
+  addBoolToCache(String key, bool boolValue) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, boolValue);
+  }
+
   Future<String> getSecureStringFromCache(String key) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     String stringValue = await storage.read(key: key);
@@ -36,6 +41,13 @@ class CacheHandler {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print(key);
     List<String> stringListValue = prefs.getStringList(key);
+    // print(stringListValue);
+    return stringListValue;
+  }
+
+  Future<bool> getBoolFromCache(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool stringListValue = prefs.getBool(key);
     // print(stringListValue);
     return stringListValue;
   }

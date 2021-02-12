@@ -86,7 +86,8 @@ class PasswordScreen extends StatelessWidget {
     );
   }
 
-  final GlobalKey<ScaffoldState> _passwordscreenScaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _passwordscreenScaffoldKey =
+      new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +259,8 @@ class PasswordScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Builder(
         builder: (BuildContext context) {
-          return PasswordActionButtonWithDialogWidget(_passwordscreenScaffoldKey);
+          return PasswordActionButtonWithDialogWidget(
+              _passwordscreenScaffoldKey);
         },
       ),
       body: Builder(
@@ -343,7 +345,11 @@ class PasswordScreen extends StatelessWidget {
                           child: FutureBuilder<List<PasswordEntryClass>>(
                             future: getPasswordEntries(),
                             builder: (context, snapshot) {
-                              if (snapshot.hasData) {
+                              if (snapshot.data == null) {
+                                return Center(
+                                  child: Text('no passwordentries yet'),
+                                );
+                              } else if (snapshot.hasData) {
                                 List<PasswordEntryClass> data = snapshot.data;
                                 return _passwordEntryListView(data);
                               } else if (snapshot.hasError) {

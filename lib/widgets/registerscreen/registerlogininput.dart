@@ -4,6 +4,8 @@ import 'package:save_pass/models/authentication/auth.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/api.dart';
+import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/widgets/uni/addpassworddialog.dart';
 
 class RegisterLoginInputWidget extends StatefulWidget {
   @override
@@ -33,7 +35,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
       ),
       child: AnimatedCrossFade(
         duration: Duration(milliseconds: 200),
-        // TODO: Add the coose passwor widget 
+        // TODO: Add the coose passwor widget
         crossFadeState: CrossFadeState.showFirst,
         secondChild: ChoosePasswordWidget(),
         firstChild: Column(
@@ -156,10 +158,23 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                           this.user = user;
                           print(user.toString());
                           try {
-                            UserClass addedUser = await ApiProvider()
-                                .registerUser('username', user.displayName, '',
-                                    user.email);
-                            // Navigator.of(context).pushNamed()
+                            UserClass addedUser =
+                                await ApiProvider().registerUser(
+                              true,
+                              user.uid,
+                              user.displayName,
+                              '',
+                              user.email,
+                            );
+                            await showAddPasswordDialog(context, true);
+                            CacheHandler cache = CacheHandler();
+                            await ApiProvider().login(
+                              await cache
+                                  .getSecureStringFromCache('user_ident'),
+                              await cache
+                                  .getSecureStringFromCache('master_password'),
+                            );
+                            Navigator.of(context).pushReplacementNamed('/passwordscreen');
                           } catch (e) {
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -167,7 +182,8 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                                     .toString()
                                     .replaceAll('Exception', 'Error')),
                                 behavior: SnackBarBehavior.floating,
-                                backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+                                backgroundColor:
+                                    AppDefaultColors.colorPrimaryGrey[800],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
@@ -247,7 +263,7 @@ class RegisterWithGoogleInfoWidget extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(maxWidth: 230),
       child: Text(
-        'Note: if you sign in with google, you will have access to online features later on. You encrypted data will not be stored in google servers though.',
+        'Note: We will only use your google account to get your user data (e.G. your email adress). You will save the time to type it in manually.',
         style: TextStyle(
           color: AppDefaultColors.colorPrimaryGrey[500],
           fontSize: 13,
@@ -295,6 +311,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
       _lastNameInputKey.currentState.validate();
 
       await api.registerUser(
+        false,
         _usernameInputController.text,
         _firstNameInputController.text,
         _lastNameInputController.text,
@@ -556,8 +573,16 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                     borderRadius: BorderRadius.circular(7)),
                 onPressed: () async {
                   bool goFurther = await _validateSignInEmailFields();
-                  print(goFurther);
-                  if (goFurther) {}
+                  if (goFurther) {
+                    await showAddPasswordDialog(context, true);
+                    CacheHandler cache = CacheHandler();
+                    await ApiProvider().login(
+                      await cache.getSecureStringFromCache('user_ident'),
+                      await cache.getSecureStringFromCache('master_password'),
+                    );
+                    Navigator.of(context)
+                        .pushReplacementNamed('/passwordscreen');
+                  }
                 },
               ),
             ],

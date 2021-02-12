@@ -23,6 +23,7 @@ class ApiProvider {
   Client client = Client();
 
   Future<UserClass> registerUser(
+    bool googleSignIn,
     String username,
     String firstname,
     String lastname,
@@ -34,6 +35,7 @@ class ApiProvider {
       // headers: "",
       body: jsonEncode(
         {
+          "google_sign_in" : googleSignIn,
           "emailadress": emailadress,
           "username": username,
           "firstname": firstname,
@@ -70,7 +72,7 @@ class ApiProvider {
       // },
       headers: {"username": username},
     );
-    print('[DEBUG] Status of POST request (/api/login): ' +
+    print('[DEBUG] Status of POST request (/api/user_data): ' +
         response.statusCode.toString());
     final Map result = json.decode(response.body);
     if (response.statusCode == 201) {
@@ -81,7 +83,6 @@ class ApiProvider {
       await _saveLastName(result["data"]["lastname"]);
       await _saveEmailAdress(result["data"]["emailadress"]);
     } else if (response.statusCode == 400) {
-      // print('ELELELELELELELEL');
       throw Exception(result['message']);
     } else {
       // If that call was not successful, throw an error.
@@ -100,11 +101,15 @@ class ApiProvider {
       'https://savepass.frifu.de/api/login',
       headers: {"user_ident": userIdent, "password": password},
     );
-    print('[DEBUG] Status of GET request (/api/check_pass):' +
+    print('[DEBUG] Status of GET request (/api/login):' +
         response.statusCode.toString());
     final Map result = json.decode(response.body);
     if (response.statusCode == 401) {
       return false;
+    } else if (response.statusCode == 404) {
+      if (result['reason'] == 'no password entries yet') {
+        return null;
+      }
     } else {
       _savePassword(password);
       return true;
@@ -259,9 +264,6 @@ class ApiProvider {
     bool lowercase,
     bool numbers,
   ) async {
-    print(length.toString());
-    print('______');
-    print(words.toString());
     final response = await client.get(
       'https://savepass.frifu.de/api/generate_password',
       headers: {

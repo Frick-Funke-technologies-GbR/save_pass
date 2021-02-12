@@ -9,6 +9,8 @@ import 'package:save_pass/screens/walletscreen.dart';
 import 'package:save_pass/screens/notificationsscreen.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 
+import 'models/resources/cache.dart';
+
 // void main() {
 //   runApp(SavePass());
 // }
@@ -30,10 +32,20 @@ class SavePass extends StatelessWidget {
     );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: FutureBuilder(
+        future: CacheHandler().getBoolFromCache('first_time_login'),
+        builder: (context, snapshot) {
+          if (snapshot.data == null || snapshot.data == true) {
+            return RegisterScreen();
+          } else {
+            return LoginScreen();
+          }
+        },
+      ),
+      // LoginScreen(),
       theme: ThemeData(primarySwatch: AppDefaultColors.colorPrimaryBlue),
       darkTheme: ThemeData.dark(),
-      routes: <String, WidgetBuilder> {
+      routes: <String, WidgetBuilder>{
         // "/mainscreen": (BuildContext context) => new MainScreen(),
         "/newpasswordscreen": (BuildContext context) => PasswordScreen(),
         "/passwordscreen": (BuildContext context) => PasswordScreen(),
