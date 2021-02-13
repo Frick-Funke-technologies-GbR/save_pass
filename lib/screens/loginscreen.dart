@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return new Scaffold(
       // backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-
+      
       // appBar: AppBar(
       //   title: Text('SavePass.'),
       // ),

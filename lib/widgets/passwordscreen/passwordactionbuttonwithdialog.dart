@@ -57,19 +57,42 @@ class _PasswordActionButtonWithDialogWidgetState
     super.dispose();
   }
 
-  validatePasswordFields() async {
+  validatePasswordFields([bool generatedPassword = false]) async {
     ApiProvider api = ApiProvider();
     CacheHandler cache = CacheHandler();
 
-    if (_passwordFieldController.text != _passwordRepeatFieldController.text) {
-      _passwordFieldKey.currentState.validate();
-      // _passwordFieldKey.currentState.validate();
+    if (!generatedPassword) {
+      if (_passwordFieldController.text !=
+          _passwordRepeatFieldController.text) {
+        _passwordFieldKey.currentState.validate();
+        // _passwordFieldKey.currentState.validate();
+      } else {
+        String userIdent = await cache.getSecureStringFromCache('user_ident');
+        String masterPassword =
+            await cache.getSecureStringFromCache('master_password');
+
+        String exception;
+
+        await api
+            .addUserPasswordEntry(
+              userIdent,
+              masterPassword,
+              _aliasFieldController.text,
+              _urlFieldController.text,
+              _usernameFieldController.text,
+              _passwordFieldController.text,
+              _notesFieldController.text,
+            )
+            .catchError(
+                (e) => e = exception == null ? null : exception.toString());
+        return exception;
+      }
     } else {
       String userIdent = await cache.getSecureStringFromCache('user_ident');
       String masterPassword =
           await cache.getSecureStringFromCache('master_password');
 
-      String exception = null;
+      String exception;
 
       await api
           .addUserPasswordEntry(
@@ -78,7 +101,7 @@ class _PasswordActionButtonWithDialogWidgetState
             _aliasFieldController.text,
             _urlFieldController.text,
             _usernameFieldController.text,
-            _passwordFieldController.text,
+            await CacheHandler().getSecureStringFromCache('entry_password'),
             _notesFieldController.text,
           )
           .catchError(
@@ -90,8 +113,11 @@ class _PasswordActionButtonWithDialogWidgetState
   Row _generatedPasswordRow(Map<String, dynamic> data) {
     print(data.toString());
     List<Widget> chunks = new List<Widget>();
+    String wholePassword = '';
     for (String count in data.keys) {
       for (String chunk in data[count].keys) {
+        print(chunk);
+        wholePassword += chunk;
         chunks.add(
           Text(
             chunk,
@@ -110,6 +136,7 @@ class _PasswordActionButtonWithDialogWidgetState
         );
       }
     }
+    CacheHandler().addSecureStringToCache('entry_password', wholePassword);
     return Row(
       children: chunks,
     );
@@ -275,7 +302,8 @@ class _PasswordActionButtonWithDialogWidgetState
                         // color: AppDefaultColors.colorPrimaryGrey[500],
                         onPressed: () async {
                           var error = await validatePasswordFields();
-                          Navigator.of(context).popAndPushNamed('/passwordscreen');
+                          Navigator.of(context)
+                              .popAndPushNamed('/passwordscreen');
                           final sucessSnackBar = SnackBar(
                             content: Text('The entry was stored sucessfully!'),
                             behavior: SnackBarBehavior.floating,
@@ -287,7 +315,6 @@ class _PasswordActionButtonWithDialogWidgetState
                               ),
                             ),
                           );
-                          // sucess = sucess.toString();
                           final unsucessSnackBar = SnackBar(
                             content: Text(
                               'An Error occured $error',
@@ -334,7 +361,6 @@ class _PasswordActionButtonWithDialogWidgetState
               ),
               title: Text('Generate Pasword'),
               // TODO: Add buttons with functionality
-              actions: [],
               content: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -367,13 +393,17 @@ class _PasswordActionButtonWithDialogWidgetState
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 print(snapshot.data);
+                                // CacheHandler().addSecureStringToCache()
                                 return _generatedPasswordRow(snapshot.data);
                               } else if (snapshot.hasError) {
                                 print(snapshot.error);
                                 return Center(child: Text(snapshot.error));
                               }
                               return Center(
-                                child: CircularProgressIndicator(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3),
+                                  child: CircularProgressIndicator(),
+                                ),
                               );
                             },
                           ),
@@ -456,7 +486,7 @@ class _PasswordActionButtonWithDialogWidgetState
                             title: Text('Contain words'),
                             value: _containWords,
                             onChanged: (value) {
-                              setState((){
+                              setState(() {
                                 _containWords = value;
                               });
                             },
@@ -475,7 +505,7 @@ class _PasswordActionButtonWithDialogWidgetState
                             title: Text('Contain numbers'),
                             value: _containNumbers,
                             onChanged: (value) {
-                              setState((){
+                              setState(() {
                                 _containNumbers = value;
                               });
                             },
@@ -494,7 +524,7 @@ class _PasswordActionButtonWithDialogWidgetState
                             title: Text('Contain special characters'),
                             value: _containSpecialchar,
                             onChanged: (value) {
-                              setState((){
+                              setState(() {
                                 _containSpecialchar = value;
                               });
                             },
@@ -513,7 +543,7 @@ class _PasswordActionButtonWithDialogWidgetState
                             title: Text('Contain uppercase letters'),
                             value: _containUppercase,
                             onChanged: (value) {
-                              setState((){
+                              setState(() {
                                 _containUppercase = value;
                               });
                             },
@@ -532,7 +562,7 @@ class _PasswordActionButtonWithDialogWidgetState
                             title: Text('Contain lowercase letters'),
                             value: _containLowercase,
                             onChanged: (value) {
-                              setState((){
+                              setState(() {
                                 _containLowercase = value;
                               });
                             },
@@ -543,6 +573,49 @@ class _PasswordActionButtonWithDialogWidgetState
                   )
                 ],
               ),
+              actions: [
+                FlatButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  color: AppDefaultColors.colorPrimaryBlue,
+                  // textColor: Colors.white,
+                  // color: AppDefaultColors.colorPrimaryGrey[500],
+                  onPressed: () async {
+                    // validateAddPasswordEntryFields(true, context);
+                    var error = await validatePasswordFields(true);
+                    Navigator.of(context).popAndPushNamed('/passwordscreen');
+                    final sucessSnackBar = SnackBar(
+                      content: Text('The entry was stored sucessfully!'),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                    );
+                    final unsucessSnackBar = SnackBar(
+                      content: Text(
+                        'An Error occured $error',
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                    );
+                    error ??= false;
+                    // Navigator.of(context).pop();
+                    _passwordscreenScaffoldKey.currentState.showSnackBar(
+                      error ? unsucessSnackBar : sucessSnackBar,
+                    );
+                  },
+                  child: Text('Submit and create entry'),
+                ),
+              ],
             );
           },
         ),
