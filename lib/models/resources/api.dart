@@ -7,18 +7,6 @@ import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/cache.dart';
 import 'package:retry/retry.dart';
 
-// typedef Future<T> FutureGenerator<T>();
-// Future<T> retry<T>(int retries, FutureGenerator aFuture) async {
-//   try {
-//     return await aFuture();
-//   } catch (e) {
-//     if (retries > 1) {
-//       return retry(retries - 1, aFuture);
-//     }
-//     rethrow;
-//   }
-// }
-
 class ApiProvider {
   Client client = Client();
 
@@ -162,7 +150,7 @@ class ApiProvider {
       for (PasswordEntryClass passwordEntry in passwordEntries) {
         print(passwordEntry.alias + passwordEntry.notes);
       }
-      return passwordEntries;
+      return passwordEntries ?? '';
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load password entries');

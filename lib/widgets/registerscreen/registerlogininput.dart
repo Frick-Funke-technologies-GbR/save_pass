@@ -22,7 +22,8 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
   void initState() {
     // TODO: eventually remove bevore release, add manual logout
     super.initState();
-    signOutGoogle();
+    // TODO: Add signout functionality
+    // signOutGoogle();
   }
 
   @override
@@ -175,6 +176,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                                   .getSecureStringFromCache('master_password'),
                             );
                             Navigator.of(context).pushReplacementNamed('/passwordscreen');
+                            CacheHandler().addBoolToCache('first_time_login', false);
                           } catch (e) {
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -225,10 +227,14 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                   RaisedButton(
                     child: Text('Login'),
                     color: AppDefaultColors.colorPrimaryBlue,
+                    padding: EdgeInsets.all(0),
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7)),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed('/loginscreen');
+                      CacheHandler().addBoolToCache('first_time_login', false);
+                    },
                   ),
                 ],
               ),
@@ -582,6 +588,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                     );
                     Navigator.of(context)
                         .pushReplacementNamed('/passwordscreen');
+                    CacheHandler().addBoolToCache('first_time_login', false);
                   }
                 },
               ),

@@ -11,7 +11,6 @@ import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
-import 'package:save_pass/screens/loginscreen.dart';
 import 'package:save_pass/widgets/bottomnavigationbar.dart';
 import 'package:save_pass/widgets/passwordscreen/passwordactionbuttonwithdialog.dart';
 import 'package:save_pass/widgets/uni/drawer.dart';
@@ -345,7 +344,7 @@ class PasswordScreen extends StatelessWidget {
                           child: FutureBuilder<List<PasswordEntryClass>>(
                             future: getPasswordEntries(),
                             builder: (context, snapshot) {
-                              if (snapshot.data == null) {
+                              if (snapshot.data == '') {
                                 return Center(
                                   child: Text('no passwordentries yet'),
                                 );

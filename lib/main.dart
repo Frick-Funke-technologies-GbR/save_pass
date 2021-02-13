@@ -16,6 +16,7 @@ import 'models/resources/cache.dart';
 // }
 
 void main() async {
+  
   runApp(SavePass());
 }
 
@@ -47,12 +48,13 @@ class SavePass extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       routes: <String, WidgetBuilder>{
         // "/mainscreen": (BuildContext context) => new MainScreen(),
-        "/newpasswordscreen": (BuildContext context) => PasswordScreen(),
-        "/passwordscreen": (BuildContext context) => PasswordScreen(),
-        "/settingsscreen": (BuildContext context) => SettingsScreen(),
-        "/walletscreen": (BuildContext context) => WalletScreen(),
-        "/registerscreen": (BuildContext context) => RegisterScreen(),
-        // "/notificationsscreen": (BuildContext context) => NotificationsScreen(),
+        '/loginscreen' : (BuildContext context) => LoginScreen(),
+        '/newpasswordscreen': (BuildContext context) => PasswordScreen(),
+        '/passwordscreen': (BuildContext context) => PasswordScreen(),
+        '/settingsscreen': (BuildContext context) => SettingsScreen(),
+        '/walletscreen': (BuildContext context) => WalletScreen(),
+        '/registerscreen': (BuildContext context) => RegisterScreen(),
+        // '/notificationsscreen': (BuildContext context) => NotificationsScreen(),
       },
     );
   }

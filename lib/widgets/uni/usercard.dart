@@ -57,7 +57,7 @@ class _UserCardState extends State<UserCard> {
                 children: [
                   // TODO: Add info, from UserClass
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Container(
@@ -68,35 +68,37 @@ class _UserCardState extends State<UserCard> {
                           size: 30,
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            height: 20,
-                            margin: EdgeInsets.only(left: 5, top: 5),
-                            child: Text(
-                              snapshot.data['user_name'],
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              height: 20,
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                snapshot.data['user_name'],
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(left: 5, top: 2),
-                            child: Text(
-                              snapshot.data['user_ident'],
-                              style: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 12,
-                                color: Colors.white,
+                            Container(
+                              margin: EdgeInsets.only(right: 20),
+                              child: Text(
+                                snapshot.data['user_ident'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -141,7 +143,9 @@ class _UserCardState extends State<UserCard> {
                         Container(
                           margin: EdgeInsets.only(left: 13),
                           child: Text(
-                            snapshot.data['first_name'] + ' ' + snapshot.data['last_name'],
+                            snapshot.data['first_name'] +
+                                ' ' +
+                                snapshot.data['last_name'],
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,

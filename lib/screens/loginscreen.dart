@@ -23,44 +23,27 @@ Future<String> getUserIdent() async {
 //   return passcheck;
 // }
 
-Future<bool> checkMasterPassword(String password, context) async {
+Future<bool> checkMasterPassword(
+    String password, context, String username) async {
   // TODO: Add get username from progreq.json
-  // final _boolSubject = BehaviorSubject<bool>();
   ApiProvider api = ApiProvider();
-  try {
-    // FIXME: The followong schould only be called after register
-    api.getUserData('paulaner');
-  } catch (e) {
-    // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
-    // FIXME: Here, the state also doesnt change for Snackbar
-    // print('ALALALALALALALALALA');
-    // print(e.toString().replaceAll('Exception', 'Error'));
-    Scaffold.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.toString().replaceAll('Exception', 'Error')),
-      ),
-    );
-    return null;
+  if (username != null) {
+    try {
+      // FIXME: The followong schould only be called after register
+      api.getUserData(username);
+    } catch (e) {
+      // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
+      // FIXME: Here, the state also doesnt change for Snackbar
+      // print('ALALALALALALALALALA');
+      // print(e.toString().replaceAll('Exception', 'Error'));
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception', 'Error')),
+        ),
+      );
+      return null;
+    }
   }
-  // bool _bool;
-  // Future<String> userIdent = getUserIdent();
-  // userIdent.then(
-  //   (userIdent) {
-  //     Future<bool> checkpass = api.checkPass(userIdent, password);
-  //     checkpass.then(
-  //       (boolean) {
-  //         print('Point.1');
-  //         _boolSubject.add(boolean);
-  //         // _bool = boolean;
-  //       },
-  //     );
-  //     print('hä');
-  //   },
-  // );
-  // print('Sojetztaber');
-  // var stream = _boolSubject.stream;
-  // return stream;
-
   String userIdent = await getUserIdent();
   // TODO: Add route when checkPass receaves 404 (list empty)
   bool check = await api.login(userIdent, password);
@@ -96,17 +79,21 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final textFieldController = TextEditingController();
+  final passwordTextFieldController = TextEditingController();
+  final usernameTextFieldController = TextEditingController();
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    textFieldController.dispose();
+    passwordTextFieldController.dispose();
+    usernameTextFieldController.dispose();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
     bool _showPassword = false;
-    bool passwordValidator = false;
+    bool fieldsValidator = false;
+    bool usernameValidator = false;
     int wrongPassCount = 0;
     final passinputKey = GlobalKey<FormState>();
     final passButtonKey = GlobalKey<FormState>();
@@ -126,27 +113,25 @@ class _LoginScreenState extends State<LoginScreen> {
       print(_showPassword);
     }
 
-    void passInputValidator() async {
-      var response =
-          await checkMasterPassword(textFieldController.text, context);
+    void passInputValidator({String username = null}) async {
+      var passwordChecked = await checkMasterPassword(
+          passwordTextFieldController.text, context, username);
 
-      if (response == null) {
+      if (passwordChecked == null) {
         // No snackbar needed, because it is displayed already in checkMasterPassword()
-        if (passinputKey.currentState.validate()) {
-          CacheHandler().addSecureStringToCache(
-              'master_password', textFieldController.text);
-          Navigator.of(context).pushNamed("/newpasswordscreen");
-        }
+        // if (passinputKey.currentState.validate()) {
+        //   CacheHandler().addSecureStringToCache(
+        //       'master_password', passwordTextFieldController.text);
+        //   Navigator.of(context).pushNamed("/newpasswordscreen");
+        // }
       } else {
-        setState(
-          () {
-            passwordValidator = response;
-          },
-        );
+        setState(() {
+          fieldsValidator = passwordChecked;
+        });
 
         if (passinputKey.currentState.validate()) {
           CacheHandler().addSecureStringToCache(
-              'master_password', textFieldController.text);
+              'master_password', passwordTextFieldController.text);
           Navigator.of(context).pushNamed("/newpasswordscreen");
         }
       }
@@ -157,6 +142,15 @@ class _LoginScreenState extends State<LoginScreen> {
       // }
       // ;
       // Navigator.of(context).pushNamed("/newpasswordscreen");
+    }
+
+    Future<bool> _checkNessecaryUsername() async {
+      String value = await CacheHandler().getSecureStringFromCache('user_name');
+      if (value == null) {
+        return true;
+      } else {
+        return false;
+      }
     }
 
     return new Scaffold(
@@ -200,7 +194,76 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Expanded(
+                      FutureBuilder(
+                          future: _checkNessecaryUsername(),
+                          builder: (context, snapshot) {
+                            if (snapshot.data) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                                margin: EdgeInsets.symmetric(
+                                  vertical: 80,
+                                  horizontal: 10,
+                                ),
+                                child: Form(
+                                  key: passinputKey,
+                                  child: new TextFormField(
+                                    controller: usernameTextFieldController,
+                                    // key: passinputKey,
+                                    // FIXME: Fix the state not updating
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please enter a username';
+                                      }
+                                      if (usernameValidator) {
+                                        return null;
+                                      }
+                                      return 'username doesn\'t exist';
+                                    },
+                                    enableInteractiveSelection: true,
+                                    onEditingComplete: () {
+                                      // passinputKey.currentState.validate();
+                                      // passButtonKey.currentState.
+                                      passInputValidator();
+                                    },
+                                    keyboardType: TextInputType.visiblePassword,
+                                    obscureText: !_showPassword,
+                                    decoration: InputDecoration(
+                                      // prefixIcon: Icon(Icons.security),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          Icons.remove_red_eye,
+                                          color: _showPassword
+                                              ? AppDefaultColors
+                                                  .colorPrimaryBlue
+                                              : AppDefaultColors
+                                                  .colorPrimaryGrey,
+                                        ),
+                                        onPressed: () {
+                                          togglePasswordVisibillity();
+                                        },
+                                      ),
+                                      // fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                          width: 0,
+                                          style: BorderStyle.none,
+                                        ),
+                                      ),
+                                      filled: true,
+                                      // hintText: '',
+                                      labelText: 'Password',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return Container();
+                          }),
                       Container(
                         decoration: BoxDecoration(
                           // color: AppDefaultColors.colorPrimaryGrey[100],
@@ -215,12 +278,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Form(
                           key: passinputKey,
                           child: new TextFormField(
-                            controller: textFieldController,
+                            controller: passwordTextFieldController,
                             // key: passinputKey,
                             // FIXME: Fix the state not updating
                             validator: (value) {
                               if (value.isEmpty) {
-                                return 'Please enter a Password';
+                                return 'Please enter a password';
                               }
                               if (wrongPassCount > 3) {
                                 // this.deactivate();
@@ -255,8 +318,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               // // String delayedchecked = delay();
                               // // return delayedchecked;
                               // print('niunununun');
-                              // print(passwordValidator);
-                              if (passwordValidator) {
+                              // print(fieldsValidator);
+                              if (fieldsValidator) {
                                 return null;
                               }
                               return 'Password is incorrect';
@@ -297,7 +360,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      // ),
                       Container(
                         margin: EdgeInsets.only(left: 245, bottom: 20),
                         child: FlatButton(
