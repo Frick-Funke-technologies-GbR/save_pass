@@ -23,6 +23,11 @@ class CacheHandler {
     prefs.setBool(key, boolValue);
   }
 
+  removeFromCache(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
+  }
+
   Future<String> getSecureStringFromCache(String key) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     String stringValue = await storage.read(key: key);

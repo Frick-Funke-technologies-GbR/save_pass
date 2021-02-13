@@ -91,11 +91,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget build(BuildContext context) {
+    bool _showUsernameField = false;
     bool _showPassword = false;
     bool fieldsValidator = false;
     bool usernameValidator = false;
     int wrongPassCount = 0;
-    final passinputKey = GlobalKey<FormState>();
+    final userInputKey = GlobalKey<FormState>();
+    final passInputKey = GlobalKey<FormState>();
     final passButtonKey = GlobalKey<FormState>();
     // var content = [
     //   'Hello this is a brand new language, i\'m working on right now',
@@ -113,13 +115,13 @@ class _LoginScreenState extends State<LoginScreen> {
       print(_showPassword);
     }
 
-    void passInputValidator({String username = null}) async {
+    void passInputValidator([String username]) async {
       var passwordChecked = await checkMasterPassword(
           passwordTextFieldController.text, context, username);
 
       if (passwordChecked == null) {
         // No snackbar needed, because it is displayed already in checkMasterPassword()
-        // if (passinputKey.currentState.validate()) {
+        // if (passInputKey.currentState.validate()) {
         //   CacheHandler().addSecureStringToCache(
         //       'master_password', passwordTextFieldController.text);
         //   Navigator.of(context).pushNamed("/newpasswordscreen");
@@ -129,14 +131,14 @@ class _LoginScreenState extends State<LoginScreen> {
           fieldsValidator = passwordChecked;
         });
 
-        if (passinputKey.currentState.validate()) {
+        if (passInputKey.currentState.validate()) {
           CacheHandler().addSecureStringToCache(
               'master_password', passwordTextFieldController.text);
           Navigator.of(context).pushNamed("/newpasswordscreen");
         }
       }
 
-      // if (passinputKey) {};
+      // if (passInputKey) {};
       // if (checkMasterPassword(value)) {
       //   return null;
       // }
@@ -176,6 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 ToplabelLogin(),
                 Container(
+                  constraints: BoxConstraints(minHeight: 300),
                   margin: EdgeInsets.only(right: 10, left: 10),
                   decoration: BoxDecoration(
                     boxShadow: [
@@ -193,26 +196,36 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       FutureBuilder(
                           future: _checkNessecaryUsername(),
                           builder: (context, snapshot) {
+                            // WidgetsBinding.instance.addPostFrameCallback((_){
+                            //   setState(() {
+                            //     _showUsernameField = true;
+                            //   });
+                            // });
                             if (snapshot.data) {
+                            // if (true) {
                               return Container(
+                                // constraints: BoxConstraints(maxHeight: 50, ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
                                 ),
-                                margin: EdgeInsets.symmetric(
-                                  vertical: 80,
-                                  horizontal: 10,
+                                margin: EdgeInsets.only(
+                                  top: 20,
+                                  bottom: 10,
+                                  left: 10,
+                                  right: 10,
                                 ),
                                 child: Form(
-                                  key: passinputKey,
+                                  key: userInputKey,
                                   child: new TextFormField(
                                     controller: usernameTextFieldController,
-                                    // key: passinputKey,
+                                    // key: passInputKey,
                                     // FIXME: Fix the state not updating
                                     validator: (value) {
                                       if (value.isEmpty) {
@@ -225,27 +238,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                     },
                                     enableInteractiveSelection: true,
                                     onEditingComplete: () {
-                                      // passinputKey.currentState.validate();
+                                      // passInputKey.currentState.validate();
                                       // passButtonKey.currentState.
-                                      passInputValidator();
+                                      passInputValidator(
+                                          usernameTextFieldController.text);
                                     },
                                     keyboardType: TextInputType.visiblePassword,
-                                    obscureText: !_showPassword,
                                     decoration: InputDecoration(
                                       // prefixIcon: Icon(Icons.security),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          Icons.remove_red_eye,
-                                          color: _showPassword
-                                              ? AppDefaultColors
-                                                  .colorPrimaryBlue
-                                              : AppDefaultColors
-                                                  .colorPrimaryGrey,
-                                        ),
-                                        onPressed: () {
-                                          togglePasswordVisibillity();
-                                        },
-                                      ),
+                                      // suffixIcon: IconButton(
+                                      //   icon: Icon(
+                                      //     Icons.remove_red_eye,
+                                      //     color: _showPassword
+                                      //         ? AppDefaultColors
+                                      //             .colorPrimaryBlue
+                                      //         : AppDefaultColors
+                                      //             .colorPrimaryGrey,
+                                      //   ),
+                                      //   onPressed: () {
+                                      //     togglePasswordVisibillity();
+                                      //   },
+                                      // ),
                                       // fillColor: Colors.white,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -256,7 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       filled: true,
                                       // hintText: '',
-                                      labelText: 'Password',
+                                      labelText: 'Username',
                                     ),
                                   ),
                                 ),
@@ -272,14 +285,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         margin: EdgeInsets.symmetric(
-                          vertical: 80,
+                          // vertical: _showUsernameField ? 10 : 80,
+                          vertical: 10,
                           horizontal: 10,
                         ),
                         child: Form(
-                          key: passinputKey,
+                          key: passInputKey,
                           child: new TextFormField(
                             controller: passwordTextFieldController,
-                            // key: passinputKey,
+                            // key: passInputKey,
                             // FIXME: Fix the state not updating
                             validator: (value) {
                               if (value.isEmpty) {
@@ -326,7 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             enableInteractiveSelection: true,
                             onEditingComplete: () {
-                              // passinputKey.currentState.validate();
+                              // passInputKey.currentState.validate();
                               // passButtonKey.currentState.
                               passInputValidator();
                             },
@@ -370,8 +384,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           // color: AppDefaultColors.colorPrimaryBlue,
                           // splashColor: AppDefaultColors.colorPrimaryBlue,
-                          onPressed: () {
+                          onPressed: () async {
                             passInputValidator();
+                            // await CacheHandler().removeFromCache('user_ident');
+                            // await CacheHandler().removeFromCache('user_name');
                           },
                           color: AppDefaultColors.colorPrimaryGrey[100],
                           // elevation: 6,
