@@ -19,33 +19,7 @@ import 'package:save_pass/widgets/uni/usercard.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:ui' as ui;
 
-Future<List<PasswordEntryClass>> getPasswordEntries() async {
-  CacheHandler cache = CacheHandler();
-  ApiProvider api = ApiProvider();
-
-  // TODO: Add user_ident to cache before this lines. probably on register.
-  String userIdent = await cache.getSecureStringFromCache('user_ident');
-  String password = await cache.getSecureStringFromCache('master_password');
-
-  List<PasswordEntryClass> entries =
-      await api.getUserPasswordEntries(userIdent, password);
-
-  print(entries[0].password);
-
-  List<String> ids = [];
-
-  for (PasswordEntryClass entry in entries) {
-    await cache.addStringToCache(
-        'stored_alias_with_id_' + entry.id.toString(), entry.alias);
-    ids.add(entry.id.toString());
-  }
-
-  await cache.addStringListToCache('stored_ids', ids);
-
-  return entries;
-}
-
-class PasswordScreen extends StatelessWidget {
+class PasswordScreen extends StatefulWidget {
   // final List<PasswordEntryClass> contents = [PasswordEntryClass(1, 'a', 'alias', 'note')];
   // String _randomGeneratedPassword = 'S(99*aSdFuj9Baum_';
   // for (str  in _randomGeneratedPassword.) {
@@ -69,6 +43,44 @@ class PasswordScreen extends StatelessWidget {
   //   };
   // )
 
+  @override
+  _PasswordScreenState createState() => _PasswordScreenState();
+}
+
+class _PasswordScreenState extends State<PasswordScreen> {
+  String _searchText = '';
+  // List<PasswordEntryClass> _entries;
+
+  Future<List<PasswordEntryClass>> getPasswordEntries() async {
+    CacheHandler cache = CacheHandler();
+    ApiProvider api = ApiProvider();
+
+    // TODO: Add user_ident to cache before this lines. probably on register.
+    String userIdent = await cache.getSecureStringFromCache('user_ident');
+    String password = await cache.getSecureStringFromCache('master_password');
+
+    List<PasswordEntryClass> entries =
+        await api.getUserPasswordEntries(userIdent, password);
+
+    print(entries[0].password);
+
+    List<String> ids = [];
+
+    for (PasswordEntryClass entry in entries) {
+      await cache.addStringToCache(
+          'stored_alias_with_id_' + entry.id.toString(), entry.alias);
+      ids.add(entry.id.toString());
+    }
+
+    await cache.addStringListToCache('stored_ids', ids);
+
+    // setState(() {
+    //   _entries = entries;
+    // });
+
+    return entries;
+  }
+
   void _showAccountDialog(BuildContext context) {
     // String username = 'hallo';
     showDialog(
@@ -88,6 +100,49 @@ class PasswordScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _passwordscreenScaffoldKey =
       new GlobalKey<ScaffoldState>();
 
+  final _searchFilteringController = TextEditingController();
+  
+
+  // TODO: Add serch functionality with one of the following functions
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _searchFilteringController.addListener(() {
+  //     if (_searchFilteringController.text.isEmpty) {
+  //       setState(() {
+  //         _searchText = "";
+  //         // FIXME:
+  //         // _entries = names;
+  //       });
+  //     } else {
+  //       print(_searchFilteringController.text + '______________________________________________________________');
+  //       setState(() {
+  //         _searchText = _searchFilteringController.text;
+  //       });
+  //     }
+  //   });
+  // }
+
+  // _changeSearchFieldListeners() {
+  //   if (_searchFilteringController.text.isEmpty) {
+  //     // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     setState(() {
+  //       _searchText = "";
+  //       // FIXME:
+  //       // _entries = names;
+  //     });
+  //     // });
+  //   } else {
+  //     // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     print(_searchFilteringController.text +
+  //         '______________________________________________________________');
+  //     setState(() {
+  //       _searchText = _searchFilteringController.text;
+  //     });
+  //     // });
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     // task
@@ -100,7 +155,6 @@ class PasswordScreen extends StatelessWidget {
     // FIXME: debug api if no entry added yet
     CustomScrollView _passwordEntryListView(data) {
       return CustomScrollView(
-        // semanticChildCount: data.length,
         slivers: <Widget>[
           SliverPadding(
             padding: EdgeInsets.only(bottom: 30),
@@ -134,7 +188,8 @@ class PasswordScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: TextField(
-                        // controller: editingController,
+                        controller: _searchFilteringController,
+                        // onChanged: _changeSearchFieldListeners(),
                         decoration: InputDecoration(
                           // fillColor: AppDefaultColors.colorPrimaryGrey[100],
                           // hintText: "Search",
@@ -350,6 +405,20 @@ class PasswordScreen extends StatelessWidget {
                                 );
                               } else if (snapshot.hasData) {
                                 List<PasswordEntryClass> data = snapshot.data;
+                                // if (_searchText.isNotEmpty) {
+                                //   List _tempList =
+                                //       new List<PasswordEntryClass>();
+                                //   for (int i = 0; i < data.length; i++) {
+                                //     if (data[i].alias.toLowerCase().contains(
+                                //             _searchText.toLowerCase()) ||
+                                //         data[i].username.toLowerCase().contains(
+                                //             _searchText.toLowerCase())) {
+                                //       _tempList.add(data[i]);
+                                //     }
+                                //   }
+                                //   data = _tempList;
+                                //   print(_tempList);
+                                // }
                                 return _passwordEntryListView(data);
                               } else if (snapshot.hasError) {
                                 return Center(
@@ -386,13 +455,6 @@ class PasswordScreen extends StatelessWidget {
       ),
     );
   }
-  // List<Widget> getContents() {
-  //   for (int i = 0; i < 10; i++) {
-  //     contents.add(PasswordEntry(i, 'Paulus222', 'Facebook', 'Not all cpital letters, but with my birthday in it.'))
-  //   }
-  //   return contents;
-  // }
-
 }
 
 // class _MainScreenState extends StatelessWidget {
