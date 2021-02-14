@@ -103,7 +103,7 @@ class _UserCardState extends State<UserCard> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 5),
+                    padding: const EdgeInsets.only(left: 10, top: 10, bottom: 5),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -129,7 +129,7 @@ class _UserCardState extends State<UserCard> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
+                    padding: const EdgeInsets.only(left: 10, bottom: 5),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [

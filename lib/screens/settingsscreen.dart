@@ -53,10 +53,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: <Widget>[
                         ListTile(
                           leading: Icon(
-                            Icons.lock_outline,
+                            Icons.lock_outline_rounded,
                             color: AppDefaultColors.colorPrimaryBlue,
                           ),
-                          title: Text("Change Password"),
+                          title: Text("Change password"),
                           trailing: Icon(Icons.keyboard_arrow_right),
                           onTap: () {
                             //open change password
@@ -65,25 +65,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _buildDivider(),
                         ListTile(
                           leading: Icon(
-                            Icons.language,
+                            Icons.logout,
                             color: AppDefaultColors.colorPrimaryBlue,
                           ),
-                          title: Text("Change Language"),
+                          title: Text("Log out"),
                           trailing: Icon(Icons.keyboard_arrow_right),
                           onTap: () {
-                            //open change language
+                            //open change location
                           },
                         ),
                         _buildDivider(),
                         ListTile(
                           leading: Icon(
-                            Icons.location_on,
-                            color: AppDefaultColors.colorPrimaryBlue,
+                            Icons.delete_outline_rounded,
+                            color: AppDefaultColors.colorPrimaryRed,
                           ),
-                          title: Text("Change Location"),
+                          title: Text("Delete account"),
                           trailing: Icon(Icons.keyboard_arrow_right),
                           onTap: () {
-                            //open change location
+                            //open change language
                           },
                         ),
                       ],
@@ -91,42 +91,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 20.0),
                   Text(
-                    "Notification Settings",
+                    "Data settings",
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.indigo,
+                      color: AppDefaultColors.colorPrimaryBlue,
                     ),
                   ),
                   SwitchListTile(
                     activeColor: AppDefaultColors.colorPrimaryBlue,
                     contentPadding: const EdgeInsets.all(0),
-                    value: true,
-                    title: Text("Received notification"),
-                    onChanged: (val) {},
-                  ),
-                  SwitchListTile(
-                    activeColor: AppDefaultColors.colorPrimaryBlue,
-                    contentPadding: const EdgeInsets.all(0),
                     value: false,
-                    title: Text("Received newsletter"),
+                    title: Text("Cloud sync"),
                     onChanged: null,
                   ),
-                  SwitchListTile(
-                    activeColor: AppDefaultColors.colorPrimaryBlue,
-                    contentPadding: const EdgeInsets.all(0),
-                    value: true,
-                    title: Text("Received Offer Notification"),
-                    onChanged: (val) {},
-                  ),
-                  SwitchListTile(
-                    activeColor: AppDefaultColors.colorPrimaryBlue,
-                    contentPadding: const EdgeInsets.all(0),
-                    value: true,
-                    title: Text("Received App Updates"),
-                    onChanged: null,
-                  ),
-                  const SizedBox(height: 60.0),
+                  // SwitchListTile(
+                  //   activeColor: AppDefaultColors.colorPrimaryBlue,
+                  //   contentPadding: const EdgeInsets.all(0),
+                  //   value: false,
+                  //   title: Text("Received newsletter"),
+                  //   onChanged: null,
+                  // ),
+                  // SwitchListTile(
+                  //   activeColor: AppDefaultColors.colorPrimaryBlue,
+                  //   contentPadding: const EdgeInsets.all(0),
+                  //   value: true,
+                  //   title: Text("Received Offer Notification"),
+                  //   onChanged: (val) {},
+                  // ),
+                  // SwitchListTile(
+                  //   activeColor: AppDefaultColors.colorPrimaryBlue,
+                  //   contentPadding: const EdgeInsets.all(0),
+                  //   value: true,
+                  //   title: Text("Received App Updates"),
+                  //   onChanged: null,
+                  // ),
+                  // const SizedBox(height: 60.0),
                 ],
               ),
             ),
