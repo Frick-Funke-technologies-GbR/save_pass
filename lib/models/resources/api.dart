@@ -58,7 +58,7 @@ class ApiProvider {
       // headers: {
       //   "Authorization" : userIdent
       // },
-      headers: {"username": username},
+      headers: {"username": username, 'all' : 'false'},
     );
     print('[DEBUG] Status of POST request (/api/user_data): ' +
         response.statusCode.toString());

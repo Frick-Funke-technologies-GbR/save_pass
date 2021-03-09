@@ -45,7 +45,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   UserCard(),
                   const SizedBox(height: 10.0),
                   Card(
-                    elevation: 4.0,
+                    elevation: 20,
+                    shadowColor: AppDefaultColors.colorPrimaryGrey[200],
                     margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),

@@ -40,13 +40,19 @@ class _UserCardState extends State<UserCard> {
         future: getUserData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(
-                child: Text(snapshot.error
-                    .toString()
-                    .replaceAll('exception', 'error')));
+            return SizedBox(
+              height: 200,
+              width: 400,
+              child: Center(
+                  child: Text(snapshot.error
+                      .toString()
+                      .replaceAll('exception', 'error'))),
+            );
           }
           if (snapshot.hasData) {
             return Card(
+              elevation: 20,
+              shadowColor: AppDefaultColors.colorPrimaryBlue,
               borderOnForeground: true,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -103,17 +109,12 @@ class _UserCardState extends State<UserCard> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10, top: 10, bottom: 5),
+                    padding:
+                        const EdgeInsets.only(left: 10, top: 10, bottom: 5),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Icon(
-                            Icons.mail_rounded,
-                            color: Colors.white,
-                          ),
-                        ),
                         Container(
                           margin: EdgeInsets.only(left: 13),
                           child: Text(
@@ -124,7 +125,14 @@ class _UserCardState extends State<UserCard> {
                               color: Colors.white,
                             ),
                           ),
-                        )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5, right: 10),
+                          child: Icon(
+                            Icons.mail_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -132,14 +140,8 @@ class _UserCardState extends State<UserCard> {
                     padding: const EdgeInsets.only(left: 10, bottom: 5),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white,
-                          ),
-                        ),
                         Container(
                           margin: EdgeInsets.only(left: 13),
                           child: Text(
@@ -152,7 +154,14 @@ class _UserCardState extends State<UserCard> {
                               color: Colors.white,
                             ),
                           ),
-                        )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5, right: 10),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -161,7 +170,11 @@ class _UserCardState extends State<UserCard> {
             );
           }
           return Center(
-            child: CircularProgressIndicator(),
+            child: SizedBox(
+              height: 200,
+              width: 400,
+              child: CircularProgressIndicator(),
+            ),
           );
         });
   }
