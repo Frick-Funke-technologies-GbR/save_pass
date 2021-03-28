@@ -11,16 +11,23 @@ import 'package:save_pass/models/classes/defaultcolors.dart';
 
 import 'models/resources/cache.dart';
 
+import 'dart:async';
+
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
 // void main() {
 //   runApp(SavePass());
 // }
 
 void main() async {
-  
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(SavePass());
 }
 
 class SavePass extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -48,7 +55,7 @@ class SavePass extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       routes: <String, WidgetBuilder>{
         // "/mainscreen": (BuildContext context) => new MainScreen(),
-        '/loginscreen' : (BuildContext context) => LoginScreen(),
+        '/loginscreen': (BuildContext context) => LoginScreen(),
         '/newpasswordscreen': (BuildContext context) => PasswordScreen(),
         '/passwordscreen': (BuildContext context) => PasswordScreen(),
         '/settingsscreen': (BuildContext context) => SettingsScreen(),

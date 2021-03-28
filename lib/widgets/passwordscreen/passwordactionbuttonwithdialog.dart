@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
+import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/models/resources/database.dart';
 
 class PasswordActionButtonWithDialogWidget extends StatefulWidget {
   GlobalKey<ScaffoldState> _passwordscreenScaffoldKey;
@@ -59,6 +63,7 @@ class _PasswordActionButtonWithDialogWidgetState
 
   validatePasswordFields([bool generatedPassword = false]) async {
     ApiProvider api = ApiProvider();
+    DatabaseHandler db = DatabaseHandler();
     CacheHandler cache = CacheHandler();
 
     if (!generatedPassword) {
@@ -73,16 +78,19 @@ class _PasswordActionButtonWithDialogWidgetState
 
         String exception;
 
-        await api
-            .addUserPasswordEntry(
-              userIdent,
-              masterPassword,
-              _aliasFieldController.text,
-              _urlFieldController.text,
-              _usernameFieldController.text,
-              _passwordFieldController.text,
-              _notesFieldController.text,
-            )
+        await db
+            .insertPasswordEntry(
+                PasswordEntryClass(
+                  null,
+                  _aliasFieldController.text,
+                  _passwordFieldController.text,
+                  _usernameFieldController.text,
+                  _urlFieldController.text,
+                  _notesFieldController.text,
+                  base64Encode(
+                      await api.getIconAsBlob(_urlFieldController.text)),
+                ),
+                masterPassword)
             .catchError(
                 (e) => e = exception == null ? null : exception.toString());
         return exception;
@@ -94,16 +102,18 @@ class _PasswordActionButtonWithDialogWidgetState
 
       String exception;
 
-      await api
-          .addUserPasswordEntry(
-            userIdent,
-            masterPassword,
-            _aliasFieldController.text,
-            _urlFieldController.text,
-            _usernameFieldController.text,
-            await CacheHandler().getSecureStringFromCache('entry_password'),
-            _notesFieldController.text,
-          )
+      await db
+          .insertPasswordEntry(
+              PasswordEntryClass(
+                null,
+                _aliasFieldController.text,
+                await CacheHandler().getSecureStringFromCache('entry_password'),
+                _usernameFieldController.text,
+                _urlFieldController.text,
+                _notesFieldController.text,
+                base64Encode(await api.getIconAsBlob(_urlFieldController.text)),
+              ),
+              masterPassword)
           .catchError(
               (e) => e = exception == null ? null : exception.toString());
       return exception;
@@ -381,7 +391,7 @@ class _PasswordActionButtonWithDialogWidgetState
                         // TODO: Fix overflow bug
                         child: ClipRect(
                           child: FutureBuilder(
-                            future: ApiProvider().getGeneratedPassword(
+                            future: ApiProvider().getGeneratedPassword( // TODO: build the local password randomizer
                               _passwordLength,
                               _passwordComplexity,
                               _containWords,

@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 
-import 'package:random_color/random_color.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';

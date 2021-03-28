@@ -11,6 +11,7 @@ import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/models/resources/database.dart';
 import 'package:save_pass/widgets/bottomnavigationbar.dart';
 import 'package:save_pass/widgets/passwordscreen/passwordactionbuttonwithdialog.dart';
 import 'package:save_pass/widgets/uni/drawer.dart';
@@ -53,16 +54,20 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   Future<List<PasswordEntryClass>> getPasswordEntries() async {
     CacheHandler cache = CacheHandler();
-    ApiProvider api = ApiProvider();
+    DatabaseHandler db = DatabaseHandler();
 
     // TODO: Add user_ident to cache before this lines. probably on register.
     String userIdent = await cache.getSecureStringFromCache('user_ident');
     String password = await cache.getSecureStringFromCache('master_password');
 
-    List<PasswordEntryClass> entries =
-        await api.getUserPasswordEntries(userIdent, password);
+    List<PasswordEntryClass> entries = await db.getPasswordEntries(password); 
 
-    print(entries[0].password);
+    if (!entries.isEmpty) {
+      // FIXME: check, if they aciually begin with 1
+      print(entries[1].password);
+    } else {
+      return entries;
+    }
 
     List<String> ids = [];
 
@@ -399,9 +404,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
                           child: FutureBuilder<List<PasswordEntryClass>>(
                             future: getPasswordEntries(),
                             builder: (context, snapshot) {
-                              if (snapshot.data == '') {
+                              if (snapshot.data.isEmpty) {
                                 return Center(
-                                  child: Text('no passwordentries yet'),
+                                  child: Text('no entries added yet'),
                                 );
                               } else if (snapshot.hasData) {
                                 List<PasswordEntryClass> data = snapshot.data;

@@ -3,6 +3,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
+import 'package:save_pass/models/resources/cryptograph.dart';
+import 'package:save_pass/models/classes/passwordentryClass.dart';
+import 'package:save_pass/models/resources/database.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
@@ -26,6 +29,28 @@ Future<String> getUserIdent() async {
 Future<bool> checkMasterPassword(
     String password, context, String username) async {
   // TODO: Add get username from progreq.json
+  // TODO: Add check username if username not in cache
+
+  DatabaseHandler().deleteAllPasswordEntries();
+
+
+  // Cryptograph c = Cryptograph(password);
+
+  // List<int> key = await c.generateKeyFromPass();
+
+  // List<int> encrypted = await c.encrypt('hallo', key);
+
+  // List<int> salt = c.encryptionSalt;
+  // int macLength = c.encryptionMacLength;
+
+  // print(macLength);
+
+  // Cryptograph cn = Cryptograph(password);
+
+  // String result = await cn.decrypt(encrypted, key, salt: salt, macLength: macLength);
+
+  // print('[result]: ' + result);
+
   ApiProvider api = ApiProvider();
   if (username != null) {
     try {
@@ -46,8 +71,9 @@ Future<bool> checkMasterPassword(
   }
   String userIdent = await getUserIdent();
   // TODO: Add route when checkPass receaves 404 (list empty)
-  bool check = await api.login(userIdent, password);
-  return check;
+  // bool checkedIn = await api.login(userIdent, password);
+  bool checkedIn = await PasswordEntryDatabaseActions(password).login();
+  return checkedIn;
 }
 
 class LoginScreen extends StatefulWidget {
@@ -115,6 +141,10 @@ class _LoginScreenState extends State<LoginScreen> {
       print(_showPassword);
     }
 
+    void testFunction() async {
+      
+    }
+
     void passInputValidator([String username]) async {
       var passwordChecked = await checkMasterPassword(
           passwordTextFieldController.text, context, username);
@@ -158,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return new Scaffold(
       // backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      
+
       // appBar: AppBar(
       //   title: Text('SavePass.'),
       // ),
@@ -207,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             //   });
                             // });
                             if (snapshot.data) {
-                            // if (true) {
+                              // if (true) {
                               return Container(
                                 // constraints: BoxConstraints(maxHeight: 50, ),
                                 decoration: BoxDecoration(
@@ -356,6 +386,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       : AppDefaultColors.colorPrimaryGrey,
                                 ),
                                 onPressed: () {
+                                  testFunction();
                                   togglePasswordVisibillity();
                                 },
                               ),
@@ -389,7 +420,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             // await CacheHandler().removeFromCache('user_ident');
                             // await CacheHandler().removeFromCache('user_name');
                           },
-                          color: AppDefaultColors.colorPrimaryGrey[100],
+                          color: AppDefaultColors.colorPrimaryGrey[50],
                           // elevation: 6,
                         ),
                       ),

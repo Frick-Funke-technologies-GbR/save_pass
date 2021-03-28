@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart' show Client, ClientException, Request;
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/classes/userClass.dart';
@@ -9,6 +10,21 @@ import 'package:retry/retry.dart';
 
 class ApiProvider {
   Client client = Client();
+
+  Future<Uint8List> getIconAsBlob(String domain) async {
+    try {
+      final response = await client.get('https://logo.clearbit.com/$domain?size=600&format=png');
+      print('[DEBUG] Icon GET request Status: ${response.statusCode.toString()}');
+    
+      // If domain does not exist in clearbit db:
+      if (response.statusCode == 404) {
+        throw Exception(1);
+      }
+      return response.bodyBytes;
+    } on HttpException {
+      return null;
+    }
+  }
 
   Future<UserClass> registerUser(
     bool googleSignIn,

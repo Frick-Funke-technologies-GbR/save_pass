@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/widgets/bottomnavigationbar.dart';
 import 'package:save_pass/widgets/uni/drawer.dart';
-import 'package:flutter_speed_dial_material_design/flutter_speed_dial_material_design.dart';
 
 class WalletScreen extends StatelessWidget {
   @override
