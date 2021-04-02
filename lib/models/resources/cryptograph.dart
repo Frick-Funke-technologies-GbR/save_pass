@@ -9,7 +9,7 @@ class Cryptograph {
   // TODO: Store this salt
   final List<int> salt = generateSalt();
   List<int> encryptionSalt;
-  int encryptionMacLength = 16;
+  int encryptionMacLength = 32;
   Cryptograph(this.password);
 
   static final Random _random = Random.secure();
@@ -78,23 +78,26 @@ class Cryptograph {
 
     // Generate a secret key.
     final secretKey = await algorithm.newSecretKeyFromBytes(key);
-    final secretKeyBytes = secretKey.extractBytes();
-    print('Secret key: $secretKeyBytes');
+    print('Key: ${await secretKey.extractBytes()}');
+    // final secretKeyBytes = secretKey.extractBytes();
+    // print('Secret key: $secretKeyBytes');
 
     // Encrypt
     final secretBox = await algorithm.encrypt(
       encodedDecryptedContent,
       secretKey: secretKey,
     );
+    print('Key: ${secretKey.extractBytes()}');
     print('Nonce: ${secretBox.nonce}');
     // print('NonceLength: ${secretBox.mac.bytes.length}');
     print('Ciphertext: ${secretBox.cipherText}');
     print('MAC: ${secretBox.mac.bytes}');
+    print('MACLENGTH: ${secretBox.mac.bytes.length}');
 
     encryptionSalt = secretBox.nonce;
     encryptionMacLength = secretBox.mac.bytes.length;
 
-    return secretBox.cipherText + secretBox.mac.bytes;
+    return secretBox.cipherText + secretBox.nonce + secretBox.mac.bytes;
   }
 
   Future<String> decrypt(
@@ -112,29 +115,39 @@ class Cryptograph {
     macLength = macLength ?? encryptionMacLength;
     salt = salt ?? encryptionSalt;
 
-
     final encryptedContentInListView = Uint8List.fromList(encryptedContent);
-    final saltInListView = Uint8List.fromList(salt);
+    // final saltInListView = Uint8List.fromList(salt);
 
     final SecretBox secretBox = SecretBox(
       Uint8List.sublistView(
         encryptedContentInListView,
         0,
-        encryptedContentInListView.lengthInBytes - macLength,
+        encryptedContentInListView.lengthInBytes - macLength - 16,
       ),
       mac: Mac(
         Uint8List.sublistView(
           encryptedContentInListView,
-          encryptedContentInListView.lengthInBytes - macLength,
+          encryptedContentInListView.lengthInBytes - macLength
+          // encryptedContentInListView.lengthInBytes,
         ),
       ),
-      nonce: saltInListView,
+      nonce: Uint8List.sublistView(
+        encryptedContentInListView,
+        encryptedContentInListView.lengthInBytes - macLength - 16,
+        encryptedContentInListView.lengthInBytes - macLength,
+      ),
     );
+
+    print(encryptedContentInListView.lengthInBytes);
+    print(secretBox.cipherText);
+    print(secretBox.nonce.toString());
+    print(';;;;;;;;;;;;;;;;;;;;;;;;');
+    print(secretBox.mac.bytes);
 
     final algorithm = AesCbc.with128bits(macAlgorithm: Hmac.sha256());
 
     final secretKey = await algorithm.newSecretKeyFromBytes(key);
-    final secretKeyBytes = secretKey.extractBytes();
+    final secretKeyBytes = await secretKey.extractBytes();
     print('Secret key: $secretKeyBytes');
 
     final List<int> clearText = await algorithm.decrypt(
@@ -143,6 +156,8 @@ class Cryptograph {
     );
 
     final String decodedDecryptedContent = utf8.decode(clearText);
+
+    print('Decrypted Content: $decodedDecryptedContent');
 
     return decodedDecryptedContent;
   }

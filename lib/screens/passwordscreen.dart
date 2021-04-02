@@ -64,7 +64,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
     if (!entries.isEmpty) {
       // FIXME: check, if they aciually begin with 1
-      print(entries[1].password);
+      // print(entries[0].password);
     } else {
       return entries;
     }

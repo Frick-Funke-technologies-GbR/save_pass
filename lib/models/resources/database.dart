@@ -41,19 +41,19 @@ class DatabaseHandler {
 
     // Convert the List<Map<String, dynamic> into a List<PasswordEntryClass> while decrypt the members contents
     List<PasswordEntryClass> passwordEntries = [];
-    for (Map entry in maps) {
-      print(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;');
-      entry.forEach((key, value) {print(key + value.toString());});
+    for (Map<String, dynamic> iteratedEntry in maps) {
+      Map<String, dynamic> entry = Map.of(iteratedEntry);
+      // FIXME: Remove following line for future implementation of creation date
       entry.remove('creation_date');
-      print(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;');
-      entry.forEach((key, value) {print(key + value.toString());});
-      passwordEntries.add(await generatePasswordEntry(password, entry));
+      PasswordEntryClass encryptedEntry = await generatePasswordEntry(password, entry);
+      passwordEntries.add(encryptedEntry);
     }
     return passwordEntries;
   }
 
   Future<PasswordEntryClass> generatePasswordEntry(
       String password, Map<String, dynamic> map) async {
+    print('hallolsdkjföasjfiafn');
     return await PasswordEntryClass().fromEncryptedMap(
         password,
         map['id'],
