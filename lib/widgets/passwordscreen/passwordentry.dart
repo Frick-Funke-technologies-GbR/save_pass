@@ -8,6 +8,7 @@ import 'dart:math';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/models/resources/database.dart';
 
 class PasswordEntry extends StatefulWidget {
   // TODO: Add recursive color change, remember notes icon
@@ -471,17 +472,19 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                           bool result;
                                           String exc;
                                           try {
-                                            result = await ApiProvider()
-                                                .deleteUserPasswordEntry(
-                                              widget.passwordId,
-                                              false,
-                                              await CacheHandler()
-                                                  .getSecureStringFromCache(
-                                                      'user_ident'),
-                                              await CacheHandler()
-                                                  .getSecureStringFromCache(
-                                                      'master_password'),
-                                            );
+                                            // result = await ApiProvider()
+                                            //     .deleteUserPasswordEntry(
+                                            //   widget.passwordId,
+                                            //   false,
+                                            //   await CacheHandler()
+                                            //       .getSecureStringFromCache(
+                                            //           'user_ident'),
+                                            //   await CacheHandler()
+                                            //       .getSecureStringFromCache(
+                                            //           'master_password'),
+                                            // );
+                                            await DatabaseHandler().deletePasswordEntry(widget.passwordId);
+                                            result = true;
                                           } catch (e) {
                                             result = false;
                                             exc = e;
