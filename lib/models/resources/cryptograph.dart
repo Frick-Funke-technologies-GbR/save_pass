@@ -2,11 +2,9 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
-import 'package:cryptography/dart.dart';
 
 class Cryptograph {
   String password;
-  // TODO: Store this salt
   final List<int> salt = generateSalt();
   List<int> encryptionSalt;
   int encryptionMacLength = 32;

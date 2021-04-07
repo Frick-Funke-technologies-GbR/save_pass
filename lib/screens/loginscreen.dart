@@ -31,9 +31,6 @@ Future<bool> checkMasterPassword(
   // TODO: Add get username from progreq.json
   // TODO: Add check username if username not in cache
 
-  DatabaseHandler().deleteAllPasswordEntries();
-
-
   // Cryptograph c = Cryptograph(password);
 
   // List<int> key = await c.generateKeyFromPass();

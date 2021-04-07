@@ -70,6 +70,7 @@ class _PasswordActionButtonWithDialogWidgetState
       if (_passwordFieldController.text !=
           _passwordRepeatFieldController.text) {
         _passwordFieldKey.currentState.validate();
+        return false;
         // _passwordFieldKey.currentState.validate();
       } else {
         String userIdent = await cache.getSecureStringFromCache('user_ident');
@@ -91,9 +92,13 @@ class _PasswordActionButtonWithDialogWidgetState
                       await api.getIconAsBlob(_urlFieldController.text)),
                 ),
                 masterPassword)
-            .catchError(
-                (e) => e = exception == null ? null : exception.toString());
-        return exception;
+            // .catchError(
+            //     (e) => e = exception == null ? null : exception.toString());
+            .catchError((e) => exception = e);
+        if (exception != null) {
+          throw Exception(exception);
+        }
+        return true;
       }
     } else {
       String userIdent = await cache.getSecureStringFromCache('user_ident');
@@ -311,40 +316,48 @@ class _PasswordActionButtonWithDialogWidgetState
                         // textColor: Colors.white,
                         // color: AppDefaultColors.colorPrimaryGrey[500],
                         onPressed: () async {
-                          var error = await validatePasswordFields();
-                          Navigator.of(context)
-                              .popAndPushNamed('/passwordscreen');
-                          final sucessSnackBar = SnackBar(
-                            content: Text('The entry was stored sucessfully!'),
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor:
-                                AppDefaultColors.colorPrimaryGrey[800],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
+                          var error;
+                          Exception exception;
+                          try {
+                            error = await validatePasswordFields();
+                          } on Exception catch (e) {
+                            exception = e;
+                          } 
+                          if (!error == true) {
+                          } else {
+                            Navigator.of(context)
+                                .popAndPushNamed('/passwordscreen');
+                            final sucessSnackBar = SnackBar(
+                              content:
+                                  Text('The entry was stored sucessfully!'),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor:
+                                  AppDefaultColors.colorPrimaryGrey[800],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
                               ),
-                            ),
-                          );
-                          final unsucessSnackBar = SnackBar(
-                            content: Text(
-                              'An Error occured $error',
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor:
-                                AppDefaultColors.colorPrimaryGrey[800],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
+                            );
+                            final unsucessSnackBar = SnackBar(
+                              content: Text(
+                                'An Error occured $error',
                               ),
-                            ),
-                          );
-                          if (error == null) {
-                            error = false;
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor:
+                                  AppDefaultColors.colorPrimaryGrey[800],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                            );
+                            // Navigator.of(context).pop();
+                            _passwordscreenScaffoldKey.currentState
+                                .showSnackBar(
+                              exception == null ? unsucessSnackBar : sucessSnackBar,
+                            );
                           }
-                          // Navigator.of(context).pop();
-                          _passwordscreenScaffoldKey.currentState.showSnackBar(
-                            error ? unsucessSnackBar : sucessSnackBar,
-                          );
                         },
                         child: Text('Submit and create Entry'),
                       ),
@@ -391,7 +404,8 @@ class _PasswordActionButtonWithDialogWidgetState
                         // TODO: Fix overflow bug
                         child: ClipRect(
                           child: FutureBuilder(
-                            future: ApiProvider().getGeneratedPassword( // TODO: build the local password randomizer
+                            future: ApiProvider().getGeneratedPassword(
+                              // TODO: build the local password randomizer
                               _passwordLength,
                               _passwordComplexity,
                               _containWords,
@@ -642,208 +656,227 @@ class _PasswordActionButtonWithDialogWidgetState
         // Navigator.of(context).pushNamed('/registerscreen');
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            scrollable: true,
-            content: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              // mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Form(
-                    key: _aliasFieldKey,
-                    child: TextFormField(
-                      controller: _aliasFieldController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
+          builder: (context) => StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                scrollable: true,
+                content: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  // mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Form(
+                        key: _aliasFieldKey,
+                        child: TextFormField(
+                          controller: _aliasFieldController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
+                            ),
+                            suffixIcon: IconButton(
+                              splashColor: Colors.transparent,
+                              icon: Icon(Icons.info,
+                                  color: AppDefaultColors.colorPrimaryBlue),
+                              onPressed: () {
+                                print(_showAliasInputInfoText);
+                                setState(() {
+                                  _showAliasInputInfoText =
+                                      !_showAliasInputInfoText;
+                                  print(_showAliasInputInfoText);
+                                });
+                              },
+                            ),
+                            // helperText: 'Keyword for the entry.',
+                            labelText: 'alias',
+                            filled: true,
                           ),
-                        ),
-                        suffixIcon: IconButton(
-                          splashColor: Colors.transparent,
-                          icon: Icon(Icons.info,
-                              color: AppDefaultColors.colorPrimaryBlue),
-                          onPressed: () {
-                            print(_showAliasInputInfoText);
-                            setState(() {
-                              _showAliasInputInfoText =
-                                  !_showAliasInputInfoText;
-                              print(_showAliasInputInfoText);
-                            });
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'please enter an alias';
+                            }
+                            if (!_aliasValidator) {
+                              setState(() {
+                                _aliasValidator = true;
+                              });
+                              return 'already in use';
+                            }
+                            return null;
                           },
                         ),
-                        // helperText: 'Keyword for the entry.',
-                        labelText: 'alias',
-                        filled: true,
                       ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'please enter an alias';
-                        }
-                        if (!_aliasValidator) {
-                          setState(() {
-                            _aliasValidator = true;
-                          });
-                          return 'already in use';
-                        }
-                        return null;
-                      },
                     ),
-                  ),
+                    AnimatedCrossFade(
+                      crossFadeState: !_showAliasInputInfoText
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      firstChild: Container(),
+                      secondChild: Container(
+                        margin: EdgeInsets.only(left: 12, bottom: 15),
+                        child: Text(
+                          'keyword/title for the entry. Most commonly the name of the company/provider.',
+                          style: TextStyle(
+                            color: AppDefaultColors.colorPrimaryBlue,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      duration: Duration(milliseconds: 200),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Form(
+                        key: _urlFieldKey,
+                        child: TextFormField(
+                          keyboardType: TextInputType.url,
+                          controller: _urlFieldController,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              splashColor: Colors.transparent,
+                              icon: Icon(Icons.info,
+                                  color: AppDefaultColors.colorPrimaryBlue),
+                              onPressed: () {
+                                setState(() {
+                                  _showUrlInputInfoText = !_showUrlInputInfoText;
+                                });
+                              },
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
+                            ),
+                            labelText: 'domain',
+                            filled: true,
+                          ),
+                          validator: (value) {
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    AnimatedCrossFade(
+                      crossFadeState: !_showUrlInputInfoText
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      firstChild: Container(),
+                      secondChild: Container(
+                        margin: EdgeInsets.only(left: 12, bottom: 15),
+                        child: Text(
+                          'website name with an top-level-domain, usually \'.com\'. Egs. google.com',
+                          style: TextStyle(
+                            color: AppDefaultColors.colorPrimaryBlue,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      duration: Duration(milliseconds: 200),
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Form(
+                        key: _usernameFieldKey,
+                        child: TextFormField(
+                          controller: _usernameFieldController,
+                          decoration: InputDecoration(
+                            labelText: 'username',
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Form(
+                        key: _notesFieldKey,
+                        child: TextFormField(
+                          controller: _notesFieldController,
+                          decoration: InputDecoration(
+                            labelText: 'notes',
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                // FIXME: Fix animated info about Alias and url
-                AnimatedCrossFade(
-                  crossFadeState: !_showAliasInputInfoText
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                  firstChild: Container(),
-                  secondChild: Container(
-                    margin: EdgeInsets.only(left: 12, bottom: 15),
-                    child: Text(
-                      'keyword/title for the entry. Most commonly the name of the company/provider.',
-                      style: TextStyle(
+                actions: [
+                  ButtonBar(
+                    children: [
+                      FlatButton(
+                        // textColor: AppDefaultColors.colorPrimaryBlue,
+                        child: Text(
+                          'Add own password',
+                          style: TextStyle(
+                            color: AppDefaultColors.colorPrimaryGrey,
+                          ),
+                        ),
+                        onPressed: () {
+                          // Navigator.of(context).pop();
+                          validateAddPasswordEntryFields(false, context);
+                        },
+                      ),
+                      FlatButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                         color: AppDefaultColors.colorPrimaryBlue,
-                        fontSize: 12,
+                        // textColor: Colors.white,
+                        // color: AppDefaultColors.colorPrimaryGrey[500],
+                        onPressed: () {
+                          validateAddPasswordEntryFields(true, context);
+                        },
+                        child: Text('Add generated password'),
                       ),
-                    ),
-                  ),
-                  duration: Duration(milliseconds: 200),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Form(
-                    // TODO: Add info widget on how to add appropriate url
-                    key: _urlFieldKey,
-                    child: TextFormField(
-                      keyboardType: TextInputType.url,
-                      controller: _urlFieldController,
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          splashColor: Colors.transparent,
-                          icon: Icon(Icons.info,
-                              color: AppDefaultColors.colorPrimaryBlue),
-                          onPressed: () {
-                            setState(() {
-                              _showUrlInputInfoText = !_showUrlInputInfoText;
-                            });
-                          },
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
-                        labelText: 'domain',
-                        filled: true,
-                      ),
-                      validator: (value) {
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Form(
-                    key: _usernameFieldKey,
-                    child: TextFormField(
-                      controller: _usernameFieldController,
-                      decoration: InputDecoration(
-                        labelText: 'username',
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Form(
-                    key: _notesFieldKey,
-                    child: TextFormField(
-                      controller: _notesFieldController,
-                      decoration: InputDecoration(
-                        labelText: 'notes',
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              ButtonBar(
-                children: [
-                  FlatButton(
-                    // textColor: AppDefaultColors.colorPrimaryBlue,
-                    child: Text(
-                      'Add own password',
-                      style: TextStyle(
-                        color: AppDefaultColors.colorPrimaryGrey,
-                      ),
-                    ),
-                    onPressed: () {
-                      // Navigator.of(context).pop();
-                      validateAddPasswordEntryFields(false, context);
-                    },
-                  ),
-                  FlatButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    color: AppDefaultColors.colorPrimaryBlue,
-                    // textColor: Colors.white,
-                    // color: AppDefaultColors.colorPrimaryGrey[500],
-                    onPressed: () {
-                      validateAddPasswordEntryFields(true, context);
-                    },
-                    child: Text('Add generated password'),
+                    ],
                   ),
                 ],
-              ),
-            ],
-            title: Text('Create password entry'),
+                title: Text('Create password entry'),
+              );
+            }
           ),
         );
       },

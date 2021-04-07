@@ -387,7 +387,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                               Radius.circular(10),
                                             ),
                                             child: LinearProgressIndicator(
-                                              value: 1, // Double beond one
+                                              value: 1, // Double beond one, work with Duration()
                                               minHeight: 7,
                                             ),
                                           ),

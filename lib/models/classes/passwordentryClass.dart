@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:flutter/services.dart';
 import 'package:save_pass/models/resources/database.dart';
-import 'package:save_pass/widgets/passwordscreen/passwordentry.dart';
 import 'package:save_pass/models/resources/cryptograph.dart';
 
 class PasswordEntryClass {
