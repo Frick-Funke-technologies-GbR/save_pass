@@ -37,7 +37,6 @@ class PasswordEntry extends StatefulWidget {
 }
 
 class _PasswordEntryState extends State<PasswordEntry> {
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).copyWith(
@@ -177,7 +176,9 @@ class _PasswordEntryState extends State<PasswordEntry> {
                       ),
                       padding: EdgeInsets.all(5),
                       child: Text(
-                        widget.storedusername == '' ? 'no username' : widget.storedusername,
+                        widget.storedusername == ''
+                            ? 'no username'
+                            : widget.storedusername,
                         overflow: TextOverflow.fade,
                         style:
                             TextStyle(color: AppDefaultColors.colorPrimaryBlue),
@@ -279,7 +280,8 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                                         text: widget.storedpassword ==
                                                                 ''
                                                             ? 'no password'
-                                                            : widget.storedpassword,
+                                                            : widget
+                                                                .storedpassword,
                                                       ),
                                                     ],
                                                   ),
@@ -328,7 +330,8 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                                         text: widget.storedwebadress ==
                                                                 ''
                                                             ? 'no url'
-                                                            : widget.storedwebadress,
+                                                            : widget
+                                                                .storedwebadress,
                                                       ),
                                                     ],
                                                   ),
@@ -370,7 +373,8 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                                         text: widget.storedusername ==
                                                                 ''
                                                             ? 'no username'
-                                                            : widget.storedusername,
+                                                            : widget
+                                                                .storedusername,
                                                       ),
                                                     ],
                                                   ),
@@ -387,7 +391,8 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                               Radius.circular(10),
                                             ),
                                             child: LinearProgressIndicator(
-                                              value: 1, // Double beond one, work with Duration()
+                                              value:
+                                                  1, // Double beond one, work with Duration()
                                               minHeight: 7,
                                             ),
                                           ),
@@ -395,8 +400,16 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                       ],
                                     ),
                                     actions: [
-                                      FlatButton(
-                                        child: Text('Close'),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.transparent),
+                                        child: Text(
+                                          'Close',
+                                          style: TextStyle(
+                                              color: AppDefaultColors
+                                                  .colorPrimaryBlue),
+                                        ),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
@@ -415,7 +428,8 @@ class _PasswordEntryState extends State<PasswordEntry> {
                               icon: Icon(Icons.content_copy),
                               onPressed: () {
                                 Clipboard.setData(
-                                  new ClipboardData(text: widget.storedpassword),
+                                  new ClipboardData(
+                                      text: widget.storedpassword),
                                 );
                                 Scaffold.of(context).showSnackBar(
                                   SnackBar(
@@ -456,7 +470,10 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                     content:
                                         Text('The data can not be recovered.'),
                                     actions: [
-                                      FlatButton(
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.transparent),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
@@ -467,7 +484,10 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                                   .colorPrimaryBlue),
                                         ),
                                       ),
-                                      FlatButton(
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                        ),
                                         onPressed: () async {
                                           bool result;
                                           String exc;
@@ -483,13 +503,17 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                             //       .getSecureStringFromCache(
                                             //           'master_password'),
                                             // );
-                                            await DatabaseHandler().deletePasswordEntry(widget.passwordId);
+                                            await DatabaseHandler()
+                                                .deletePasswordEntry(
+                                                    widget.passwordId);
                                             result = true;
                                           } catch (e) {
                                             result = false;
                                             exc = e;
                                           } finally {
-                                            Navigator.of(context).popAndPushNamed('/passwordscreen');
+                                            Navigator.of(context)
+                                                .popAndPushNamed(
+                                                    '/passwordscreen');
                                             Scaffold.of(context).showSnackBar(
                                               // TODO: Add screen reload here
                                               SnackBar(
@@ -529,59 +553,65 @@ class _PasswordEntryState extends State<PasswordEntry> {
                     ),
                   ],
                 ),
-                widget.storednotes == '' ? Container() : Container(
-                  height: 50,
-                  margin: EdgeInsets.only(bottom: 7),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.yellow[50],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                              bottom: 25,
-                              left: 2,
+                widget.storednotes == ''
+                    ? Container()
+                    : Container(
+                        height: 50,
+                        margin: EdgeInsets.only(bottom: 7),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.yellow[50],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: 25,
+                                    left: 2,
+                                  ),
+                                  child: Icon(
+                                    Icons.note,
+                                    color:
+                                        AppDefaultColors.colorPrimaryBlue[200],
+                                  ),
+                                ),
+                                Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth: 282,
+                                    maxHeight: 50,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 4.25,
+                                    horizontal: 10,
+                                  ),
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    widget.storednotes == ''
+                                        ? 'no notes'
+                                        : widget.storednotes,
+                                    // textHeightBehavior: TextHeightBehavior(
+                                    //   applyHeightToLastDescent: true,
+                                    //   applyHeightToFirstAscent: true,
+                                    // ),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppDefaultColors
+                                          .colorPrimaryGrey[900],
+                                    ),
+                                    softWrap: true,
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: Icon(
-                              Icons.note,
-                              color: AppDefaultColors.colorPrimaryBlue[200],
-                            ),
-                          ),
-                          Container(
-                            constraints: BoxConstraints(
-                              maxWidth: 282,
-                              maxHeight: 50,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical: 4.25,
-                              horizontal: 10,
-                            ),
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              widget.storednotes == '' ? 'no notes' : widget.storednotes,
-                              // textHeightBehavior: TextHeightBehavior(
-                              //   applyHeightToLastDescent: true,
-                              //   applyHeightToFirstAscent: true,
-                              // ),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppDefaultColors.colorPrimaryGrey[900],
-                              ),
-                              softWrap: true,
-                              overflow: TextOverflow.clip,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ],
