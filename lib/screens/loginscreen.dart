@@ -1,5 +1,7 @@
 // import 'dart:js';
 
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
@@ -415,7 +417,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor: AppDefaultColors.colorPrimaryGrey[50],
                           ),
                           onPressed: () async {
-                            passInputValidator();
+                            passInputValidator();                            
                             // await CacheHandler().removeFromCache('user_ident');
                             // await CacheHandler().removeFromCache('user_name');
                           },

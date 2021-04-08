@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
+import 'package:english_words/english_words.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:save_pass/models/resources/strings.dart';
 
 class Cryptograph {
   String password;
@@ -158,5 +162,212 @@ class Cryptograph {
     print('Decrypted Content: $decodedDecryptedContent');
 
     return decodedDecryptedContent;
+  }
+}
+
+class Generator {
+  
+  static final Random _random = Random.secure();
+
+  // static List<int> generateSalt([int length = 32]) {
+  //   return List<int>.generate(length, (i) => _random.nextInt(256));
+  // }
+
+  bool probabilityFromComplexity(int complexity, [lessRare = false]) {
+    /// returns a bool with the propability of the complexity int to be true.
+    if (!lessRare) {
+      return _random.nextInt(complexity + 1) == complexity ? true : false;
+    } else {
+      return _random.nextInt(((complexity + 1) / 2).round()) == (complexity / 2).round(); 
+    }
+  }
+
+  Map<String, dynamic> generatePassword(
+    int length,
+    int complexity,
+    bool containWords,
+    bool containNumbers,
+    bool containSpecialchar,
+    bool containUppercase,
+    bool containLowercase,
+  ) {
+  Map<String, dynamic> passwordMap = {};
+  int whichCharacter = 0;
+  List uppercase = [
+    'Q',
+    'W',
+    'E',
+    'R',
+    'T',
+    'Z',
+    'U',
+    'I',
+    'O',
+    'P',
+    'A',
+    'S',
+    'D',
+    'F',
+    'G',
+    'H',
+    'J',
+    'K',
+    'L',
+    'Y',
+    'X',
+    'C',
+    'V',
+    'B',
+    'N',
+    'M',
+  ];
+  List lowercase = [
+    'q',
+    'w',
+    'e',
+    'r',
+    't',
+    'z',
+    'u',
+    'i',
+    'o',
+    'p',
+    'a',
+    's',
+    'd',
+    'f',
+    'g',
+    'h',
+    'j',
+    'k',
+    'l',
+    'y',
+    'x',
+    'c',
+    'v',
+    'b',
+    'n',
+    'm',
+  ];
+  List digits = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+  ];
+  List punctuations = [
+    '!',
+    '"',
+    '#',
+    '\$',
+    '&',
+    '\'',
+    '(',
+    ')',
+    '*',
+    '+',
+    ',',
+    '-',
+    '.',
+    '/',
+    ':',
+    ';',
+    '<',
+    '>',
+    '=',
+    '?',
+    '@',
+    '[',
+    '\\',
+    ']',
+    '^',
+    '_',
+    '`',
+    '{',
+    '|',
+    '}',
+    '~'
+  ];
+
+  for (int iter = 0; iter < length; iter++) {
+    String i = iter.toString().padLeft(3);
+    if (probabilityFromComplexity(complexity, true) && containWords) {
+      int where = _random.nextInt(nounsWithLessThanTwoSyllables.length);
+      String word = nounsWithLessThanTwoSyllables[where];
+      passwordMap[i] = {word : 'grey_bright'};
+    } else {
+      String charval = '';
+      if (!probabilityFromComplexity(complexity, true)) {
+        whichCharacter = _random.nextInt(2);
+      } else {
+        whichCharacter = 3;
+      }
+      bool exsists = false;
+      if (!(whichCharacter == 3)) {
+        if (whichCharacter == 0 && containSpecialchar) {
+          for (int ii = 0; ii < (complexity / 4).round(); ii++) {
+            charval += punctuations[_random.nextInt(punctuations.length)];
+          }
+          passwordMap[i] = {charval : 'red'};
+        } else if (whichCharacter == 1 && containNumbers) {
+          for (int ii = 0; ii < (complexity / 4).round(); ii++) {
+            charval += digits[_random.nextInt(digits.length)];
+          }
+          passwordMap[i] = {charval : 'blue'};
+        }
+      } else {
+        if (containUppercase && containLowercase) {
+          if (_random.nextBool()) {
+            for (int ii = 0; ii < (length / 4).round(); ii++) {
+              charval += uppercase[_random.nextInt(uppercase.length)];
+            }
+            passwordMap[i] = {charval : 'grey'};
+          } else {
+            for (int ii = 0; ii < (length / 4).round(); ii++) {
+              charval += lowercase[_random.nextInt(lowercase.length)];
+            }
+            passwordMap[i] = {charval : 'grey'};            
+          }
+        } else if (containUppercase) {
+            for (int ii = 0; ii < (length / 4).round(); ii++) {
+              charval += uppercase[_random.nextInt(uppercase.length)];
+            }
+            passwordMap[i] = {charval : 'grey'};          
+        } else if (containLowercase) {
+            for (int ii = 0; ii < (complexity / 4).round(); ii++) {
+              charval += lowercase[_random.nextInt(lowercase.length)];
+            }
+            passwordMap[i] = {charval : 'grey'};
+        }
+      }
+    }
+  }
+
+  // _write(text) async {
+  //   final Directory directory = await getApplicationDocumentsDirectory();
+  //   final File file = File('${directory.path}/my_file.txt');
+  //   await file.writeAsString(text.toString());
+  // }
+
+  // int ind = 0;
+  // List<String> newnouns = [];
+  // for(String i in nouns) {
+  //   if (syllables(i) <= 2) {
+  //     newnouns.add(i);
+  //   }
+  //   ind++;
+  // }
+  // print(newnouns);
+  // _write(newnouns);
+
+
+
+  return passwordMap;
   }
 }
