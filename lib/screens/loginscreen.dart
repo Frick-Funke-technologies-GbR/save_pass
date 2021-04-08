@@ -138,9 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(_showPassword);
     }
 
-    void testFunction() async {
-      
-    }
+    void testFunction() async {}
 
     void passInputValidator([String username]) async {
       var passwordChecked = await checkMasterPassword(
@@ -403,21 +401,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 245, bottom: 20),
-                        child: FlatButton(
+                        margin: EdgeInsets.only(left: 270, bottom: 20),
+                        child: TextButton(
                           key: passButtonKey,
                           child: Icon(
                             Icons.lock_open,
-                            color: AppDefaultColors.colorPrimaryBlue,
+                            // color: AppDefaultColors.colorPrimaryBlue,
                           ),
                           // color: AppDefaultColors.colorPrimaryBlue,
                           // splashColor: AppDefaultColors.colorPrimaryBlue,
+                          style: TextButton.styleFrom(
+                            primary: AppDefaultColors.colorPrimaryBlue,
+                            backgroundColor: AppDefaultColors.colorPrimaryGrey[50],
+                          ),
                           onPressed: () async {
                             passInputValidator();
                             // await CacheHandler().removeFromCache('user_ident');
                             // await CacheHandler().removeFromCache('user_name');
                           },
-                          color: AppDefaultColors.colorPrimaryGrey[50],
                           // elevation: 6,
                         ),
                       ),

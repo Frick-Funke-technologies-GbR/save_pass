@@ -308,11 +308,7 @@ class _PasswordActionButtonWithDialogWidgetState
                 actions: [
                   ButtonBar(
                     children: [
-                      FlatButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        color: AppDefaultColors.colorPrimaryBlue,
+                      TextButton(
                         // textColor: Colors.white,
                         // color: AppDefaultColors.colorPrimaryGrey[500],
                         onPressed: () async {
@@ -598,11 +594,7 @@ class _PasswordActionButtonWithDialogWidgetState
                 ],
               ),
               actions: [
-                FlatButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  color: AppDefaultColors.colorPrimaryBlue,
+                TextButton(
                   // textColor: Colors.white,
                   // color: AppDefaultColors.colorPrimaryGrey[500],
                   onPressed: () async {
@@ -846,7 +838,7 @@ class _PasswordActionButtonWithDialogWidgetState
                 actions: [
                   ButtonBar(
                     children: [
-                      FlatButton(
+                      TextButton(
                         // textColor: AppDefaultColors.colorPrimaryBlue,
                         child: Text(
                           'Add own password',
@@ -858,12 +850,15 @@ class _PasswordActionButtonWithDialogWidgetState
                           // Navigator.of(context).pop();
                           validateAddPasswordEntryFields(false, context);
                         },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                        )
                       ),
-                      FlatButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        color: AppDefaultColors.colorPrimaryBlue,
+                      TextButton(
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(5),
+                        // ),
+                        // color: AppDefaultColors.colorPrimaryBlue,
                         // textColor: Colors.white,
                         // color: AppDefaultColors.colorPrimaryGrey[500],
                         onPressed: () {

@@ -146,12 +146,8 @@ Future showAddPasswordDialog(BuildContext context, bool register) async {
       actions: [
         ButtonBar(
           children: [
-            FlatButton(
+            TextButton(
               child: Text('Submit'),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-              color: AppDefaultColors.colorPrimaryBlue,
               // key: _submitButtonKey,
               // textColor: Colors.white,
               // color: AppDefaultColors.colorPrimaryGrey[500],
