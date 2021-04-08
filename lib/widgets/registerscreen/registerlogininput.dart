@@ -36,7 +36,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
       ),
       child: AnimatedCrossFade(
         duration: Duration(milliseconds: 200),
-        // TODO: Add the coose passwor widget
+        // TODO: Add the coose password widget
         crossFadeState: CrossFadeState.showFirst,
         secondChild: ChoosePasswordWidget(),
         firstChild: Column(

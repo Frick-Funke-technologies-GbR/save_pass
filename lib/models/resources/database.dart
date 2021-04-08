@@ -5,7 +5,6 @@ import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHandler {
-
   getDatabase() async {
     final Future<Database> database = openDatabase(
       join(await getDatabasesPath(), 'save_pass.db'),
@@ -45,7 +44,8 @@ class DatabaseHandler {
       Map<String, dynamic> entry = Map.of(iteratedEntry);
       // FIXME: Remove following line for future implementation of creation date
       entry.remove('creation_date');
-      PasswordEntryClass encryptedEntry = await generatePasswordEntry(password, entry);
+      PasswordEntryClass encryptedEntry =
+          await generatePasswordEntry(password, entry);
       passwordEntries.add(encryptedEntry);
     }
     return passwordEntries;
@@ -55,15 +55,16 @@ class DatabaseHandler {
       String password, Map<String, dynamic> map) async {
     print('hallolsdkjföasjfiafn');
     return await PasswordEntryClass().fromEncryptedMap(
-        password,
-        map['id'],
-        map['alias'],
-        map['password'],
-        map['username'],
-        map['url'],
-        map['notes'],
-        map['thumbnail'],
-        map['encryption_salt'],);
+      password,
+      map['id'],
+      map['alias'],
+      map['password'],
+      map['username'],
+      map['url'],
+      map['notes'],
+      map['thumbnail'],
+      map['encryption_salt'],
+    );
   }
 
   Future<bool> checkPassword(password) async {

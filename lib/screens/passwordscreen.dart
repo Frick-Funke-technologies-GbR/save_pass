@@ -49,6 +49,7 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
+  Future<List<PasswordEntryClass>> getPasswordEntriesFuture;
   String _searchText = '';
   // List<PasswordEntryClass> _entries;
 
@@ -60,7 +61,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
     String userIdent = await cache.getSecureStringFromCache('user_ident');
     String password = await cache.getSecureStringFromCache('master_password');
 
-    List<PasswordEntryClass> entries = await db.getPasswordEntries(password); 
+    List<PasswordEntryClass> entries = await db.getPasswordEntries(password);
 
     if (!entries.isEmpty) {
       // FIXME: check, if they aciually begin with 1
@@ -106,7 +107,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
       new GlobalKey<ScaffoldState>();
 
   final _searchFilteringController = TextEditingController();
-  
 
   // TODO: Add serch functionality with one of the following functions
   // @override
@@ -147,6 +147,13 @@ class _PasswordScreenState extends State<PasswordScreen> {
   //     // });
   //   }
   // }
+  //
+
+  @override
+  void initState() {
+    getPasswordEntriesFuture = getPasswordEntries();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -402,44 +409,79 @@ class _PasswordScreenState extends State<PasswordScreen> {
                             // TODO: add refresh function
                           },
                           child: FutureBuilder<List<PasswordEntryClass>>(
-                            future: getPasswordEntries(),
+                            future: getPasswordEntriesFuture,
+                            // initialData: [],
                             builder: (context, snapshot) {
-                              if (snapshot.data.isEmpty) {
-                                return Center(
-                                  child: Text('no entries added yet'),
-                                );
-                              } else if (snapshot.hasData) {
-                                List<PasswordEntryClass> data = snapshot.data;
-                                // if (_searchText.isNotEmpty) {
-                                //   List _tempList =
-                                //       new List<PasswordEntryClass>();
-                                //   for (int i = 0; i < data.length; i++) {
-                                //     if (data[i].alias.toLowerCase().contains(
-                                //             _searchText.toLowerCase()) ||
-                                //         data[i].username.toLowerCase().contains(
-                                //             _searchText.toLowerCase())) {
-                                //       _tempList.add(data[i]);
-                                //     }
-                                //   }
-                                //   data = _tempList;
-                                //   print(_tempList);
-                                // }
-                                return _passwordEntryListView(data);
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                  child: Text('${snapshot.error}'),
-                                );
+                              // print('test');
+                              // print(snapshot.hasData);
+                              // print(snapshot.data);
+                              // if (!snapshot.hasData) {
+                              //   print('test7einhalb');
+                              //   return CircularProgressIndicator(
+                              //       // borderSize: 5,
+                              //       // backgroundColor: AppDefaultColors.colorPrimaryBlue,
+                              //       strokeWidth: 7,
+                              //       // size: 30,
+                              //       // inverted: true,
+                              //       // duration: Duration(milliseconds: 400),
+                              //     );
+                              // }
+                              // if (snapshot.hasData) {
+                              //   print('test3');
+                              //   if (snapshot.hasError) {
+                              //     print('test4');
+                              //     return Center(
+                              //       child: Text('${snapshot.error}'),
+                              //     );
+                              //   }
+                              //   List<PasswordEntryClass> data = snapshot.data;
+                              //   // if (_searchText.isNotEmpty) {
+                              //   //   List _tempList =
+                              //   //       new List<PasswordEntryClass>();
+                              //   //   for (int i = 0; i < data.length; i++) {
+                              //   //     if (data[i].alias.toLowerCase().contains(
+                              //   //             _searchText.toLowerCase()) ||
+                              //   //         data[i].username.toLowerCase().contains(
+                              //   //             _searchText.toLowerCase())) {
+                              //   //       _tempList.add(data[i]);
+                              //   //     }
+                              //   //   }
+                              //   //   data = _tempList;
+                              //   //   print(_tempList);
+                              //   // }
+                              //   return _passwordEntryListView(data);
+                              // } else if (snapshot.data.isEmpty &&
+                              //     snapshot.connectionState ==
+                              //         ConnectionState.done) {
+                              //   print('test5');
+                              //   // if (snapshot.data.isEmpty) {
+                              //   return Center(
+                              //     child: Text('no entries added yet'),
+                              //   );
+                              //   // }
+                              // }
+                              // return CircularProgressIndicator();
+                              // FIXME: find out why the HACK the circularProgressIndicator just DOESNT WORK MAAAAAN 
+                              print(snapshot.connectionState);
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                  break;
+                                default:
+                                  if (snapshot.hasError) {
+                                    print('test4');
+                                    return Center(
+                                      child: Text('${snapshot.error}'),
+                                    );
+                                  } else if (snapshot.data.isEmpty) {
+                                    return Center(
+                                      child: Text('no entries added yet'),
+                                    );
+                                  }
+                                  List<PasswordEntryClass> data = snapshot.data;
+                                  return _passwordEntryListView(data);
                               }
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  // borderSize: 5,
-                                  // backgroundColor: AppDefaultColors.colorPrimaryBlue,
-                                  strokeWidth: 7,
-                                  // size: 30,
-                                  // inverted: true,
-                                  // duration: Duration(milliseconds: 400),
-                                ),
-                              );
                             },
                           ),
                         )
