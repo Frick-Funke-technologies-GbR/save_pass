@@ -124,23 +124,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final userInputKey = GlobalKey<FormState>();
     final passInputKey = GlobalKey<FormState>();
     final passButtonKey = GlobalKey<FormState>();
-    // var content = [
-    //   'Hello this is a brand new language, i\'m working on right now',
-    //   'What\'s our best blue cheese?',
-    // ];
-    void togglePasswordVisibillity() {
-      _showPassword = !_showPassword;
-      if (_showPassword) {
-        setState(() {
-          _showPassword = false;
-        });
-      } else {
-        _showPassword = true;
-      }
-      print(_showPassword);
-    }
-
-    void testFunction() async {}
 
     void passInputValidator([String username]) async {
       var passwordChecked = await checkMasterPassword(
@@ -316,91 +299,95 @@ class _LoginScreenState extends State<LoginScreen> {
                           vertical: 10,
                           horizontal: 10,
                         ),
-                        child: Form(
-                          key: passInputKey,
-                          child: new TextFormField(
-                            controller: passwordTextFieldController,
-                            // key: passInputKey,
-                            // FIXME: Fix the state not updating
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter a password';
-                              }
-                              if (wrongPassCount > 3) {
-                                // this.deactivate();
-                                return 'You failed to enter the correct password three times';
-                              }
+                        child: StatefulBuilder(builder: (context, setState) {
+                          return Form(
+                            key: passInputKey,
+                            child: new TextFormField(
+                              controller: passwordTextFieldController,
+                              // key: passInputKey,
+                              // FIXME: Fix the state not updating
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Please enter a password';
+                                }
+                                if (wrongPassCount > 3) {
+                                  // this.deactivate();
+                                  return 'You failed to enter the correct password three times';
+                                }
 
-                              // bool checked = checkMasterPassword(value);
-                              // String _return = 'Password is incorrect';
+                                // bool checked = checkMasterPassword(value);
+                                // String _return = 'Password is incorrect';
 
-                              // if (checked) {
-                              //   Navigator.of(context)
-                              //       .pushNamed("/newpasswordscreen");
-                              // }
-                              // // print('mensch');
-                              // // print(checked);
+                                // if (checked) {
+                                //   Navigator.of(context)
+                                //       .pushNamed("/newpasswordscreen");
+                                // }
+                                // // print('mensch');
+                                // // print(checked);
 
-                              // // String delay() {
-                              // //   // int sec = 0;
-                              // //   // while (checked == null) {
-                              // //   //   sec += sec;
-                              // //   //   print(sec);
-                              // //   // }
-                              // //   if (checked) {
-                              // //     Navigator.of(context).pushNamed("/newpasswordscreen");
-                              // //   } else if (checked == false) {
-                              // //     return 'Password is incorrect';
-                              // //   }
-                              // // }
+                                // // String delay() {
+                                // //   // int sec = 0;
+                                // //   // while (checked == null) {
+                                // //   //   sec += sec;
+                                // //   //   print(sec);
+                                // //   // }
+                                // //   if (checked) {
+                                // //     Navigator.of(context).pushNamed("/newpasswordscreen");
+                                // //   } else if (checked == false) {
+                                // //     return 'Password is incorrect';
+                                // //   }
+                                // // }
 
-                              // // print('mensch2');
-                              // // print(checked);
-                              // // String delayedchecked = delay();
-                              // // return delayedchecked;
-                              // print('niunununun');
-                              // print(fieldsValidator);
-                              if (fieldsValidator) {
-                                return null;
-                              }
-                              return 'Password is incorrect';
-                            },
-                            enableInteractiveSelection: true,
-                            onEditingComplete: () {
-                              // passInputKey.currentState.validate();
-                              // passButtonKey.currentState.
-                              passInputValidator();
-                            },
-                            keyboardType: TextInputType.visiblePassword,
-                            obscureText: !_showPassword,
-                            decoration: InputDecoration(
-                              // prefixIcon: Icon(Icons.security),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  Icons.remove_red_eye,
-                                  color: _showPassword
-                                      ? AppDefaultColors.colorPrimaryBlue
-                                      : AppDefaultColors.colorPrimaryGrey,
+                                // // print('mensch2');
+                                // // print(checked);
+                                // // String delayedchecked = delay();
+                                // // return delayedchecked;
+                                // print('niunununun');
+                                // print(fieldsValidator);
+                                if (fieldsValidator) {
+                                  return null;
+                                }
+                                return 'Password is incorrect';
+                              },
+                              enableInteractiveSelection: true,
+                              onEditingComplete: () {
+                                // passInputKey.currentState.validate();
+                                // passButtonKey.currentState.
+                                passInputValidator();
+                              },
+                              keyboardType: TextInputType.visiblePassword,
+                              obscureText: !_showPassword,
+                              decoration: InputDecoration(
+                                // prefixIcon: Icon(Icons.security),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    Icons.remove_red_eye,
+                                    color: _showPassword
+                                        ? AppDefaultColors.colorPrimaryBlue
+                                        : AppDefaultColors.colorPrimaryGrey,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _showPassword = !_showPassword;
+                                    });
+                                    print(_showPassword);
+                                  },
                                 ),
-                                onPressed: () {
-                                  testFunction();
-                                  togglePasswordVisibillity();
-                                },
-                              ),
-                              // fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
+                                // fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  ),
                                 ),
+                                filled: true,
+                                // hintText: '',
+                                labelText: 'Password',
                               ),
-                              filled: true,
-                              // hintText: '',
-                              labelText: 'Password',
                             ),
-                          ),
-                        ),
+                          );
+                        }),
                       ),
                       Container(
                         margin: EdgeInsets.only(left: 270, bottom: 20),
@@ -414,10 +401,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           // splashColor: AppDefaultColors.colorPrimaryBlue,
                           style: TextButton.styleFrom(
                             primary: AppDefaultColors.colorPrimaryBlue,
-                            backgroundColor: AppDefaultColors.colorPrimaryGrey[50],
+                            backgroundColor:
+                                AppDefaultColors.colorPrimaryGrey[50],
                           ),
                           onPressed: () async {
-                            passInputValidator();                            
+                            passInputValidator();
                             // await CacheHandler().removeFromCache('user_ident');
                             // await CacheHandler().removeFromCache('user_name');
                           },

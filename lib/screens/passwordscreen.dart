@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 // import 'package:path/path.dart' as Path;
 import 'package:loading_animations/loading_animations.dart';
@@ -153,6 +154,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
   void initState() {
     getPasswordEntriesFuture = getPasswordEntries();
     super.initState();
+  }
+
+  void refreshPasswordEntrys() {
+    setState(() {
+      getPasswordEntriesFuture = getPasswordEntries();
+    });
   }
 
   @override
@@ -407,6 +414,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                       ? RefreshIndicator(
                           onRefresh: () async {
                             // TODO: add refresh function
+                            refreshPasswordEntrys();
                           },
                           child: FutureBuilder<List<PasswordEntryClass>>(
                             future: getPasswordEntriesFuture,
@@ -461,7 +469,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                               //   // }
                               // }
                               // return CircularProgressIndicator();
-                              // FIXME: find out why the HACK the circularProgressIndicator just DOESNT WORK MAAAAAN 
+                              // FIXME: find out why the HACK the circularProgressIndicator just DOESNT WORK MAAAAAN
                               print(snapshot.connectionState);
                               switch (snapshot.connectionState) {
                                 case ConnectionState.waiting:
