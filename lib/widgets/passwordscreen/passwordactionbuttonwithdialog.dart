@@ -170,14 +170,16 @@ class _PasswordActionButtonWithDialogWidgetState
     List<String> ids = await cache.getStringListFromCache('stored_ids');
 
     // check if alias already exists
-    for (String id in ids) {
-      String storedalias = await cache
-          .getSecureStringFromCache('stored_alias_with_id_' + id.toString());
+    if (ids != null) {
+      for (String id in ids) {
+        String storedalias = await cache
+            .getSecureStringFromCache('stored_alias_with_id_' + id.toString());
 
-      if (storedalias == alias) {
-        setState(() {
-          _aliasValidator = false;
-        });
+        if (storedalias == alias) {
+          setState(() {
+            _aliasValidator = false;
+          });
+        }
       }
     }
 
