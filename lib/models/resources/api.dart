@@ -54,6 +54,7 @@ class ApiProvider {
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       await _saveUserIdent(result["data"]["user_ident"]);
+      await _saveUserName(result["data"]['username']);
       return UserClass.fromJson(result["data"]);
     } else if (response.statusCode == 400) {
       // If email or username already exist, throw an error
@@ -116,6 +117,7 @@ class ApiProvider {
       }
     } else {
       _savePassword(password);
+      _saveUserIdent(userIdent);
       return true;
     }
   }
@@ -125,7 +127,6 @@ class ApiProvider {
     String password,
   ) async {
     // try {
-    // FIXME: Hardfix this ClientException 'connection closed while receiving data' bug
     print('[DEBUG] userIdent ' + userIdent);
     final response = await retry(
       () => client.get(

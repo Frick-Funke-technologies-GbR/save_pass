@@ -589,6 +589,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                     Navigator.of(context)
                         .pushReplacementNamed('/passwordscreen');
                     CacheHandler().addBoolToCache('first_time_login', false);
+                    ApiProvider().getUserData(await CacheHandler().getSecureStringFromCache('username'));
                   }
                 },
               ),

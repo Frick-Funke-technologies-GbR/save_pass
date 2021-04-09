@@ -20,7 +20,6 @@ Future<String> getUserIdent() async {
 }
 
 // Future<bool> checkMasterPassword(String password) async {
-//   // TODO: Add get username from progreq.json
 //   ApiProvider api = ApiProvider();
 //   api.loginUser('paulaner');
 //   String userIdent = await getUserIdent();
@@ -50,24 +49,23 @@ Future<bool> checkMasterPassword(
 
   // print('[result]: ' + result);
 
-  ApiProvider api = ApiProvider();
-  if (username != null) {
-    try {
-      // FIXME: The followong schould only be called after register
-      api.getUserData(username);
-    } catch (e) {
-      // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
-      // FIXME: Here, the state also doesnt change for Snackbar
-      // print('ALALALALALALALALALA');
-      // print(e.toString().replaceAll('Exception', 'Error'));
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceAll('Exception', 'Error')),
-        ),
-      );
-      return null;
-    }
-  }
+  // ApiProvider api = ApiProvider();
+  // if (username != null) {
+  //   try {
+  //     // FIXME: The followong schould only be called after register
+  //   } catch (e) {
+  //     // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
+  //     // FIXME: Here, the state also doesnt change for Snackbar
+  //     // print('ALALALALALALALALALA');
+  //     // print(e.toString().replaceAll('Exception', 'Error'));
+  //     Scaffold.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(e.toString().replaceAll('Exception', 'Error')),
+  //       ),
+  //     );
+  //     return null;
+  //   }
+  // }
   String userIdent = await getUserIdent();
   // TODO: Add route when checkPass receaves 404 (list empty)
   // bool checkedIn = await api.login(userIdent, password);
