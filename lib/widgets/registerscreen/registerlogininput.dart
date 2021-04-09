@@ -326,7 +326,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
 
       Scaffold.of(context).showSnackBar(
         SnackBar(
-          content: Text('Registretion progress successfully'),
+          content: Text('Registration progress successfully'),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
           shape: RoundedRectangleBorder(
