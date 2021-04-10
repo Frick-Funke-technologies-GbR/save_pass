@@ -89,7 +89,6 @@ class PasswordEntryClass {
   ) async {
     Cryptograph c = Cryptograph(masterPassword);
     List<int> key = await c.generateKeyFromPass(keySalt: salt);
-
     try {
       return PasswordEntryClass(
         id,

@@ -21,18 +21,19 @@ Future<String> validatePasswordFields() async {
     // _passwordFieldKey.currentState.validate();
   } else {
     String userIdent = await cache.getSecureStringFromCache('user_ident');
-    String masterPassword =
-        await cache.getSecureStringFromCache('master_password');
+    // FIXME: possible error found in register progress. if not ignore/delete this comment
+    // String masterPassword =
+    //     await cache.getSecureStringFromCache('master_password');
 
     String exception = null;
 
-    await api
-        .login(userIdent, masterPassword)
-        .catchError(
-            (e) => e = exception == null ? null : exception.toString());
+    // await api
+    //     .login(userIdent, masterPassword)
+    //     .catchError(
+    //         (e) => e = exception == null ? null : exception.toString());
     
-    await CacheHandler().addSecureStringToCache('master_password', masterPassword);
-    return exception;
+    await CacheHandler().addSecureStringToCache('master_password', _passwordFieldController.text);
+    return null;
   }
 }
 

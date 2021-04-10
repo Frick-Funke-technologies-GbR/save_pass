@@ -29,45 +29,43 @@ Future<String> getUserIdent() async {
 
 Future<bool> checkMasterPassword(
     String password, context, String username) async {
-  // TODO: Add get username from progreq.json
-  // TODO: Add check username if username not in cache
+  if (username == null) {
+    try {
+      CacheHandler().getSecureStringFromCache('user_name');
+    } catch (e) {
+      print('[EXCEPTION_FIX] ' + e.toString());
+    }
+  }
 
-  // Cryptograph c = Cryptograph(password);
+  // Check if user_data was already requested successfully at register
+  bool userIdentAlreadyStored = true;
+  try {
+    CacheHandler().getSecureStringFromCache('user_ident');
+  } catch (e) {
+    print('[EXCEPTION_FIX] ' + e.toString());
+    userIdentAlreadyStored = false;
+  }
 
-  // List<int> key = await c.generateKeyFromPass();
+  if (!userIdentAlreadyStored) {
+    try {
+      // FIXME: The followong schould only be called after register
+      ApiProvider().getUserData(username);
+    } catch (e) {
+      // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
+      // FIXME: Here, the state also doesnt change for Snackbar
+      // print('ALALALALALALALALALA');
+      // print(e.toString().replaceAll('Exception', 'Error'));
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception', 'Error')),
+        ),
+      );
+      return null;
+    }
+  }
 
-  // List<int> encrypted = await c.encrypt('hallo', key);
-
-  // List<int> salt = c.encryptionSalt;
-  // int macLength = c.encryptionMacLength;
-
-  // print(macLength);
-
-  // Cryptograph cn = Cryptograph(password);
-
-  // String result = await cn.decrypt(encrypted, key, salt: salt, macLength: macLength);
-
-  // print('[result]: ' + result);
-
-  // ApiProvider api = ApiProvider();
-  // if (username != null) {
-  //   try {
-  //     // FIXME: The followong schould only be called after register
-  //   } catch (e) {
-  //     // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
-  //     // FIXME: Here, the state also doesnt change for Snackbar
-  //     // print('ALALALALALALALALALA');
-  //     // print(e.toString().replaceAll('Exception', 'Error'));
-  //     Scaffold.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(e.toString().replaceAll('Exception', 'Error')),
-  //       ),
-  //     );
-  //     return null;
-  //   }
-  // }
   String userIdent = await getUserIdent();
-  // TODO: Add route when checkPass receaves 404 (list empty)
+  // TODO: Add route when checkPass receives 404 (list empty)
   // bool checkedIn = await api.login(userIdent, password);
   bool checkedIn = await PasswordEntryDatabaseActions(password).login();
   return checkedIn;
@@ -135,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
         //   Navigator.of(context).pushNamed("/newpasswordscreen");
         // }
       } else {
+        print('[PASSWORD_CHECK] ' + passwordChecked.toString());
         setState(() {
           fieldsValidator = passwordChecked;
         });
@@ -215,7 +214,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             //   });
                             // });
                             if (snapshot.data) {
-                              // if (true) {
+                              setState(() {
+                                _showUsernameField = true;
+                              });
                               return Container(
                                 // constraints: BoxConstraints(maxHeight: 50, ),
                                 decoration: BoxDecoration(
@@ -305,6 +306,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               // key: passInputKey,
                               // FIXME: Fix the state not updating
                               validator: (value) {
+                                print(
+                                    '[VALIDATE_PASSWORDFIELD] passwordcheck: ' +
+                                        fieldsValidator.toString());
                                 if (value.isEmpty) {
                                   return 'Please enter a password';
                                 }
@@ -345,6 +349,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (fieldsValidator) {
                                   return null;
                                 }
+                                // FIXME: fix not changing state here
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('wrong password, ' +
+                                        (3 - wrongPassCount).toString() +
+                                        ' trys left'),
+                                  ),
+                                );
                                 return 'Password is incorrect';
                               },
                               enableInteractiveSelection: true,
@@ -403,7 +415,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 AppDefaultColors.colorPrimaryGrey[50],
                           ),
                           onPressed: () async {
-                            passInputValidator();
+                            passInputValidator(_showUsernameField
+                                ? usernameTextFieldController.text
+                                : null);
                             // await CacheHandler().removeFromCache('user_ident');
                             // await CacheHandler().removeFromCache('user_name');
                           },

@@ -1,5 +1,5 @@
 // import 'dart:js';
-import 'dart:ui';
+// import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -19,7 +19,7 @@ import 'package:save_pass/widgets/uni/drawer.dart';
 import 'package:save_pass/widgets/passwordscreen/passwordentry.dart';
 import 'package:save_pass/widgets/uni/usercard.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:ui' as ui;
+// import 'dart:ui' as ui;
 
 class PasswordScreen extends StatefulWidget {
   // final List<PasswordEntryClass> contents = [PasswordEntryClass(1, 'a', 'alias', 'note')];
@@ -164,7 +164,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // task
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.transparent,
@@ -411,12 +410,13 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
                   // TODO: Add no data handler
                   child: ['contents', 'moin'].length != 0
+                      // FIXME: fix state not changing
                       ? RefreshIndicator(
                           onRefresh: () async {
-                            // TODO: add refresh function
                             refreshPasswordEntrys();
                           },
                           child: FutureBuilder<List<PasswordEntryClass>>(
+                            // TODO: change the future to an Isolate
                             future: getPasswordEntriesFuture,
                             // initialData: [],
                             builder: (context, snapshot) {
@@ -559,62 +559,62 @@ class _PasswordScreenState extends State<PasswordScreen> {
 //   }
 // }
 
-class BackgroundPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final height = size.height;
-    final width = size.width;
-    Paint paint = Paint();
+// class BackgroundPainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final height = size.height;
+//     final width = size.width;
+//     Paint paint = Paint();
 
-    Path mainBackground = Path();
-    mainBackground.addRect(Rect.fromLTRB(0, 0, width, height));
-    paint.color = AppDefaultColors.colorPrimaryGrey[300];
-    canvas.drawPath(mainBackground, paint);
+//     Path mainBackground = Path();
+//     mainBackground.addRect(Rect.fromLTRB(0, 0, width, height));
+//     paint.color = AppDefaultColors.colorPrimaryGrey[300];
+//     canvas.drawPath(mainBackground, paint);
 
-    Path circlePathOne = Path();
-    // Start paint from 20% height to the left
-    circlePathOne.moveTo(0, height * 0.1);
-    circlePathOne.quadraticBezierTo(
-      width * 0.9,
-      height * 0.1,
-      width * 0,
-      height * 0.9,
-    );
-    paint
-      ..shader = ui.Gradient.linear(
-        Offset(width * 0, height * 0.4),
-        Offset(width * 0.9, height * 0.1),
-        [
-          AppDefaultColors.colorPrimaryBlue,
-          Colors.white,
-        ],
-      );
-    canvas.drawPath(circlePathOne, paint);
+//     Path circlePathOne = Path();
+//     // Start paint from 20% height to the left
+//     circlePathOne.moveTo(0, height * 0.1);
+//     circlePathOne.quadraticBezierTo(
+//       width * 0.9,
+//       height * 0.1,
+//       width * 0,
+//       height * 0.9,
+//     );
+//     paint
+//       ..shader = ui.Gradient.linear(
+//         Offset(width * 0, height * 0.4),
+//         Offset(width * 0.9, height * 0.1),
+//         [
+//           AppDefaultColors.colorPrimaryBlue,
+//           Colors.white,
+//         ],
+//       );
+//     canvas.drawPath(circlePathOne, paint);
 
-    Path circlePathTwo = Path();
-    // Start paint from 20% height to the left
-    circlePathTwo.moveTo(width * 1, height * 0.1);
-    circlePathTwo.quadraticBezierTo(
-      width * 0.1,
-      height * 0.8,
-      width * 1,
-      height * 0.9,
-    );
-    // paint.color = AppDefaultColors.colorPrimaryBlue;
-    paint
-      ..shader = ui.Gradient.linear(
-        Offset(width * 0, height * 0.9),
-        Offset(width * 0.9, height * 0.4),
-        [
-          Colors.white,
-          AppDefaultColors.colorPrimaryBlue,
-        ],
-      );
-    canvas.drawPath(circlePathTwo, paint);
-  }
+//     Path circlePathTwo = Path();
+//     // Start paint from 20% height to the left
+//     circlePathTwo.moveTo(width * 1, height * 0.1);
+//     circlePathTwo.quadraticBezierTo(
+//       width * 0.1,
+//       height * 0.8,
+//       width * 1,
+//       height * 0.9,
+//     );
+//     // paint.color = AppDefaultColors.colorPrimaryBlue;
+//     paint
+//       ..shader = ui.Gradient.linear(
+//         Offset(width * 0, height * 0.9),
+//         Offset(width * 0.9, height * 0.4),
+//         [
+//           Colors.white,
+//           AppDefaultColors.colorPrimaryBlue,
+//         ],
+//       );
+//     canvas.drawPath(circlePathTwo, paint);
+//   }
 
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return oldDelegate != this;
-  }
-}
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) {
+//     return oldDelegate != this;
+//   }
+// }

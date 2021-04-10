@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:path/path.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
+import 'package:save_pass/models/resources/cache.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHandler {
@@ -79,13 +80,22 @@ class DatabaseHandler {
     );
 
     if (map.isEmpty) {
-      return true;
+      String cachedPassword = await CacheHandler().getSecureStringFromCache('master_password');
+      if (cachedPassword == null) {
+        throw Exception('Error when storing the masterpassword on register, please restart app');
+      }
+      // manually check password on securely stored password
+      if (password == cachedPassword) {
+        return true;
+      }
     }
+
+    print('TESTTESTTEST');
 
     Map<String, dynamic> mapAsMap = map[0];
 
     try {
-      PasswordEntryClass().fromEncryptedMap(
+      await PasswordEntryClass().fromEncryptedMap(
         password,
         mapAsMap['id'],
         mapAsMap['alias'],
@@ -98,7 +108,8 @@ class DatabaseHandler {
       );
       return true;
     } on Exception catch (e) {
-      if (e.toString() == 'wrong_password') {
+      print('[EXCEPTION_FIX] ' + e.toString());
+      if (e.toString() == 'Exception: wrong_password') {
         return false;
       } else {
         throw Error(); // FIXME: e.toString() == 'wrong_password' does eventually not work
