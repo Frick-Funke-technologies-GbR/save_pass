@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/authentication/auth.dart';
@@ -5,6 +7,7 @@ import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/models/resources/cryptograph.dart';
 import 'package:save_pass/widgets/uni/addpassworddialog.dart';
 
 class RegisterLoginInputWidget extends StatefulWidget {
@@ -159,6 +162,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                           this.user = user;
                           print(user.toString());
                           try {
+                            String keyDerivationSalt = base64Encode(Cryptograph().salt);
                             UserClass addedUser =
                                 await ApiProvider().registerUser(
                               true,
@@ -167,6 +171,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                               '',
                               user.email,
                             );
+                            await CacheHandler().addStringToCache('key_derivation_salt', keyDerivationSalt);
                             await showAddPasswordDialog(context, true);
                             CacheHandler cache = CacheHandler();
                             await ApiProvider().login(
@@ -316,6 +321,8 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
       _firstNameInputKey.currentState.validate();
       _lastNameInputKey.currentState.validate();
 
+      String keyDerivationSalt = base64Encode(Cryptograph().salt);
+      await CacheHandler().addStringToCache('key_derivation_salt', keyDerivationSalt);
       await api.registerUser(
         false,
         _usernameInputController.text,
@@ -588,8 +595,10 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                     );
                     Navigator.of(context)
                         .pushReplacementNamed('/passwordscreen');
-                    CacheHandler().addBoolToCache('first_time_login', false);
-                    ApiProvider().getUserData(await CacheHandler().getSecureStringFromCache('username'));
+                    cache.addBoolToCache('first_time_login', false);
+                    ApiProvider().getUserData(await cache.getSecureStringFromCache('user_name'));
+                    // TODO: add save user data in app functionality (button already added)
+                    // _toggleSaveUserInApp ? null : cache.removeFromCache('user_name') && cache.removeFromCache('user_ident') && cache.removeFromCache('master_password');
                   }
                 },
               ),

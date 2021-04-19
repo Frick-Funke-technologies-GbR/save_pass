@@ -31,7 +31,8 @@ class ApiProvider {
     String username,
     String firstname,
     String lastname,
-    String emailadress,
+    String emailadress, 
+    // TODO: Add KeyDerivationSalt (base64 encoded)
   ) async {
     final response = await client.post(
       // "http://10.0.2.2:5000/api/register",

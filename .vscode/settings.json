@@ -1,3 +1,9 @@
 {
-    "python.pythonPath": "C:\\Users\\Paul Frick\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
+    "python.pythonPath": "C:\\Users\\Paul Frick\\AppData\\Local\\Programs\\Python\\Python37\\python.exe",
+    "dart.flutterRunAdditionalArgs": [
+        "--no-sound-null-safety"
+    ],
+    "dart.vmAdditionalArgs": [
+        "--no-sound-null-safety"
+    ]
 }

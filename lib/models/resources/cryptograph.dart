@@ -12,45 +12,25 @@ class Cryptograph {
   final List<int> salt = generateSalt();
   List<int> encryptionSalt;
   int encryptionMacLength = 32;
-  Cryptograph(this.password);
+  Cryptograph([this.password]);
 
   static final Random _random = Random.secure();
 
-  static List<int> generateSalt([int length = 32]) {
+  static List<int> generateSalt([int length = 16]) {
     return List<int>.generate(length, (i) => _random.nextInt(256));
   }
 
-  // Future<List<int>> generateKeyFromPass() async {
-  //   /// generate a key from the password
-  //   /// prevoiusely stored in a global variable
-  //   /// Algorythm: Argon2id
-
-  //   final algorithm = DartArgon2id(
-  //     parallelism: 3,
-  //     memorySize: 10000000,
-  //     iterations: 3,
-  //     hashLength: 32,
-  //   );
-
-  //   @override
-  //   final newSecretKey = await algorithm.deriveKey(
-  //     secretKey: SecretKey(password.codeUnits),
-  //     nonce: salt,
-  //   );
-
-  //   final newSecretKeyBytes = await newSecretKey.extractBytes();
-
-  //   return newSecretKeyBytes;
-  // }
-
   Future<List<int>> generateKeyFromPass({List<int> keySalt}) async {
+
     final pbkdf2 = Pbkdf2(
       macAlgorithm: Hmac.sha256(),
-      iterations: 100000,
+      iterations: 50000,
       bits: 128,
     );
 
-    keySalt = keySalt == null ? salt : keySalt;
+    Stopwatch stopwatch = Stopwatch()..start();
+
+    keySalt = keySalt ?? salt;
 
     // Password we want to hash
     final secretKey = SecretKey(password.codeUnits);
@@ -62,10 +42,30 @@ class Cryptograph {
     final newSecretKey = await pbkdf2.deriveKey(
       secretKey: secretKey,
       nonce: nonce,
-    );
+    );  
+
     final newSecretKeyBytes = await newSecretKey.extractBytes();
     print('Result: $newSecretKeyBytes');
+    print('[CRYPTOGRAPH] key generation executed in ${stopwatch.elapsed}');
+    stopwatch.stop();
     return newSecretKeyBytes;
+
+  // TODO: implement Argon2id password deviation in the future
+  // final algorithm = Argon2id(
+  //   parallelism: 3,
+  //   memorySize: 10000000,
+  //   iterations: 3,
+  //   hashLength: 32,
+  // );
+
+  // final newSecretKey = await algorithm.deriveKey(
+  //   secretKey: SecretKey([1,2,3]),
+  //   nonce: [4,5,6],
+  // );
+  // final newSecretKeyBytes = await newSecretKey.extractBytes();
+
+  // print('hashed password: $newSecretKeyBytes');
+
   }
 
   Future<List<int>> encrypt(String decryptedContent, List<int> key) async {
@@ -80,33 +80,32 @@ class Cryptograph {
 
     // Generate a secret key.
     final secretKey = await algorithm.newSecretKeyFromBytes(key);
-    print('Key: ${await secretKey.extractBytes()}');
-    // final secretKeyBytes = secretKey.extractBytes();
-    // print('Secret key: $secretKeyBytes');
 
     // Encrypt
     final secretBox = await algorithm.encrypt(
       encodedDecryptedContent,
       secretKey: secretKey,
+      nonce: salt,
     );
-    print('Key: ${secretKey.extractBytes()}');
-    print('Nonce: ${secretBox.nonce}');
+
+    print('ENCRYPTION KEY: ${await secretKey.extractBytes()}');
+    print('ENCRYPTION SALT: ${secretBox.nonce}');
     // print('NonceLength: ${secretBox.mac.bytes.length}');
-    print('Ciphertext: ${secretBox.cipherText}');
+    print('ENCRYPTION ENCRYPTED CONTENT: ${secretBox.cipherText}');
     print('MAC: ${secretBox.mac.bytes}');
     print('MACLENGTH: ${secretBox.mac.bytes.length}');
 
     encryptionSalt = secretBox.nonce;
     encryptionMacLength = secretBox.mac.bytes.length;
 
-    return secretBox.cipherText + secretBox.nonce + secretBox.mac.bytes;
+    return secretBox.cipherText + secretBox.mac.bytes;
   }
 
   Future<String> decrypt(
     List<int> encryptedContent,
     List<int> key, {
+    List<int> salt, // FIXME add keyword required in future implementation of null savety 
     int macLength,
-    List<int> salt,
   }) async {
     // final secretBox = SecretBox.fromConcatenation(
     //   encryptedContent,
@@ -124,26 +123,28 @@ class Cryptograph {
       Uint8List.sublistView(
         encryptedContentInListView,
         0,
-        encryptedContentInListView.lengthInBytes - macLength - 16,
+        encryptedContentInListView.lengthInBytes - macLength,
       ),
       mac: Mac(
         Uint8List.sublistView(
           encryptedContentInListView,
-          encryptedContentInListView.lengthInBytes - macLength
-          // encryptedContentInListView.lengthInBytes,
+          encryptedContentInListView.lengthInBytes - macLength,
+          encryptedContentInListView.lengthInBytes,
         ),
       ),
-      nonce: Uint8List.sublistView(
-        encryptedContentInListView,
-        encryptedContentInListView.lengthInBytes - macLength - 16,
-        encryptedContentInListView.lengthInBytes - macLength,
-      ),
+      // nonce: Uint8List.sublistView(
+      //   encryptedContentInListView,
+      //   encryptedContentInListView.lengthInBytes - macLength - 16,
+      //   encryptedContentInListView.lengthInBytes - macLength,
+      // ),
+      nonce: salt,
     );
 
     print(encryptedContentInListView.lengthInBytes);
-    print(secretBox.cipherText);
-    print(secretBox.nonce.toString());
-    print(';;;;;;;;;;;;;;;;;;;;;;;;');
+    print('DECRYPTION MAC: ' +  secretBox.mac.toString());
+    print('DECRYPTION ENCRYPTET CONTENT: ' + secretBox.cipherText.toString());
+    print('DECRYPTION SALT: ' + secretBox.nonce.toString());
+    // print(';;;;;;;;;;;;;;;;;;;;;;;;');
     print(secretBox.mac.bytes);
 
     final algorithm = AesCbc.with128bits(macAlgorithm: Hmac.sha256());

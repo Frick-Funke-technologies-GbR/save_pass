@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:path/path.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
@@ -6,6 +7,7 @@ import 'package:save_pass/models/resources/cache.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHandler {
+
   getDatabase() async {
     final Future<Database> database = openDatabase(
       join(await getDatabasesPath(), 'save_pass.db'),
@@ -45,9 +47,12 @@ class DatabaseHandler {
       Map<String, dynamic> entry = Map.of(iteratedEntry);
       // FIXME: Remove following line for future implementation of creation date
       entry.remove('creation_date');
+      Stopwatch stopwatch = Stopwatch()..start();
       PasswordEntryClass encryptedEntry =
           await generatePasswordEntry(password, entry);
+      print('[DECRYPTION] Execution process chain took: ${stopwatch.elapsed}');
       passwordEntries.add(encryptedEntry);
+      stopwatch.stop();
     }
     return passwordEntries;
   }
@@ -65,6 +70,7 @@ class DatabaseHandler {
       map['notes'],
       map['thumbnail'],
       map['encryption_salt'],
+      base64Decode(await CacheHandler().getStringFromCache('key_derivation_salt')),
     );
   }
 
@@ -105,6 +111,7 @@ class DatabaseHandler {
         mapAsMap['notes'],
         mapAsMap['thumbnail'],
         mapAsMap['encryption_salt'],
+        base64Decode(await CacheHandler().getStringFromCache('key_derivation_salt')),
       );
       return true;
     } on Exception catch (e) {

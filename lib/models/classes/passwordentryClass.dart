@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:save_pass/models/resources/cache.dart';
 import 'package:save_pass/models/resources/database.dart';
 import 'package:save_pass/models/resources/cryptograph.dart';
 
@@ -61,10 +63,10 @@ class PasswordEntryClass {
   }
 
   Future<Map<String, dynamic>> toEncryptedMap(String password) async {
+    // Salt changes with every new reference meaning with every new password entry encryption
     Cryptograph c = Cryptograph(password);
     // List<int> salt = c.salt;
-    List<int> key = await c.generateKeyFromPass();
-    
+    List<int> key = await c.generateKeyFromPass(keySalt: base64Decode(await CacheHandler().getStringFromCache('key_derivation_salt')));
     return {
       'alias': Uint8List.fromList(await c.encrypt(alias, key)),
       'password': Uint8List.fromList(await c.encrypt(password, key)),
@@ -72,7 +74,7 @@ class PasswordEntryClass {
       'url': Uint8List.fromList(await c.encrypt(url, key)),
       'notes': Uint8List.fromList(await c.encrypt(notes, key)),
       'thumbnail': Uint8List.fromList(await c.encrypt(thumbnail, key)),  // Also encrypt thumbnail, because hackers might conclude the password from it...
-      'encryption_salt': Uint8List.fromList(c.salt),
+      'encryption_salt': Uint8List.fromList(c.encryptionSalt),
     };
   }
 
@@ -85,19 +87,22 @@ class PasswordEntryClass {
     List<int> url,
     List<int> notes,
     List<int> thumbnail,
+    List<int> encryptionSalt,
     List<int> salt,
   ) async {
+    print('_____________________________________$encryptionSalt');
+    print('_____________________________________$salt');
     Cryptograph c = Cryptograph(masterPassword);
     List<int> key = await c.generateKeyFromPass(keySalt: salt);
     try {
       return PasswordEntryClass(
         id,
-        await c.decrypt(alias, key, salt: salt),
-        await c.decrypt(password, key, salt: salt),
-        await c.decrypt(username, key, salt: salt),
-        await c.decrypt(url, key, salt: salt),
-        await c.decrypt(notes, key, salt: salt),
-        await c.decrypt(thumbnail, key, salt: salt),
+        await c.decrypt(alias, key, salt: encryptionSalt),
+        await c.decrypt(password, key, salt: encryptionSalt),
+        await c.decrypt(username, key, salt: encryptionSalt),
+        await c.decrypt(url, key, salt: encryptionSalt),
+        await c.decrypt(notes, key, salt: encryptionSalt),
+        await c.decrypt(thumbnail, key, salt: encryptionSalt),
       );
     } on SecretBoxAuthenticationError catch (e) {
       print(e);
