@@ -47,7 +47,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
 
     // Color _lightBlue = randombBlueTone();
 
-    Color blueHue = UniqueColorGenerator.getColor();
+    // Color blueHue = UniqueColorGenerator.getColor();
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -208,7 +208,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                 showDialog(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    title: Text('Show password'),
+                                    title: Text('Show entry'),
                                     // TODO: Add time indicator!
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
