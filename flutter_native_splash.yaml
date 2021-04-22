@@ -1,0 +1,4 @@
+flutter_native_splash:
+  color: "#ffffff"
+  color_dark: "#454545" # TODO: Set appropriate dark mode splashscreen background color
+  image: assets/startup/icon_splash.png
