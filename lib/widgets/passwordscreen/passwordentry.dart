@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -37,6 +38,17 @@ class PasswordEntry extends StatefulWidget {
 }
 
 class _PasswordEntryState extends State<PasswordEntry> {
+  Timer _timer;
+  int _timerStart = 10;
+  double _timeIndicatorValue = 1.0;
+  bool _shouldStartIndicator = true;
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).copyWith(
@@ -202,224 +214,17 @@ class _PasswordEntryState extends State<PasswordEntry> {
                           Container(
                             width: 40,
                             // margin: EdgeInsets.symmetric(horizontal: 10),
-                            child: IconButton(
-                              icon: Icon(Icons.remove_red_eye),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: Text('Show entry'),
-                                    // TODO: Add time indicator!
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          // height: 50,
-                                          decoration: BoxDecoration(
-                                            // color: Colors.yellow[200],
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            // boxShadow: [
-                                            //   BoxShadow(
-                                            //     color:
-                                            //         AppDefaultColors.colorPrimaryGrey.withOpacity(0.5),
-                                            //     spreadRadius: 2.5,
-                                            //     blurRadius: 5,
-                                            //     offset: Offset(0, 2),
-                                            //   )
-                                            // ],
-
-                                            // border: Border.all(
-                                            //   color: AppDefaultColors.colorPrimaryGrey[300],
-                                            //   // width: 2,
-                                            // ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.all(5),
-                                          child: Column(
-                                            // mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            // mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                constraints: BoxConstraints(
-                                                    minWidth: 500),
-                                                padding: EdgeInsets.all(5),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  // color: Colors.yellow[100],
-                                                  color: AppDefaultColors
-                                                      .colorPrimaryGrey[50],
-                                                  // border: Border.all(
-                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
-                                                  // ),
-                                                ),
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    text: 'password: ',
-                                                    style: GoogleFonts.firaCode(
-                                                      color: AppDefaultColors
-                                                              .colorPrimaryGrey[
-                                                          800],
-                                                      // color: Colors.yellow[700],
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        style: GoogleFonts
-                                                            .firaCode(
-                                                                color: Colors
-                                                                    .blue),
-                                                        text: widget.storedpassword ==
-                                                                ''
-                                                            ? 'no password'
-                                                            : widget
-                                                                .storedpassword,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Divider(
-                                                height: 20,
-                                                color: AppDefaultColors
-                                                    .colorPrimaryGrey,
-                                              ),
-                                              Container(
-                                                constraints: BoxConstraints(
-                                                    minWidth: 500),
-                                                padding: EdgeInsets.all(5),
-                                                margin:
-                                                    EdgeInsets.only(bottom: 5),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  // color: Colors.yellow[100],
-                                                  color: AppDefaultColors
-                                                      .colorPrimaryGrey[50],
-                                                  // border: Border.all(
-                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
-                                                  // ),
-                                                ),
-                                                child: RichText(
-                                                  // textAlign: TextAlign.left,
-                                                  softWrap: true,
-                                                  text: TextSpan(
-                                                    text: 'url: ',
-                                                    style: GoogleFonts.firaCode(
-                                                      color: AppDefaultColors
-                                                              .colorPrimaryGrey[
-                                                          800],
-                                                      // color: Colors.yellow[700],
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        style: GoogleFonts
-                                                            .firaCode(
-                                                                color: Colors
-                                                                    .blue),
-                                                        text: widget.storedwebadress ==
-                                                                ''
-                                                            ? 'no url'
-                                                            : widget
-                                                                .storedwebadress,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                constraints: BoxConstraints(
-                                                    minWidth: 500),
-                                                padding: EdgeInsets.all(5),
-                                                margin:
-                                                    EdgeInsets.only(bottom: 5),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  // color: Colors.yellow[100],
-                                                  color: AppDefaultColors
-                                                      .colorPrimaryGrey[50],
-                                                  // border: Border.all(
-                                                  //   color: AppDefaultColors.colorPrimaryGrey[300],
-                                                  // ),
-                                                ),
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    text: 'username: ',
-                                                    style: GoogleFonts.firaCode(
-                                                      color: AppDefaultColors
-                                                              .colorPrimaryGrey[
-                                                          800],
-                                                      // color: Colors.yellow[700],
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        style: GoogleFonts
-                                                            .firaCode(
-                                                                color: Colors
-                                                                    .blue),
-                                                        text: widget.storedusername ==
-                                                                ''
-                                                            ? 'no username'
-                                                            : widget
-                                                                .storedusername,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 20),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(10),
-                                            ),
-                                            child: LinearProgressIndicator(
-                                              value:
-                                                  1, // Double beond one, work with Duration()
-                                              minHeight: 7,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                            backgroundColor:
-                                                Colors.transparent),
-                                        child: Text(
-                                          'Close',
-                                          style: TextStyle(
-                                              color: AppDefaultColors
-                                                  .colorPrimaryBlue),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              color: AppDefaultColors.colorPrimaryBlue,
-                            ),
+                            child:
+                                StatefulBuilder(builder: (context, setState) {
+                              return IconButton(
+                                icon: Icon(Icons.remove_red_eye),
+                                onPressed: () async {
+                                  await showEntryDialog(context);
+                                  _shouldStartIndicator = false;
+                                },
+                                color: AppDefaultColors.colorPrimaryBlue,
+                              );
+                            }),
                           ),
                           Container(
                             width: 40,
@@ -617,6 +422,206 @@ class _PasswordEntryState extends State<PasswordEntry> {
           ],
         ),
       ),
+    );
+  }
+
+  Future showEntryDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (_) {
+        _timerStart = 10;
+        _timeIndicatorValue = 1.0;
+        void _startTimer() {
+          const duration = const Duration(milliseconds: 500);
+          _timer = new Timer.periodic(
+            duration,
+            (Timer timer) {
+              if (_timerStart == 0) {
+                setState(() {
+                  timer.cancel();
+                  Navigator.of(context).pop();
+                  _timerStart = 10;
+                });
+              } else {
+                setState(() {
+                  _timeIndicatorValue = (_timerStart / 10);
+                  _timerStart--;
+                  // _timerStart = 0;
+                  print(_timeIndicatorValue.toString() + '____');
+                  print(_timerStart);
+                });
+              }
+            },
+          );
+        }
+        _shouldStartIndicator ? _startTimer() : null;
+        return AlertDialog(
+          title: Text('Show entry'),
+          // TODO: Add time indicator!
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                // height: 50,
+                decoration: BoxDecoration(
+                  // color: Colors.yellow[200],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color:
+                  //         AppDefaultColors.colorPrimaryGrey.withOpacity(0.5),
+                  //     spreadRadius: 2.5,
+                  //     blurRadius: 5,
+                  //     offset: Offset(0, 2),
+                  //   )
+                  // ],
+
+                  // border: Border.all(
+                  //   color: AppDefaultColors.colorPrimaryGrey[300],
+                  //   // width: 2,
+                  // ),
+                ),
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  // mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      constraints: BoxConstraints(minWidth: 500),
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        // color: Colors.yellow[100],
+                        color: AppDefaultColors.colorPrimaryGrey[50],
+                        // border: Border.all(
+                        //   color: AppDefaultColors.colorPrimaryGrey[300],
+                        // ),
+                      ),
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'password: ',
+                          style: GoogleFonts.firaCode(
+                            color: AppDefaultColors.colorPrimaryGrey[800],
+                            // color: Colors.yellow[700],
+                            fontWeight: FontWeight.bold,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              style: GoogleFonts.firaCode(color: Colors.blue),
+                              text: widget.storedpassword == ''
+                                  ? 'no password'
+                                  : widget.storedpassword,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Divider(
+                      height: 20,
+                      color: AppDefaultColors.colorPrimaryGrey,
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 500),
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.only(bottom: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        // color: Colors.yellow[100],
+                        color: AppDefaultColors.colorPrimaryGrey[50],
+                        // border: Border.all(
+                        //   color: AppDefaultColors.colorPrimaryGrey[300],
+                        // ),
+                      ),
+                      child: RichText(
+                        // textAlign: TextAlign.left,
+                        softWrap: true,
+                        text: TextSpan(
+                          text: 'url: ',
+                          style: GoogleFonts.firaCode(
+                            color: AppDefaultColors.colorPrimaryGrey[800],
+                            // color: Colors.yellow[700],
+                            fontWeight: FontWeight.bold,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              style: GoogleFonts.firaCode(color: Colors.blue),
+                              text: widget.storedwebadress == ''
+                                  ? 'no url'
+                                  : widget.storedwebadress,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 500),
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.only(bottom: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        // color: Colors.yellow[100],
+                        color: AppDefaultColors.colorPrimaryGrey[50],
+                        // border: Border.all(
+                        //   color: AppDefaultColors.colorPrimaryGrey[300],
+                        // ),
+                      ),
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'username: ',
+                          style: GoogleFonts.firaCode(
+                            color: AppDefaultColors.colorPrimaryGrey[800],
+                            // color: Colors.yellow[700],
+                            fontWeight: FontWeight.bold,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              style: GoogleFonts.firaCode(color: Colors.blue),
+                              text: widget.storedusername == ''
+                                  ? 'no username'
+                                  : widget.storedusername,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  child: LinearProgressIndicator(
+                    value:
+                        _timeIndicatorValue, // Double beond one, work with Duration()
+                    minHeight: 7,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.transparent),
+              child: Text(
+                'Close',
+                style: TextStyle(color: AppDefaultColors.colorPrimaryBlue),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
