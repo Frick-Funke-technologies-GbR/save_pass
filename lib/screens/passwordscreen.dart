@@ -13,7 +13,7 @@ import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
 import 'package:save_pass/models/resources/database.dart';
-import 'package:save_pass/widgets/bottomnavigationbar.dart';
+import 'package:save_pass/widgets/passwordscreen/bottomnavigationbar.dart';
 import 'package:save_pass/widgets/passwordscreen/passwordactionbuttonwithdialog.dart';
 import 'package:save_pass/widgets/uni/drawer.dart';
 import 'package:save_pass/widgets/passwordscreen/passwordentry.dart';
@@ -171,7 +171,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
     );
     // TODO: Add widget to display if no entry added yet
     // FIXME: debug api if no entry added yet
-    CustomScrollView _passwordEntryListView(data) {
+    CustomScrollView _passwordEntryListView(List<PasswordEntryClass> data) {
+      bool shouldCopyData = true;
+      List<PasswordEntryClass> dataCopy;
       return CustomScrollView(
         slivers: <Widget>[
           SliverPadding(
@@ -208,6 +210,66 @@ class _PasswordScreenState extends State<PasswordScreen> {
                       child: TextField(
                         controller: _searchFilteringController,
                         // onChanged: _changeSearchFieldListeners(),
+                        onChanged: (String input) async {
+                          List<PasswordEntryClass> newData = [];
+                          List<int> addIndex = [];
+                          print('shouldCopyData' + shouldCopyData.toString());
+                          shouldCopyData
+                              ? setState(() {
+                                  dataCopy ??=
+                                      data;
+                                  shouldCopyData = false; // FIXME: Add working way to signalize the datacopy
+                                })
+                              : null;
+                          if (input.isEmpty) {
+                            setState(() {
+                              data = dataCopy;
+                            });
+                          }
+                          for (int i = 0; i < data.length; i++) {
+                            print('INPUT $input');
+                            print('DataCopy: ${dataCopy.length}');
+                            print('Data: ${data.length}');
+                            if (!data[i].alias.toLowerCase().contains(input)) {
+                              print('NOT CONTAINS INPUT');
+                              print(data[i].alias);
+                              for (int ii = 0; ii < dataCopy.length; ii++) {
+                                if (dataCopy[ii]
+                                    .alias
+                                    .toLowerCase()
+                                    .contains(input)) {
+                                  setState(() {
+                                    newData.add(dataCopy[ii]);
+                                  });
+                                }
+                              }
+                              setState(() {
+                                data.removeAt(i);
+                              });
+                            }
+                          }
+                          if (newData.isNotEmpty) {
+                            print('HALLO');
+                            for (int i = 0; i < newData.length; i++) {
+                              for (int ii = 0; ii < data.length; ii++) {
+                                if (newData[i].id != data[ii].id) {
+                                  addIndex.add(i);
+                                }
+                              }
+                            }
+                          }
+                          if (addIndex.isNotEmpty) {
+                            print('HALLO2');
+                            for (int i in addIndex) {
+                              print(addIndex.toString());
+                              setState(() {
+                                data.add(newData[i]);
+                              });
+                            }
+                          }
+                          // for (int i = 0; i < dataCopy.length; i++) {
+                          //   if (dataCopy[i].alias.toLowerCase().contains(input)) {}}
+                        },
                         decoration: InputDecoration(
                           // fillColor: AppDefaultColors.colorPrimaryGrey[100],
                           // hintText: "Search",
