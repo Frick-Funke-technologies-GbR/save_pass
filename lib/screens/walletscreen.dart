@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
-import 'package:save_pass/widgets/bottomnavigationbar.dart';
+import 'package:save_pass/widgets/passwordscreen/bottomnavigationbar.dart';
 import 'package:save_pass/widgets/uni/drawer.dart';
 
 class WalletScreen extends StatelessWidget {
