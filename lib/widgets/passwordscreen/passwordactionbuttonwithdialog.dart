@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -79,19 +80,25 @@ class _PasswordActionButtonWithDialogWidgetState
             await cache.getSecureStringFromCache('master_password');
 
         String exception;
+        String thumbnail;
+
+        try {
+          thumbnail =
+              base64Encode(await api.getIconAsBlob(_urlFieldController.text));
+        } catch (e) {
+          thumbnail = 'null';
+        }
 
         await db
             .insertPasswordEntry(
                 PasswordEntryClass(
-                  null,
-                  _aliasFieldController.text,
-                  _passwordFieldController.text,
-                  _usernameFieldController.text,
-                  _urlFieldController.text,
-                  _notesFieldController.text,
-                  base64Encode(
-                      await api.getIconAsBlob(_urlFieldController.text)),
-                ),
+                    null,
+                    _aliasFieldController.text,
+                    _passwordFieldController.text,
+                    _usernameFieldController.text,
+                    _urlFieldController.text,
+                    _notesFieldController.text,
+                    thumbnail),
                 masterPassword)
             // .catchError(
             //     (e) => e = exception == null ? null : exception.toString());
@@ -107,6 +114,14 @@ class _PasswordActionButtonWithDialogWidgetState
           await cache.getSecureStringFromCache('master_password');
 
       String exception;
+      String thumbnail;
+
+      try {
+        thumbnail =
+            base64Encode(await api.getIconAsBlob(_urlFieldController.text));
+      } catch (e) {
+        thumbnail = 'null';
+      }
 
       await db
           .insertPasswordEntry(
@@ -117,7 +132,7 @@ class _PasswordActionButtonWithDialogWidgetState
                 _usernameFieldController.text,
                 _urlFieldController.text,
                 _notesFieldController.text,
-                base64Encode(await api.getIconAsBlob(_urlFieldController.text)),
+                thumbnail,
               ),
               masterPassword)
           .catchError(
@@ -396,8 +411,8 @@ class _PasswordActionButtonWithDialogWidgetState
                         // primary: true,
                         scrollDirection: Axis.horizontal,
                         child: Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
                           constraints: BoxConstraints(minWidth: 230),
                           decoration: BoxDecoration(
                             color: AppDefaultColors.colorPrimaryGrey[100],

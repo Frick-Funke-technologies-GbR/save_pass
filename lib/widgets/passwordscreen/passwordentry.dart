@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
@@ -45,7 +46,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer != null ? _timer.cancel() : null;
     super.dispose();
   }
 
@@ -116,7 +117,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                     //     : randInt() == 2
                     //         ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
                     //         : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
-                    child: widget.storedThumbnail != null
+                    child: widget.storedThumbnail != 'null'
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             // decoration: BoxDecoration(
@@ -431,196 +432,228 @@ class _PasswordEntryState extends State<PasswordEntry> {
       builder: (_) {
         _timerStart = 10;
         _timeIndicatorValue = 1.0;
-        void _startTimer() {
-          const duration = const Duration(milliseconds: 500);
-          _timer = new Timer.periodic(
-            duration,
-            (Timer timer) {
-              if (_timerStart == 0) {
-                setState(() {
-                  timer.cancel();
-                  Navigator.of(context).pop();
-                  _timerStart = 10;
-                });
-              } else {
-                setState(() {
-                  _timeIndicatorValue = (_timerStart / 10);
-                  _timerStart--;
-                  // _timerStart = 0;
-                  print(_timeIndicatorValue.toString() + '____');
-                  print(_timerStart);
-                });
-              }
-            },
-          );
-        }
-        _shouldStartIndicator ? _startTimer() : null;
-        return AlertDialog(
-          title: Text('Show entry'),
-          // TODO: Add time indicator!
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                // height: 50,
-                decoration: BoxDecoration(
-                  // color: Colors.yellow[200],
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color:
-                  //         AppDefaultColors.colorPrimaryGrey.withOpacity(0.5),
-                  //     spreadRadius: 2.5,
-                  //     blurRadius: 5,
-                  //     offset: Offset(0, 2),
-                  //   )
-                  // ],
+        // void _startTimer() {
+        //   const duration = const Duration(milliseconds: 500);
+        //   _timer = new Timer.periodic(
+        //     duration,
+        //     (Timer timer) {
+        //       if (_timerStart == 0) {
+        //         setState(() {
+        //           timer.cancel();
+        //           Navigator.of(context).pop();
+        //           _timerStart = 10;
+        //         });
+        //       } else {
+        //         setState(() {
+        //           _timeIndicatorValue = (_timerStart / 10);
+        //           _timerStart--;
+        //           // _timerStart = 0;
+        //           print(_timeIndicatorValue.toString() + '____');
+        //           print(_timerStart);
+        //         });
+        //       }
+        //     },
+        //   );
+        // }
+        // _shouldStartIndicator ? _startTimer() : null;
+        return StatefulBuilder(builder: (context, setState) {
+          double _timerIndicatorWidth = 250;
+          MaterialColor _timerIndicatorColor =
+              AppDefaultColors.colorPrimaryBlue;
 
-                  // border: Border.all(
-                  //   color: AppDefaultColors.colorPrimaryGrey[300],
-                  //   // width: 2,
-                  // ),
-                ),
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  // mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      constraints: BoxConstraints(minWidth: 500),
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        // color: Colors.yellow[100],
-                        color: AppDefaultColors.colorPrimaryGrey[50],
-                        // border: Border.all(
-                        //   color: AppDefaultColors.colorPrimaryGrey[300],
-                        // ),
-                      ),
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'password: ',
-                          style: GoogleFonts.firaCode(
-                            color: AppDefaultColors.colorPrimaryGrey[800],
-                            // color: Colors.yellow[700],
-                            fontWeight: FontWeight.bold,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              style: GoogleFonts.firaCode(color: Colors.blue),
-                              text: widget.storedpassword == ''
-                                  ? 'no password'
-                                  : widget.storedpassword,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      height: 20,
-                      color: AppDefaultColors.colorPrimaryGrey,
-                    ),
-                    Container(
-                      constraints: BoxConstraints(minWidth: 500),
-                      padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.only(bottom: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        // color: Colors.yellow[100],
-                        color: AppDefaultColors.colorPrimaryGrey[50],
-                        // border: Border.all(
-                        //   color: AppDefaultColors.colorPrimaryGrey[300],
-                        // ),
-                      ),
-                      child: RichText(
-                        // textAlign: TextAlign.left,
-                        softWrap: true,
-                        text: TextSpan(
-                          text: 'url: ',
-                          style: GoogleFonts.firaCode(
-                            color: AppDefaultColors.colorPrimaryGrey[800],
-                            // color: Colors.yellow[700],
-                            fontWeight: FontWeight.bold,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              style: GoogleFonts.firaCode(color: Colors.blue),
-                              text: widget.storedwebadress == ''
-                                  ? 'no url'
-                                  : widget.storedwebadress,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      constraints: BoxConstraints(minWidth: 500),
-                      padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.only(bottom: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        // color: Colors.yellow[100],
-                        color: AppDefaultColors.colorPrimaryGrey[50],
-                        // border: Border.all(
-                        //   color: AppDefaultColors.colorPrimaryGrey[300],
-                        // ),
-                      ),
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'username: ',
-                          style: GoogleFonts.firaCode(
-                            color: AppDefaultColors.colorPrimaryGrey[800],
-                            // color: Colors.yellow[700],
-                            fontWeight: FontWeight.bold,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              style: GoogleFonts.firaCode(color: Colors.blue),
-                              text: widget.storedusername == ''
-                                  ? 'no username'
-                                  : widget.storedusername,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
+          void _startTimer() async {
+            await Future.delayed(Duration(seconds: 1));
+            if (mounted) {
+              setState(() {
+                print('HALLO');
+                _timerIndicatorWidth = 10;
+                _timerIndicatorColor = AppDefaultColors.colorPrimaryRed;
+              });
+            }
+          }
+
+          _startTimer();
+
+          return AlertDialog(
+            title: Text('Show entry'),
+            // TODO: Add time indicator!
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  // height: 50,
+                  decoration: BoxDecoration(
+                    // color: Colors.yellow[200],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color:
+                    //         AppDefaultColors.colorPrimaryGrey.withOpacity(0.5),
+                    //     spreadRadius: 2.5,
+                    //     blurRadius: 5,
+                    //     offset: Offset(0, 2),
+                    //   )
+                    // ],
+
+                    // border: Border.all(
+                    //   color: AppDefaultColors.colorPrimaryGrey[300],
+                    //   // width: 2,
+                    // ),
                   ),
-                  child: LinearProgressIndicator(
-                    value:
-                        _timeIndicatorValue, // Double beond one, work with Duration()
-                    minHeight: 7,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(5),
+                  child: Column(
+                    // mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    // mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        constraints: BoxConstraints(minWidth: 500),
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          // color: Colors.yellow[100],
+                          color: AppDefaultColors.colorPrimaryGrey[50],
+                          // border: Border.all(
+                          //   color: AppDefaultColors.colorPrimaryGrey[300],
+                          // ),
+                        ),
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'password: ',
+                            style: GoogleFonts.firaCode(
+                              color: AppDefaultColors.colorPrimaryGrey[800],
+                              // color: Colors.yellow[700],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                style: GoogleFonts.firaCode(color: Colors.blue),
+                                text: widget.storedpassword == ''
+                                    ? 'no password'
+                                    : widget.storedpassword,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        height: 20,
+                        color: AppDefaultColors.colorPrimaryGrey,
+                      ),
+                      Container(
+                        constraints: BoxConstraints(minWidth: 500),
+                        padding: EdgeInsets.all(5),
+                        margin: EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          // color: Colors.yellow[100],
+                          color: AppDefaultColors.colorPrimaryGrey[50],
+                          // border: Border.all(
+                          //   color: AppDefaultColors.colorPrimaryGrey[300],
+                          // ),
+                        ),
+                        child: RichText(
+                          // textAlign: TextAlign.left,
+                          softWrap: true,
+                          text: TextSpan(
+                            text: 'url: ',
+                            style: GoogleFonts.firaCode(
+                              color: AppDefaultColors.colorPrimaryGrey[800],
+                              // color: Colors.yellow[700],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                style: GoogleFonts.firaCode(color: Colors.blue),
+                                text: widget.storedwebadress == ''
+                                    ? 'no url'
+                                    : widget.storedwebadress,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        constraints: BoxConstraints(minWidth: 500),
+                        padding: EdgeInsets.all(5),
+                        margin: EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          // color: Colors.yellow[100],
+                          color: AppDefaultColors.colorPrimaryGrey[50],
+                          // border: Border.all(
+                          //   color: AppDefaultColors.colorPrimaryGrey[300],
+                          // ),
+                        ),
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'username: ',
+                            style: GoogleFonts.firaCode(
+                              color: AppDefaultColors.colorPrimaryGrey[800],
+                              // color: Colors.yellow[700],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                style: GoogleFonts.firaCode(color: Colors.blue),
+                                text: widget.storedusername == ''
+                                    ? 'no username'
+                                    : widget.storedusername,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                // Timer Indicator
+                AnimatedContainer(
+                  margin: EdgeInsets.only(top: 20, left: 6, right: 6),
+                  decoration: BoxDecoration(
+                    color: _timerIndicatorColor,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  onEnd: () => Navigator.of(context).pop(),
+                  width: _timerIndicatorWidth,
+                  height: 7,
+                  duration: Duration(seconds: 3),
+                ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(vertical: 20),
+                // child: ClipRRect(
+                //   borderRadius: BorderRadius.all(
+                //     Radius.circular(10),
+                //   ),
+                // child: LinearProgressIndicator(
+                //   value:
+                //       _timeIndicatorValue, // Double beond one, work with Duration()
+                //   minHeight: 7,
+                // ),
+                // ),
+                // ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                style:
+                    TextButton.styleFrom(backgroundColor: Colors.transparent),
+                child: Text(
+                  'Close',
+                  style: TextStyle(color: AppDefaultColors.colorPrimaryBlue),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              style: TextButton.styleFrom(backgroundColor: Colors.transparent),
-              child: Text(
-                'Close',
-                style: TextStyle(color: AppDefaultColors.colorPrimaryBlue),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+          );
+        });
       },
     );
   }

@@ -62,9 +62,9 @@ class PasswordEntryClass {
     };
   }
 
-  Future<Map<String, dynamic>> toEncryptedMap(String password) async {
+  Future<Map<String, dynamic>> toEncryptedMap(String encryptionPassword) async {
     // Salt changes with every new reference meaning with every new password entry encryption
-    Cryptograph c = Cryptograph(password);
+    Cryptograph c = Cryptograph(encryptionPassword);
     // List<int> salt = c.salt;
     List<int> key = await c.generateKeyFromPass(keySalt: base64Decode(await CacheHandler().getStringFromCache('key_derivation_salt')));
     return {
