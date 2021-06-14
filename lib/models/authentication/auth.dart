@@ -129,15 +129,14 @@ class BackendAuth {
     if (response.statusCode == 401) {
       return false; // FIXME: Change to throw Exception('wrong password')
     } else if (response.statusCode == 200) {
+
+      String authToken = result['auth_token'];
+      await _saveAuthToken(authToken);
+      
       if (result['data']['password_entries'] == 0) {
         return null;
       }
 
-      String authToken = result['auth_token'];
-
-      // _savePassword(password);
-      // _saveUserIdent(userIdent);
-      _saveAuthToken(authToken);
       return true;
     }
   }
@@ -152,9 +151,9 @@ class BackendAuth {
   //   cache.addSecureStringToCache('user_name', userName);
   // }
 
-  _saveAuthToken(String authToken) {
+  _saveAuthToken(String authToken) async {
     CacheHandler cache = CacheHandler();
-    cache.addSecureStringToCache('auth_token', authToken);
+    await cache.addSecureStringToCache('auth_token', authToken);
   }
 
   // _saveFirstName(String firstName) {

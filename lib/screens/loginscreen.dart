@@ -456,27 +456,28 @@ class _LoginScreenState extends State<LoginScreen> {
                             // print(await BackendAuth().login(user.userIdent, 'password'));
                             // print('Next best thing');
                             //
-                            Random random = Random();
-                            print(await ApiProvider()
-                                .addUserPasswordEntry(
-                                    '#aQigBRZ4WEfhQzN',
-                                    'password',
-                                    List<int>.generate(
-                                        32, (i) => random.nextInt(256)),
-                                    List<int>.generate(
-                                        32, (i) => random.nextInt(256)),
-                                    List<int>.generate(
-                                        32, (i) => random.nextInt(256)),
-                                    List<int>.generate(
-                                        32, (i) => random.nextInt(256)),
-                                    List<int>.generate(
-                                        32, (i) => random.nextInt(256))));
-
+                            // Random random = Random();
+                            // print(await ApiProvider().addUserPasswordEntry(
+                            //     '#aQigBRZ4WEfhQzN',
+                            //     'password',
+                            //     List<int>.generate(
+                            //         32, (i) => random.nextInt(256)),
+                            //     List<int>.generate(
+                            //         32, (i) => random.nextInt(256)),
+                            //     List<int>.generate(
+                            //         32, (i) => random.nextInt(256)),
+                            //     List<int>.generate(
+                            //         32, (i) => random.nextInt(256)),
+                            //     List<int>.generate(
+                            //         32, (i) => random.nextInt(256)),
+                            //     List<int>.generate(
+                            //         32, (i) => random.nextInt(256))));
+                            // print(await ApiProvider().getUserPasswordEntries('#aQigBRZ4WEfhQzN', 'password'));
                             // ____________________________________
 
-                            // passInputValidator(_showUsernameField
-                            //     ? usernameTextFieldController.text
-                            //     : null);
+                            passInputValidator(_showUsernameField
+                                ? usernameTextFieldController.text
+                                : null);
                           },
                           // elevation: 6,
                         ),

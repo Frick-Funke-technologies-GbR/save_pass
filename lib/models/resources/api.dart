@@ -129,7 +129,8 @@ class ApiProvider {
 
   Future<String> getAuthToken(String userIdent, String password) async {
     bool loginProcessResult = await BackendAuth().login(userIdent, password);
-    if (loginProcessResult || loginProcessResult == null) {
+    loginProcessResult ??= true;
+    if (loginProcessResult) {
       String authToken =
           await CacheHandler().getSecureStringFromCache('auth_token');
       return authToken;
@@ -150,6 +151,8 @@ class ApiProvider {
 
     String authToken = await getAuthToken(userIdent, password);
 
+    print(authToken);
+
     // try {
     print('[DEBUG] userIdent ' + userIdent);
     final response = await retry(
@@ -158,7 +161,7 @@ class ApiProvider {
         'https://savepass.frifu.de/api/db/password_entry',
         headers: {
           "user_ident": userIdent,
-          "Authentication": "Bearer " + authToken
+          "Authorization": "Bearer " + authToken
         },
       ),
       // .then((resp) {
@@ -166,7 +169,7 @@ class ApiProvider {
       // }),
       retryIf: (e) => e is ClientException,
     );
-    // final response = await
+    print('[DEBUG] Status of GET request (/api/db/password_entry): ' + response.statusCode.toString());
     print(response.body);
     final Map<String, dynamic> result = json.decode(response.body);
     if (response.statusCode == 200) {
@@ -219,7 +222,8 @@ class ApiProvider {
     List<int> url,
     List<int> username,
     List<int> password,
-    List<int> notes, {
+    List<int> notes,
+    List<int> encryption_salt, {
     int authTimeoutCount = 0,
   }) async {
     if (authTimeoutCount >= 3) {
@@ -229,12 +233,14 @@ class ApiProvider {
 
     String authToken = await getAuthToken(userIdent, masterPassword);
 
+    print(authToken);
+
     final response = await client.post(
       // "http://10.0.2.2:5000/api/password_entry",
       'https://savepass.frifu.de/api/db/password_entry',
       headers: {
         "user_ident": userIdent,
-        'Authentication': 'Bearer ' + authToken,
+        'Authorization': 'Bearer ' + authToken,
       },
       body: jsonEncode(
         {
@@ -242,16 +248,20 @@ class ApiProvider {
           'url': base64.encode(url),
           'username': base64.encode(username),
           'password': base64.encode(password),
-          'notes': base64.encode(notes)
+          'notes': base64.encode(notes),
+          'encryption_salt': base64.encode(encryption_salt),
         },
       ),
     );
-    print('[DEBUG] Status of POST request (/api/db/register): ' +
+    print('[DEBUG] Status of POST request (/api/db/password_entry): ' +
         response.statusCode.toString());
+
+    print(response.body);
+
 
     if (response.statusCode == 401) {
       return addUserPasswordEntry(
-          userIdent, masterPassword, alias, url, username, password, notes,
+          userIdent, masterPassword, alias, url, username, password, notes,encryption_salt,
           authTimeoutCount: authTimeoutCount + 1);
     } else if (response.statusCode == 201) {
       print("[DEBUG] Entry added");
@@ -284,7 +294,7 @@ class ApiProvider {
       final response = await client.send(Request("DELETE",
           Uri.parse("https://savepass.frifu.de/api/db/password_entry"))
         ..headers['user_ident'] = userIdent
-        ..headers['Authentication'] = 'Bearer ' + authToken
+        ..headers['Authorization'] = 'Bearer ' + authToken
         ..body = jsonEncode({
           "where": where,
           "what": all ? 'all' : "only",
