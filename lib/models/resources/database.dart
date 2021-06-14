@@ -7,7 +7,6 @@ import 'package:save_pass/models/resources/cache.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHandler {
-
   getDatabase() async {
     final Future<Database> database = openDatabase(
       join(await getDatabasesPath(), 'save_pass.db'),
@@ -36,6 +35,33 @@ class DatabaseHandler {
     // encryptedEntry.forEach((key, value) {print(key); print(value);});
   }
 
+  Future<List<EncryptedPasswordEntryClass>>
+      getEncrpytedPasswordEntries() async {
+    final Database db = await getDatabase();
+    print('[DATABASE] Path: ' + db.path);
+    final List<Map<String, dynamic>> maps = await db.query('password_entry');
+
+    List<EncryptedPasswordEntryClass> passwordEntries = [];
+    for (Map<String, dynamic> iteratedEntry in maps) {
+      Map<String, dynamic> entry = Map.of(iteratedEntry);
+      // FIXME: Remove following line for future implementation of creation date
+      entry.remove('creation_date');
+      passwordEntries.add(
+        await EncryptedPasswordEntryClass().fromMap(
+          entry['id'],
+          entry['alias'],
+          entry['password'],
+          entry['username'],
+          entry['url'],
+          entry['notes'],
+          entry['thumbnail'],
+          entry['encryptionSalt'],
+        ),
+      );
+    }
+    return passwordEntries;
+  }
+
   Future<List<PasswordEntryClass>> getPasswordEntries(String password) async {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
@@ -48,10 +74,10 @@ class DatabaseHandler {
       // FIXME: Remove following line for future implementation of creation date
       entry.remove('creation_date');
       Stopwatch stopwatch = Stopwatch()..start();
-      PasswordEntryClass encryptedEntry =
+      PasswordEntryClass decryptedEntry =
           await generatePasswordEntry(password, entry);
       print('[DECRYPTION] Execution process chain took: ${stopwatch.elapsed}');
-      passwordEntries.add(encryptedEntry);
+      passwordEntries.add(decryptedEntry);
       stopwatch.stop();
     }
     return passwordEntries;
@@ -59,7 +85,6 @@ class DatabaseHandler {
 
   Future<PasswordEntryClass> generatePasswordEntry(
       String password, Map<String, dynamic> map) async {
-    print('hallolsdkjföasjfiafn');
     return await PasswordEntryClass().fromEncryptedMap(
       password,
       map['id'],
@@ -70,7 +95,8 @@ class DatabaseHandler {
       map['notes'],
       map['thumbnail'],
       map['encryption_salt'],
-      base64Decode(await CacheHandler().getStringFromCache('key_derivation_salt')),
+      base64Decode(
+          await CacheHandler().getStringFromCache('key_derivation_salt')),
     );
   }
 
@@ -86,9 +112,11 @@ class DatabaseHandler {
     );
 
     if (map.isEmpty) {
-      String cachedPassword = await CacheHandler().getSecureStringFromCache('master_password');
+      String cachedPassword =
+          await CacheHandler().getSecureStringFromCache('master_password');
       if (cachedPassword == null) {
-        throw Exception('Error when storing the masterpassword on register, please restart app');
+        throw Exception(
+            'Error when storing the masterpassword on register, please restart app');
       }
       // manually check password on securely stored password
       if (password == cachedPassword) {
@@ -111,7 +139,8 @@ class DatabaseHandler {
         mapAsMap['notes'],
         mapAsMap['thumbnail'],
         mapAsMap['encryption_salt'],
-        base64Decode(await CacheHandler().getStringFromCache('key_derivation_salt')),
+        base64Decode(
+            await CacheHandler().getStringFromCache('key_derivation_salt')),
       );
       return true;
     } on Exception catch (e) {

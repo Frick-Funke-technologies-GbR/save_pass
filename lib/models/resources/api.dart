@@ -3,19 +3,23 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' show Client, ClientException, Request;
+import 'package:save_pass/models/authentication/auth.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/cache.dart';
 import 'package:retry/retry.dart';
 
 class ApiProvider {
+  // FIXME: Add server reachability check e.g. by checking connection to internet
   Client client = Client();
 
   Future<Uint8List> getIconAsBlob(String domain) async {
     try {
-      final response = await client.get('https://logo.clearbit.com/$domain?size=600&format=png');
-      print('[DEBUG] Icon GET request Status: ${response.statusCode.toString()}');
-    
+      final response = await client
+          .get('https://logo.clearbit.com/$domain?size=600&format=png');
+      print(
+          '[DEBUG] Icon GET request Status: ${response.statusCode.toString()}');
+
       // If domain does not exist in clearbit db:
       if (response.statusCode == 404) {
         throw Exception(1);
@@ -26,46 +30,46 @@ class ApiProvider {
     }
   }
 
-  Future<UserClass> registerUser(
-    bool googleSignIn,
-    String username,
-    String firstname,
-    String lastname,
-    String emailadress, 
-    // TODO: Add KeyDerivationSalt (base64 encoded)
-  ) async {
-    final response = await client.post(
-      // "http://10.0.2.2:5000/api/register",
-      'https://savepass.frifu.de/api/register',
-      // headers: "",
-      body: jsonEncode(
-        {
-          "google_sign_in" : googleSignIn,
-          "emailadress": emailadress,
-          "username": username,
-          "firstname": firstname,
-          "lastname": lastname
-        },
-      ),
-    );
-    print('[DEBUG] Status of POST request (/api/register):' +
-        response.statusCode.toString());
-    stdout.write(response.statusCode);
-    final Map result = json.decode(response.body);
-    if (response.statusCode == 200) {
-      // If the call to the server was successful, parse the JSON
-      await _saveUserIdent(result["data"]["user_ident"]);
-      await _saveUserName(result["data"]['username']);
-      return UserClass.fromJson(result["data"]);
-    } else if (response.statusCode == 400) {
-      // If email or username already exist, throw an error
-      String error = result["message"];
-      throw Exception('$error');
-    } else {
-      // If that call was not successful, throw an error.
-      throw Exception('Failed to register');
-    }
-  }
+  // Future<UserClass> registerUser(
+  //   bool googleSignIn,
+  //   String username,
+  //   String firstname,
+  //   String lastname,
+  //   String emailadress,
+  //   // TODO: Add KeyDerivationSalt (base64 encoded)
+  // ) async {
+  //   final response = await client.post(
+  //     // "http://10.0.2.2:5000/api/register",
+  //     'https://savepass.frifu.de/api/register',
+  //     // headers: "",
+  //     body: jsonEncode(
+  //       {
+  //         "google_sign_in" : googleSignIn,
+  //         "emailadress": emailadress,
+  //         "username": username,
+  //         "firstname": firstname,
+  //         "lastname": lastname
+  //       },
+  //     ),
+  //   );
+  //   print('[DEBUG] Status of POST request (/api/register):' +
+  //       response.statusCode.toString());
+  //   stdout.write(response.statusCode);
+  //   final Map result = json.decode(response.body);
+  //   if (response.statusCode == 200) {
+  //     // If the call to the server was successful, parse the JSON
+  //     await _saveUserIdent(result["data"]["user_ident"]);
+  //     await _saveUserName(result["data"]['username']);
+  //     return UserClass.fromJson(result["data"]);
+  //   } else if (response.statusCode == 400) {
+  //     // If email or username already exist, throw an error
+  //     String error = result["message"];
+  //     throw Exception('$error');
+  //   } else {
+  //     // If that call was not successful, throw an error.
+  //     throw Exception('Failed to register');
+  //   }
+  // }
 
   Future getUserData(
     String username,
@@ -76,7 +80,7 @@ class ApiProvider {
       // headers: {
       //   "Authorization" : userIdent
       // },
-      headers: {"username": username, 'all' : 'false'},
+      headers: {"username": username, 'all': 'false'},
     );
     print('[DEBUG] Status of POST request (/api/user_data): ' +
         response.statusCode.toString());
@@ -97,43 +101,65 @@ class ApiProvider {
     }
   }
 
-  Future<bool> login(
-    String userIdent,
-    String password,
-  ) async {
-    print('[DEBUG] userIdent: ' + userIdent.toString());
-    final response = await client.get(
-      // "http://10.0.2.2:5000/api/check_pass",
-      'https://savepass.frifu.de/api/login',
-      headers: {"user_ident": userIdent, "password": password},
-    );
-    print('[DEBUG] Status of GET request (/api/login):' +
-        response.statusCode.toString());
-    final Map result = json.decode(response.body);
-    if (response.statusCode == 401) {
-      return false;
-    } else if (response.statusCode == 404) {
-      if (result['reason'] == 'no password entries yet') {
-        return null;
-      }
+  // Future<bool> login(
+  //   String userIdent,
+  //   String password,
+  // ) async {
+  //   print('[DEBUG] userIdent: ' + userIdent.toString());
+  //   final response = await client.get(
+  //     // "http://10.0.2.2:5000/api/check_pass",
+  //     'https://savepass.frifu.de/api/login',
+  //     headers: {"user_ident": userIdent, "password": password},
+  //   );
+  //   print('[DEBUG] Status of GET request (/api/login):' +
+  //       response.statusCode.toString());
+  //   final Map result = json.decode(response.body);
+  //   if (response.statusCode == 401) {
+  //     return false;
+  //   } else if (response.statusCode == 404) {
+  //     if (result['reason'] == 'no password entries yet') {
+  //       return null;
+  //     }
+  //   } else {
+  //     _savePassword(password);
+  //     _saveUserIdent(userIdent);
+  //     return true;
+  //   }
+  // }
+
+  Future<String> getAuthToken(String userIdent, String password) async {
+    bool loginProcessResult = await BackendAuth().login(userIdent, password);
+    if (loginProcessResult || loginProcessResult == null) {
+      String authToken =
+          await CacheHandler().getSecureStringFromCache('auth_token');
+      return authToken;
     } else {
-      _savePassword(password);
-      _saveUserIdent(userIdent);
-      return true;
+      return null;
     }
   }
 
   Future<List<PasswordEntryClass>> getUserPasswordEntries(
     String userIdent,
-    String password,
-  ) async {
+    String password, {
+    int authTimeoutCount = 0,
+  }) async {
+    if (authTimeoutCount >= 3) {
+      throw Exception(
+          'An error occured. Please contact the developer under support.savepass@frifu.de');
+    }
+
+    String authToken = await getAuthToken(userIdent, password);
+
     // try {
     print('[DEBUG] userIdent ' + userIdent);
     final response = await retry(
       () => client.get(
         // "http://10.0.2.2:5000/api/password_entry",
-        'https://savepass.frifu.de/api/password_entry',
-        headers: {"user_ident": userIdent, "password": password},
+        'https://savepass.frifu.de/api/db/password_entry',
+        headers: {
+          "user_ident": userIdent,
+          "Authentication": "Bearer " + authToken
+        },
       ),
       // .then((resp) {
       //   print('[DEBUG] Status of GET request (/api/password_entry): ' + resp.statusCode.toString());
@@ -146,12 +172,7 @@ class ApiProvider {
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       List<PasswordEntryClass> passwordEntries = [];
-      // check if password is correct. May be unnecessary because password is already checked within login progress
-      if (result.containsKey('status') &&
-          result['status'] == 'failure' &&
-          result['reason'] == 'wrong password') {
-        throw Exception('Wrong password');
-      }
+
       // print('following is result[\'data\']');
       // print(result['data'].toString());
       for (Map<String, dynamic> json_ in result["data"]) {
@@ -169,6 +190,11 @@ class ApiProvider {
         print(passwordEntry.alias + passwordEntry.notes);
       }
       return passwordEntries ?? '';
+    } else if (response.statusCode == 401) {
+      String message = result['message'];
+      print(message);
+      return getUserPasswordEntries(userIdent, password,
+          authTimeoutCount: authTimeoutCount + 1);
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load password entries');
@@ -186,42 +212,57 @@ class ApiProvider {
     // }
   }
 
-  Future addUserPasswordEntry(
+  Future<bool> addUserPasswordEntry(
     String userIdent,
     String masterPassword,
-    String alias,
-    String url,
-    String username,
-    String password,
-    String notes,
-  ) async {
+    List<int> alias,
+    List<int> url,
+    List<int> username,
+    List<int> password,
+    List<int> notes, {
+    int authTimeoutCount = 0,
+  }) async {
+    if (authTimeoutCount >= 3) {
+      throw Exception(
+          'An error occured. Please contact the developer under support.savepass@frifu.de');
+    }
+
+    String authToken = await getAuthToken(userIdent, masterPassword);
+
     final response = await client.post(
       // "http://10.0.2.2:5000/api/password_entry",
-      'https://savepass.frifu.de/api/password_entry',
+      'https://savepass.frifu.de/api/db/password_entry',
       headers: {
         "user_ident": userIdent,
-        'password': masterPassword,
+        'Authentication': 'Bearer ' + authToken,
       },
       body: jsonEncode(
         {
-          'alias': alias,
-          'url': url,
-          'username': username,
-          'password': password,
-          'notes': notes
+          'alias': base64.encode(alias),
+          'url': base64.encode(url),
+          'username': base64.encode(username),
+          'password': base64.encode(password),
+          'notes': base64.encode(notes)
         },
       ),
     );
-    print('[DEBUG] Status of POST request (/api/register): ' +
+    print('[DEBUG] Status of POST request (/api/db/register): ' +
         response.statusCode.toString());
-    if (response.statusCode == 200) {
-      print("[DEBUG] ^ Entry added");
-    } else {
+
+    if (response.statusCode == 401) {
+      return addUserPasswordEntry(
+          userIdent, masterPassword, alias, url, username, password, notes,
+          authTimeoutCount: authTimeoutCount + 1);
+    } else if (response.statusCode == 201) {
+      print("[DEBUG] Entry added");
+      return true;
+    } else if (response.statusCode == 422) {
+      throw Exception('Failed to add entry.');
+    } else if (response.statusCode == 404) {
       // If that call was not successful, throw an error.
-      var responsebody = json.decode(response.body);
-      // print(responsebody.toString());
-      if (responsebody['message'] == "Entry with given alias already exists")
-        throw Exception('Failed to add entry');
+      var result = json.decode(response.body);
+      throw Exception(result['message']);
+      // print(result.toString());
     }
   }
 
@@ -229,13 +270,21 @@ class ApiProvider {
     int where,
     bool all,
     String userIdent,
-    String masterPassword,
-  ) async {
+    String masterPassword, {
+    int authTimeoutCount = 0,
+  }) async {
+    if (authTimeoutCount >= 3) {
+      throw Exception(
+          'An error occured. Please contact the developer under support.savepass@frifu.de');
+    }
+
+    String authToken = await getAuthToken(userIdent, masterPassword);
+
     try {
-      final response = await client.send(Request(
-          "DELETE", Uri.parse("https://savepass.frifu.de/api/password_entry"))
+      final response = await client.send(Request("DELETE",
+          Uri.parse("https://savepass.frifu.de/api/db/password_entry"))
         ..headers['user_ident'] = userIdent
-        ..headers['password'] = masterPassword
+        ..headers['Authentication'] = 'Bearer ' + authToken
         ..body = jsonEncode({
           "where": where,
           "what": all ? 'all' : "only",
@@ -245,6 +294,8 @@ class ApiProvider {
           response.statusCode.toString());
       if (response.statusCode == 204) {
         return true;
+      } else if (response.statusCode == 401) {
+        return deleteUserPasswordEntry(where, all, userIdent, masterPassword, authTimeoutCount: authTimeoutCount + 1);
       } else {
         // Map<String, dynamic> result = json.decode(response.reasonPhrase);
         // Stream result = response.stream;
@@ -261,6 +312,7 @@ class ApiProvider {
     }
   }
 
+  @deprecated
   Future<Map<String, dynamic>> getGeneratedPassword(
     int length,
     int complexity,

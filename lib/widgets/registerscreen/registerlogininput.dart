@@ -162,26 +162,31 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                           this.user = user;
                           print(user.toString());
                           try {
-                            String keyDerivationSalt = base64Encode(Cryptograph().salt);
-                            UserClass addedUser =
-                                await ApiProvider().registerUser(
+                            String keyDerivationSalt =
+                                base64Encode(Cryptograph().salt);
+                            await showAddPasswordDialog(context, true);
+                            CacheHandler cache = CacheHandler();
+                            UserClass addedUser = await BackendAuth().register(
                               true,
                               user.uid,
                               user.displayName,
                               '',
                               user.email,
+                              await cache
+                                  .getSecureStringFromCache('master_password'),
                             );
-                            await CacheHandler().addStringToCache('key_derivation_salt', keyDerivationSalt);
-                            await showAddPasswordDialog(context, true);
-                            CacheHandler cache = CacheHandler();
-                            await ApiProvider().login(
+                            await CacheHandler().addStringToCache(
+                                'key_derivation_salt', keyDerivationSalt);
+                            await BackendAuth().login(
                               await cache
                                   .getSecureStringFromCache('user_ident'),
                               await cache
                                   .getSecureStringFromCache('master_password'),
                             );
-                            Navigator.of(context).pushReplacementNamed('/passwordscreen');
-                            CacheHandler().addBoolToCache('first_time_login', false);
+                            Navigator.of(context)
+                                .pushReplacementNamed('/passwordscreen');
+                            CacheHandler()
+                                .addBoolToCache('first_time_login', false);
                           } catch (e) {
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -237,7 +242,8 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7)),
                     onPressed: () {
-                      Navigator.of(context).pushReplacementNamed('/loginscreen');
+                      Navigator.of(context)
+                          .pushReplacementNamed('/loginscreen');
                       CacheHandler().addBoolToCache('first_time_login', false);
                     },
                   ),
@@ -306,8 +312,6 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
   final _lastNameInputController = TextEditingController();
 
   Future<bool> _validateSignInEmailFields() async {
-    ApiProvider api = ApiProvider();
-
     try {
       setState(() {
         _usernameAlreadyAdded = false;
@@ -322,27 +326,8 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
       _lastNameInputKey.currentState.validate();
 
       String keyDerivationSalt = base64Encode(Cryptograph().salt);
-      await CacheHandler().addStringToCache('key_derivation_salt', keyDerivationSalt);
-      await api.registerUser(
-        false,
-        _usernameInputController.text,
-        _firstNameInputController.text,
-        _lastNameInputController.text,
-        _emailInputController.text,
-      );
-
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Registration progress successfully'),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(10),
-            ),
-          ),
-        ),
-      );
+      await CacheHandler()
+          .addStringToCache('key_derivation_salt', keyDerivationSalt);
 
       return true;
     } catch (e) {
@@ -365,7 +350,6 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
         _emailInputKey.currentState.validate();
         _firstNameInputKey.currentState.validate();
         _lastNameInputKey.currentState.validate();
-        print('point2');
         return false;
       }
       Scaffold.of(context).showSnackBar(
@@ -589,14 +573,40 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                   if (goFurther) {
                     await showAddPasswordDialog(context, true);
                     CacheHandler cache = CacheHandler();
-                    await ApiProvider().login(
+                    BackendAuth auth = BackendAuth();
+
+                    auth.register(
+                      false,
+                      _usernameInputController.text,
+                      _firstNameInputController.text,
+                      _lastNameInputController.text,
+                      _emailInputController.text,
+                      await cache.getSecureStringFromCache('master_password'),
+                    );
+
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Registration progress successfully'),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                    );
+                    
+                    await auth.login(
                       await cache.getSecureStringFromCache('user_ident'),
                       await cache.getSecureStringFromCache('master_password'),
                     );
+
                     Navigator.of(context)
                         .pushReplacementNamed('/passwordscreen');
                     cache.addBoolToCache('first_time_login', false);
-                    ApiProvider().getUserData(await cache.getSecureStringFromCache('user_name'));
+                    ApiProvider().getUserData(
+                        await cache.getSecureStringFromCache('user_name'));
                     // TODO: add save user data in app functionality (button already added)
                     // _toggleSaveUserInApp ? null : cache.removeFromCache('user_name') && cache.removeFromCache('user_ident') && cache.removeFromCache('master_password');
                   }
