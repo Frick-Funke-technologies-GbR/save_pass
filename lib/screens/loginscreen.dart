@@ -11,6 +11,7 @@ import 'package:save_pass/models/classes/userClass.dart';
 import 'package:save_pass/models/resources/cryptograph.dart';
 import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/database.dart';
+import 'package:save_pass/models/resources/sync.dart';
 import 'package:save_pass/widgets/uni/toplabel.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
@@ -452,8 +453,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             // await CacheHandler().removeFromCache('user_name');
                             // print(await CacheHandler().getStringFromCache('key_derivation_salt'));
                             //
-                            // UserClass user = await BackendAuth().register(false, 'Klausineeeee', 'Klaus', 'Dieter', 'klausineeeee@gmail.com', 'password');
-                            // print(await BackendAuth().login(user.userIdent, 'password'));
+                            // UserClass user = await BackendAuth().register(false, 'Klausineeeeeeeee', 'Klaus', 'Dieter', 'klausineeeeeeeee@gmail.com', 'moinsen');
+                            // print(await BackendAuth().login(user.userIdent, 'moinsen'));
                             // print('Next best thing');
                             //
                             // Random random = Random();
@@ -472,12 +473,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             //         32, (i) => random.nextInt(256)),
                             //     List<int>.generate(
                             //         32, (i) => random.nextInt(256))));
-                            // print(await ApiProvider().getUserPasswordEntries('#aQigBRZ4WEfhQzN', 'password'));
+                            // print(await ApiProvider().getUserPasswordEntries(await CacheHandler().getSecureStringFromCache('user_ident'), 'moinsen'));
+                            // print(await CacheHandler().getSecureStringFromCache('user_ident'));
+                            Sync().normalSync(true); // TODO: debug sync function
+                            // print(await ApiProvider().getIconAsBlob('facebook.com'));
                             // ____________________________________
 
-                            passInputValidator(_showUsernameField
-                                ? usernameTextFieldController.text
-                                : null);
+                            // passInputValidator(_showUsernameField
+                            //     ? usernameTextFieldController.text
+                            //     : null);
                           },
                           // elevation: 6,
                         ),

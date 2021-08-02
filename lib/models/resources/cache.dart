@@ -52,8 +52,8 @@ class CacheHandler {
 
   Future<bool> getBoolFromCache(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool stringListValue = prefs.getBool(key);
-    // print(stringListValue);
-    return stringListValue;
+    bool boolValue = prefs.getBool(key);
+    // print(boolValue);
+    return boolValue;
   }
 }

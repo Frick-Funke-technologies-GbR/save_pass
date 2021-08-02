@@ -86,7 +86,7 @@ class BackendAuth {
       // If the call to the server was successful, parse the JSON
       await _saveAuthToken(result['auth_token']);
 
-      // await _saveUserIdent(result["data"]["user_ident"]);
+      await _saveUserIdent(result["data"]["user_ident"]);
       // await _saveUserName(result["data"]['username']);
 
       return UserClass.fromJson(result["data"]);
@@ -141,10 +141,10 @@ class BackendAuth {
     }
   }
 
-  // _saveUserIdent(String userIdent) {
-  //   CacheHandler cache = CacheHandler();
-  //   cache.addSecureStringToCache('user_ident', userIdent);
-  // }
+  _saveUserIdent(String userIdent) {
+    CacheHandler cache = CacheHandler();
+    cache.addSecureStringToCache('user_ident', userIdent);
+  }
 
   // _saveUserName(String userName) {
   //   CacheHandler cache = CacheHandler();

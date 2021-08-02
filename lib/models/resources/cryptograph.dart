@@ -24,7 +24,7 @@ class Cryptograph {
 
     final pbkdf2 = Pbkdf2(
       macAlgorithm: Hmac.sha256(),
-      iterations: 50000,
+      iterations: 50000, // FIXME: Change to 200.000 iterations for better security if performance is better
       bits: 128,
     );
 
@@ -68,6 +68,38 @@ class Cryptograph {
 
   }
 
+  // Future<List<int>> generateAuthPassKeyFromPass({List<int> keySalt}) async {
+
+  //   final pbkdf2 = Pbkdf2(
+  //     macAlgorithm: Hmac.sha256(),
+  //     iterations: 50000, // FIXME: Change to 200.000 iterations for better security if performance is better
+  //     bits: 128,
+  //   );
+
+  //   Stopwatch stopwatch = Stopwatch()..start();
+
+  //   keySalt = keySalt ?? salt;
+
+  //   // Password we want to hash
+  //   final secretKey = SecretKey(password.codeUnits);
+
+  //   // A random salt
+  //   final nonce = keySalt;
+
+  //   // Calculate a hash that can be stored in the database
+  //   final newSecretKey = await pbkdf2.deriveKey(
+  //     secretKey: secretKey,
+  //     nonce: nonce,
+  //   );  
+
+  //   final newSecretKeyBytes = await newSecretKey.extractBytes();
+  //   print('Result: $newSecretKeyBytes');
+  //   print('[CRYPTOGRAPH] key generation executed in ${stopwatch.elapsed}');
+  //   stopwatch.stop();
+  //   return newSecretKeyBytes;
+  // }
+
+
   Future<List<int>> encrypt(String decryptedContent, List<int> key) async {
     /// encrypt the String [decryptedContent]
     /// using the [key] generated with [generateKeyFromPass()]
@@ -77,6 +109,13 @@ class Cryptograph {
 
     // Choose the cipher
     final algorithm = AesCbc.with128bits(macAlgorithm: Hmac.sha256());
+
+    // Stopwatch stopwatch = Stopwatch()..start();
+    // SecretKey secretKeyy = SecretKeyData.random(length: 20);
+    // algorithm.macAlgorithm.calculateMac([1, 9, 7, 6, 4, 4, 3], secretKey: secretKeyy);
+    // print('ASDFGH${stopwatch.elapsed}');
+    
+    // mac calculation takes about 0.002918 seconds
 
     // Generate a secret key.
     final secretKey = await algorithm.newSecretKeyFromBytes(key);

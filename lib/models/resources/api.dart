@@ -21,9 +21,10 @@ class ApiProvider {
           '[DEBUG] Icon GET request Status: ${response.statusCode.toString()}');
 
       // If domain does not exist in clearbit db:
-      if (response.statusCode == 404) {
+      if (response.statusCode == 404 || response.statusCode == 400) {
         throw Exception(1);
       }
+
       return response.bodyBytes;
     } on HttpException {
       return null;
@@ -139,6 +140,83 @@ class ApiProvider {
     }
   }
 
+  Future<List<EncryptedPasswordEntryClass>> getEncryptedUserPasswordEntries(
+    String userIdent,
+    String password, {
+    int authTimeoutCount = 0,
+  }) async {
+    if (authTimeoutCount >= 3) {
+      throw Exception(
+          'An error occured. Please contact the developer under support.savepass@frifu.de');
+    }
+
+    String authToken = await getAuthToken(userIdent, password);
+
+    print(authToken);
+
+    // try {
+    print('[DEBUG] userIdent ' + userIdent);
+    final response = await retry(
+      () => client.get(
+        // "http://10.0.2.2:5000/api/password_entry",
+        'https://savepass.frifu.de/api/db/password_entry',
+        headers: {
+          "user_ident": userIdent,
+          "Authorization": "Bearer " + authToken
+        },
+      ),
+      // .then((resp) {
+      //   print('[DEBUG] Status of GET request (/api/password_entry): ' + resp.statusCode.toString());
+      // }),
+      retryIf: (e) => e is ClientException,
+    );
+    print('[DEBUG] Status of GET request (/api/db/password_entry): ' +
+        response.statusCode.toString());
+    print(response.body);
+    final Map<String, dynamic> result = json.decode(response.body);
+    if (response.statusCode == 200) {
+      // If the call to the server was successful, parse the JSON
+      List<EncryptedPasswordEntryClass> passwordEntries = [];
+
+      // print('following is result[\'data\']');
+      // print(result['data'].toString());
+      for (Map<String, dynamic> json_ in result["data"]) {
+        print(json_);
+        try {
+          passwordEntries.add(EncryptedPasswordEntryClass.fromJson(json_));
+        } catch (Exception) {
+          print(
+              '[DEBUG] Exception occured while GET request (/api/password_entry): ' +
+                  Exception.toString());
+          return null;
+        }
+      }
+      for (EncryptedPasswordEntryClass passwordEntry in passwordEntries) {
+        print(passwordEntry.alias + passwordEntry.notes);
+      }
+      return passwordEntries ?? '';
+    } else if (response.statusCode == 401) {
+      String message = result['message'];
+      print(message);
+      return getEncryptedUserPasswordEntries(userIdent, password,
+          authTimeoutCount: authTimeoutCount + 1);
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load password entries');
+    }
+    // } on ClientException catch (e) {
+    //   print('[DEBUG] Client exception occured:');
+    //   print(e.message);
+    //   print('[DEBUG] Retry in 2,5 seconds...');
+    //   // await new Future.delayed(const Duration(seconds: 5));
+    //   retryFuture(getUserPasswordEntries, 2500);
+    //   // this.getUserPasswordEntries(userIdent, password);
+    //   // print('LALALALLALALLA');
+    //   // ApiProvider().getUserPasswordEntries(userIdent, password);
+    //   // print('LALALALLALALLA2');
+    // }
+  }
+
   Future<List<PasswordEntryClass>> getUserPasswordEntries(
     String userIdent,
     String password, {
@@ -169,7 +247,8 @@ class ApiProvider {
       // }),
       retryIf: (e) => e is ClientException,
     );
-    print('[DEBUG] Status of GET request (/api/db/password_entry): ' + response.statusCode.toString());
+    print('[DEBUG] Status of GET request (/api/db/password_entry): ' +
+        response.statusCode.toString());
     print(response.body);
     final Map<String, dynamic> result = json.decode(response.body);
     if (response.statusCode == 200) {
@@ -179,9 +258,25 @@ class ApiProvider {
       // print('following is result[\'data\']');
       // print(result['data'].toString());
       for (Map<String, dynamic> json_ in result["data"]) {
+        print(json_);
         try {
           // print(PasswordEntryClass.fromJson(json_).toString());
-          passwordEntries.add(PasswordEntryClass.fromJson(json_));
+          passwordEntries.add(
+            await PasswordEntryClass().fromEncryptedMap(
+              password,
+              json_['id'],
+              base64Decode(json_['alias']).toList(),
+              base64Decode(json_['password']).toList(),
+              base64Decode(json_['username']).toList(),
+              base64Decode(json_['url']).toList(),
+              base64Decode(json_['notes']).toList(),
+              null,
+              base64Decode(json_['encryption_salt']).toList(),
+              base64Decode(
+                await CacheHandler().getStringFromCache('key_derivation_salt'),
+              ),
+            ),
+          );
         } catch (Exception) {
           print(
               '[DEBUG] Exception occured while GET request (/api/password_entry): ' +
@@ -223,7 +318,7 @@ class ApiProvider {
     List<int> username,
     List<int> password,
     List<int> notes,
-    List<int> encryption_salt, {
+    List<int> encryptionSalt, {
     int authTimeoutCount = 0,
   }) async {
     if (authTimeoutCount >= 3) {
@@ -249,7 +344,7 @@ class ApiProvider {
           'username': base64.encode(username),
           'password': base64.encode(password),
           'notes': base64.encode(notes),
-          'encryption_salt': base64.encode(encryption_salt),
+          'encryption_salt': base64.encode(encryptionSalt),
         },
       ),
     );
@@ -258,10 +353,9 @@ class ApiProvider {
 
     print(response.body);
 
-
     if (response.statusCode == 401) {
-      return addUserPasswordEntry(
-          userIdent, masterPassword, alias, url, username, password, notes,encryption_salt,
+      return addUserPasswordEntry(userIdent, masterPassword, alias, url,
+          username, password, notes, encryptionSalt,
           authTimeoutCount: authTimeoutCount + 1);
     } else if (response.statusCode == 201) {
       print("[DEBUG] Entry added");
@@ -305,7 +399,8 @@ class ApiProvider {
       if (response.statusCode == 204) {
         return true;
       } else if (response.statusCode == 401) {
-        return deleteUserPasswordEntry(where, all, userIdent, masterPassword, authTimeoutCount: authTimeoutCount + 1);
+        return deleteUserPasswordEntry(where, all, userIdent, masterPassword,
+            authTimeoutCount: authTimeoutCount + 1);
       } else {
         // Map<String, dynamic> result = json.decode(response.reasonPhrase);
         // Stream result = response.stream;

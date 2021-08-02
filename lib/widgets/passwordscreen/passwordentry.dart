@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -43,6 +44,19 @@ class _PasswordEntryState extends State<PasswordEntry> {
   int _timerStart = 10;
   double _timeIndicatorValue = 1.0;
   bool _shouldStartIndicator = true;
+
+  Future<Image> getThumbnail(String domain) async {
+    Uint8List result = Uint8List.fromList([]);
+    try {
+      result = await ApiProvider().getIconAsBlob(domain);
+    } on Exception {
+      result = null;
+    }
+    if (result == null) {
+      return Image.asset('assets/save_pass_icon_placeholder.png');
+    }
+    return Image.memory(result);
+  }
 
   @override
   void dispose() {
@@ -117,17 +131,24 @@ class _PasswordEntryState extends State<PasswordEntry> {
                     //     : randInt() == 2
                     //         ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
                     //         : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
-                    child: widget.storedThumbnail != 'null'
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            // decoration: BoxDecoration(
-                            //   color: Colors.white,
-                            //   borderRadius: BorderRadius.circular(5),
-                            // ),
-                            child: Image.memory(
-                              base64Decode(widget.storedThumbnail),
-                            ),
-                          )
+                    child: widget.storedThumbnail != 'null' && widget.storedThumbnail != null
+                        ? widget.storedThumbnail != ''
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                // decoration: BoxDecoration(
+                                //   color: Colors.white,
+                                //   borderRadius: BorderRadius.circular(5),
+                                // ),
+                                child: Image.memory(
+                                  base64Decode(widget.storedThumbnail),
+                                ),
+                              )
+                            : FutureBuilder(
+                                future: getThumbnail(widget.storedwebadress),
+                                builder: (context, snapshot) {
+                                  return snapshot.data;
+                                },
+                              )
                         : Image.asset('assets/save_pass_icon_placeholder.png'),
                   ),
                   Container(

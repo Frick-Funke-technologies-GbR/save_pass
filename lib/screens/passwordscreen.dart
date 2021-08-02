@@ -317,6 +317,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 // getPasswordEntries();
+                print('AAAAAAAAAAAAAA' + data[index].thumbnail.runtimeType.toString() + data[index].thumbnail);
                 return PasswordEntry(
                   data[index].id,
                   data[index].url,

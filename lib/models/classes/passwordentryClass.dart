@@ -58,7 +58,8 @@ class PasswordEntryClass {
       'username': username,
       'url': url,
       'notes': notes,
-      'thumbnail': thumbnail
+      'thumbnail': thumbnail,
+      'encryption_salt': encryptionSalt
     };
   }
 
@@ -76,7 +77,7 @@ class PasswordEntryClass {
       'url': Uint8List.fromList(await c.encrypt(url, key)),
       'notes': Uint8List.fromList(await c.encrypt(notes, key)),
       'thumbnail': Uint8List.fromList(await c.encrypt(thumbnail,
-          key)), // Also encrypt thumbnail, because hackers might conclude the password from it...
+          key)), // Also encrypt thumbnail, because hackers might conclude the password from it.
       'encryption_salt': Uint8List.fromList(c.encryptionSalt),
     };
   }
@@ -103,7 +104,9 @@ class PasswordEntryClass {
         await c.decrypt(username, key, salt: encryptionSalt),
         await c.decrypt(url, key, salt: encryptionSalt),
         await c.decrypt(notes, key, salt: encryptionSalt),
-        await c.decrypt(thumbnail, key, salt: encryptionSalt),
+        thumbnail != null
+            ? await c.decrypt(thumbnail, key, salt: encryptionSalt)
+            : '',
       );
     } on SecretBoxAuthenticationError catch (e) {
       print(e);
@@ -147,6 +150,35 @@ class EncryptedPasswordEntryClass {
     this.thumbnail,
     this.encryptionSalt,
   ]);
+
+  Map<String, dynamic> toUin8ListMap(EncryptedPasswordEntryClass entry) {
+    return {
+      'alias': Uint8List.fromList(entry.alias),
+      'password': Uint8List.fromList(entry.password),
+      'username': Uint8List.fromList(entry.username),
+      'url': Uint8List.fromList(entry.url),
+      'notes': Uint8List.fromList(entry.notes),
+      'thumbnail': Uint8List.fromList(entry.thumbnail),
+      'encryption_salt': Uint8List.fromList(entry.encryptionSalt),
+    };
+  }
+
+  factory EncryptedPasswordEntryClass.fromJson(
+      Map<String, dynamic> parsedJson) {
+    EncryptedPasswordEntryClass result = EncryptedPasswordEntryClass(
+      parsedJson['id'],
+      base64.decode(parsedJson['alias']),
+      base64.decode(parsedJson['password']),
+      base64.decode(parsedJson['username']),
+      base64.decode(parsedJson['url']),
+      base64.decode(parsedJson['notes']),
+      parsedJson['thumbnail'] != null
+          ? base64.decode(parsedJson['thumbnail'])
+          : [],
+      base64.decode(parsedJson['encryption_salt']),
+    );
+    return result;
+  }
 
   Future<EncryptedPasswordEntryClass> fromMap(
     int id,

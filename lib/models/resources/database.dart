@@ -25,9 +25,26 @@ class DatabaseHandler {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
     Map<String, dynamic> encryptedEntry = await entry.toEncryptedMap(password);
+    
     int result = await db.insert(
       'password_entry',
       encryptedEntry,
+      conflictAlgorithm: ConflictAlgorithm.rollback,
+    );
+
+    print('-result-:  ' + result.toString());
+    // encryptedEntry.forEach((key, value) {print(key); print(value);});
+  }
+
+  Future<void> insertEncryptedPasswordEntry(
+      EncryptedPasswordEntryClass entry) async {
+    final Database db = await getDatabase();
+    print('[DATABASE] Path: ' + db.path);
+    Map<String, dynamic> mapEntry = entry.toUin8ListMap(entry); // FIXME: Here, the db suddenly doesnt except UInt8List any more. Mist.
+    print(entry);
+    int result = await db.insert(
+      'password_entry',
+      mapEntry,
       conflictAlgorithm: ConflictAlgorithm.rollback,
     );
 
@@ -55,7 +72,7 @@ class DatabaseHandler {
           entry['url'],
           entry['notes'],
           entry['thumbnail'],
-          entry['encryptionSalt'],
+          entry['encryption_salt'],
         ),
       );
     }
