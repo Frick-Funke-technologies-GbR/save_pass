@@ -19,6 +19,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return result;
   }
 
+  Future<bool> _syncronize(CacheHandler cache) async {
+    bool success = false;
+    try {
+      success = await Sync().normalSync();
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppDefaultColors.colorPrimaryGrey,
+          content: Text(
+            e.toString(),
+          ),
+        ),
+      );
+      return success;
+    }
+    bool didSync = await cache.getBoolFromCache('did_send_to_cloud') ||
+        await cache.getBoolFromCache('did_send_to_db');
+    didSync ??= false;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: success
+          ? AppDefaultColors.colorPrimaryGrey
+          : AppDefaultColors.colorPrimaryRed,
+      content: Text(success
+          ? didSync
+              ? 'Passwords successfully synced with our server'
+              : 'Passwords already up-to-date'
+          : 'An error occured during syncronization process. Please try again later.'),
+    ));
+    return success;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,60 +149,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 FutureBuilder(
                     future: _getSyncStatus(),
                     builder: (context, snapshot) {
-                      return SwitchListTile(
-                        secondary: snapshot.data
-                            ? AnimatedCrossFade(
-                                crossFadeState: _showSyncProgressIndicator
-                                    ? CrossFadeState.showSecond
-                                    : CrossFadeState.showFirst,
-                                duration: Duration(milliseconds: 20),
-                                firstChild: TextButton(
-                                  child: Text('sync now'),
-                                  onPressed: () async {
+                      bool syncStatus = snapshot.data;
+                      syncStatus ??= false;
+                      return Column(
+                        children: [
+                          SwitchListTile(
+                            secondary: AnimatedCrossFade(
+                              crossFadeState: _showSyncProgressIndicator
+                                  ? CrossFadeState.showSecond
+                                  : CrossFadeState.showFirst,
+                              duration: Duration(milliseconds: 20),
+                              firstChild: TextButton(
+                                child: Text('sync now'),
+                                onPressed: syncStatus
+                                    ? () async {
+                                        setState(() {
+                                          _showSyncProgressIndicator = true;
+                                        });
+                                        CacheHandler cache = CacheHandler();
+                                        await _syncronize(cache);
+                                        setState(() {
+                                          _showSyncProgressIndicator = false;
+                                        });
+                                      }
+                                    : null,
+                              ),
+                              secondChild: Container(
+                                child: CircularProgressIndicator(),
+                                padding: EdgeInsets.all(10),
+                              ),
+                            ),
+                            // activeColor: AppDefaultColors.colorPrimaryBlue,
+                            contentPadding: const EdgeInsets.only(
+                                right: 15, left: 15, top: 20),
+                            value: syncStatus,
+                            title: Text("Cloud sync"),
+                            onChanged: (switchState) async {
+                              setState(() {
+                                syncStatus = switchState;
+                              });
+                              CacheHandler cache = CacheHandler();
+                              if (switchState) {
+                                bool success = await _syncronize(cache);
+                                cache.addBoolToCache(
+                                    'sync_active', success ? true : false);
+                                if (!success) {
+                                  setState(() {
+                                    syncStatus = false;
+                                  });
+                                }
+                              } else {
+                                cache.addBoolToCache('sync_active', false);
+                              }
+                            },
+                          ),
+                          FutureBuilder<Object>(
+                              future: CacheHandler()
+                                  .getBoolFromCache('sync_over_cellular'),
+                              builder: (context, snapshot) {
+                                bool cellularSyncActive = snapshot.data;
+                                cellularSyncActive ??= false;
+                                return SwitchListTile(
+                                  title: Text('Sync over cellular'),
+                                  value:
+                                      syncStatus ? cellularSyncActive : false,
+                                  onChanged: (switchState) async {
+                                    await CacheHandler().addBoolToCache(
+                                        'sync_over_cellular',
+                                        switchState ? true : false);
                                     setState(() {
-                                      _showSyncProgressIndicator = true;
+                                      cellularSyncActive = switchState;
                                     });
-                                    bool success =
-                                        await Sync().normalSync(true);
-                                    setState(() {
-                                      _showSyncProgressIndicator = false;
-                                    });
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: success
-                                          ? AppDefaultColors.colorPrimaryRed
-                                          : Null,
-                                      content: Text(success
-                                          ? 'Passwords successfully synced with our server'
-                                          : 'An error occured during syncronization process. Please try again later.'),
-                                    ));
                                   },
-                                ),
-                                secondChild: Container(
-                                  child: CircularProgressIndicator(),
-                                  padding: EdgeInsets.all(10),
-                                ),
-                              )
-                            : Container(),
-                        activeColor: AppDefaultColors.colorPrimaryBlue,
-                        contentPadding: const EdgeInsets.all(0),
-                        value: snapshot.data,
-                        title: Text("Cloud sync"),
-                        onChanged: (switchState) async {
-                          if (switchState) {
-                            bool success = await Sync().normalSync();
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: success
-                                  ? AppDefaultColors.colorPrimaryRed
-                                  : Null,
-                              content: Text(success
-                                  ? 'Passwords successfully synced with our server'
-                                  : 'An error occured during syncronization process. Please try again later.'),
-                            ));
-                          }
-                        },
+                                );
+                              })
+                        ],
                       );
                     }),
                 // SwitchListTile(

@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,13 +10,22 @@ import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
 import 'package:save_pass/models/resources/database.dart';
+// import 'package:connectivity/';
 
 class Sync {
   Future<bool> normalSync(
       [bool bypassSyncedCheck = false, BuildContext context]) async {
+    
+    if (!await checkConnectionAvailability()) {
+      throw Exception('No valid connection available');
+    }
+    
     CacheHandler cache = CacheHandler();
     DatabaseHandler db = DatabaseHandler();
     ApiProvider api = ApiProvider();
+
+    bool didSendToCloud = false;
+    bool didSendToDB = false;
 
     if (!bypassSyncedCheck) {
       if (await cache.getBoolFromCache('passwords_synced')) {
@@ -51,7 +61,9 @@ class Sync {
           }
         }
         if (!contains) {
+          print('Attempting to insert local password entry');
           db.insertEncryptedPasswordEntry(i);
+          didSendToDB = true;
         }
       }
 
@@ -67,6 +79,7 @@ class Sync {
               localEntriesAlias.indexWhere((element) => listEquals(i, element));
           EncryptedPasswordEntryClass localEntry =
               localEntries.elementAt(index);
+          print('Attempting to send password entry to backend recource server');
           api.addUserPasswordEntry(
             userIdent,
             masterPassword,
@@ -77,6 +90,7 @@ class Sync {
             localEntry.notes,
             localEntry.encryptionSalt,
           ); // FIXME: END
+          didSendToCloud = true;
         }
       }
     } on Exception catch (e) {
@@ -92,8 +106,43 @@ class Sync {
     await cache.addBoolToCache(
         'passwords_synced', true); // singalize, that passwords are synced
 
+    await cache.addBoolToCache('did_send_to_cloud', didSendToCloud);
+    await cache.addBoolToCache('did_send_to_db', didSendToDB);
+
     print('test');
 
     return true;
+  }
+
+
+  Future<bool> checkConnectionAvailability() async {
+    Connectivity connect = Connectivity();
+    CacheHandler cache = CacheHandler();
+    ConnectivityResult result = await connect.checkConnectivity();
+    print('ConnectivityResult: ' + result.index.toString());
+    bool syncOverCellular = false;
+    try {
+      syncOverCellular = await cache.getBoolFromCache('sync_over_cellular');
+    } on Exception {
+      syncOverCellular = false;
+    } 
+    syncOverCellular ??= false;
+    if (syncOverCellular) {
+      if (result == ConnectivityResult.mobile) {
+        return true;
+      } else if (result == ConnectivityResult.wifi) {
+        return true;
+      } else if (result == ConnectivityResult.none) {
+        return false;
+      }
+    } else {
+      if (result == ConnectivityResult.mobile) {
+        return false;
+      } else if (result == ConnectivityResult.wifi) {
+        return true;
+      } else if (result == ConnectivityResult.none) {
+        return false;
+      }
+    }
   }
 }

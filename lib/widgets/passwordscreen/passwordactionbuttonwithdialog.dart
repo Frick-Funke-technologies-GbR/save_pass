@@ -339,6 +339,7 @@ class _PasswordActionButtonWithDialogWidgetState
                           }
                           if (!error == true) {
                           } else {
+                            await cache.addBoolToCache('passwords_synced', false); // Set the state switching boolean for password syncing
                             Navigator.of(context)
                                 .popAndPushNamed('/passwordscreen');
                             final sucessSnackBar = SnackBar(
@@ -634,6 +635,7 @@ class _PasswordActionButtonWithDialogWidgetState
                   onPressed: () async {
                     // validateAddPasswordEntryFields(true, context);
                     var error = await validatePasswordFields(true);
+                    await cache.addBoolToCache('passwords_synced', false); // Set the state switching boolean for password syncing
                     Navigator.of(context).popAndPushNamed('/passwordscreen');
                     final sucessSnackBar = SnackBar(
                       content: Text('The entry was stored sucessfully!'),

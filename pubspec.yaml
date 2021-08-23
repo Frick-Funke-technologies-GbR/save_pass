@@ -39,6 +39,7 @@ dependencies:
   sqflite: ^2.0.0+2
   path: ^1.8.0
   cryptography: ^2.0.1
+  connectivity: ^3.0.6
 
 dev_dependencies:
   flutter_test:

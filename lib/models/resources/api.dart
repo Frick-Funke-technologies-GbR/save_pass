@@ -362,6 +362,8 @@ class ApiProvider {
       return true;
     } else if (response.statusCode == 422) {
       throw Exception('Failed to add entry.');
+    } else if (response.statusCode == 500) {
+      throw Exception('Server Error. Failed to add entry.');
     } else if (response.statusCode == 404) {
       // If that call was not successful, throw an error.
       var result = json.decode(response.body);

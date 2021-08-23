@@ -475,13 +475,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             //         32, (i) => random.nextInt(256))));
                             // print(await ApiProvider().getUserPasswordEntries(await CacheHandler().getSecureStringFromCache('user_ident'), 'moinsen'));
                             // print(await CacheHandler().getSecureStringFromCache('user_ident'));
-                            Sync().normalSync(true); // TODO: debug sync function
+                            // Sync().normalSync(true); // TODO: debug sync function
                             // print(await ApiProvider().getIconAsBlob('facebook.com'));
                             // ____________________________________
 
-                            // passInputValidator(_showUsernameField
-                            //     ? usernameTextFieldController.text
-                            //     : null);
+                            passInputValidator(_showUsernameField
+                                ? usernameTextFieldController.text
+                                : null);
                           },
                           // elevation: 6,
                         ),

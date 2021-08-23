@@ -21,7 +21,7 @@ Future<String> validatePasswordFields() async {
     // _passwordFieldKey.currentState.validate();
   } else {
     String userIdent = await cache.getSecureStringFromCache('user_ident');
-    // FIXME: possible error found in register progress. if not ignore/delete this comment
+    // FIXME: possible error found in registration progress. if not, ignore/delete this comment
     // String masterPassword =
     //     await cache.getSecureStringFromCache('master_password');
 
