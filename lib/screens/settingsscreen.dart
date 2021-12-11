@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/resources/cache.dart';
@@ -43,11 +44,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: success
           ? AppDefaultColors.colorPrimaryGrey
           : AppDefaultColors.colorPrimaryRed,
-      content: Text(success
-          ? didSync
-              ? 'Passwords successfully synced with our server'
-              : 'Passwords already up-to-date'
-          : 'An error occured during syncronization process. Please try again later.'),
+      content: RichText(
+        text: TextSpan(
+          text: success
+              ? didSync
+                  ? 'Passwords successfully synced with our server'
+                  : 'Passwords already up-to-date'
+              : 'An error occured during syncronization process. Please try again later. Maybe you could try to ',
+          children: [
+            TextSpan(
+              style: TextStyle(
+                decoration: TextDecoration.underline,
+                fontWeight: FontWeight.bold,
+              ),
+              text: success ? '' : 'log in again',
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {/*TODO: add login process*/},
+            ),
+          ],
+        ),
+      ),
     ));
     return success;
   }
@@ -107,7 +123,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text("Change password"),
                         trailing: Icon(Icons.keyboard_arrow_right),
                         onTap: () {
-                          //open change password
+                          // TODO: Add change passwords function
                         },
                       ),
                       _buildDivider(),
@@ -119,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text("Log out"),
                         trailing: Icon(Icons.keyboard_arrow_right),
                         onTap: () {
-                          //open change location
+                          // TODO: Add Log Out screen
                         },
                       ),
                       _buildDivider(),
@@ -131,7 +147,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text("Delete account"),
                         trailing: Icon(Icons.keyboard_arrow_right),
                         onTap: () {
-                          //open change language
+                          // TODO: Add acount deletion function
                         },
                       ),
                     ],
@@ -223,6 +239,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   },
                                 );
                               })
+                          // TODO: add an option to create backups in own file format
                         ],
                       );
                     }),
@@ -259,7 +276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Container _buildDivider() {
     return Container(
       margin: const EdgeInsets.symmetric(
-        horizontal: 8.0,
+        horizontal: 20.0,
       ),
       width: double.infinity,
       height: 1.0,

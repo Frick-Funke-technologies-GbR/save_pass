@@ -1,7 +1,10 @@
 // import 'dart:js';
 // import 'dart:ui';
 
+import 'dart:isolate';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,6 +22,7 @@ import 'package:save_pass/widgets/uni/drawer.dart';
 import 'package:save_pass/widgets/passwordscreen/passwordentry.dart';
 import 'package:save_pass/widgets/uni/usercard.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 // import 'dart:ui' as ui;
 
 class PasswordScreen extends StatefulWidget {
@@ -87,6 +91,25 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
     return entries;
   }
+
+  // Future<int> computeOnSecondaryIsolate() async {
+  //   return await compute(getPasswordEntries, 40);
+  // }
+
+  // VoidCallback createSecondaryIsolateCallback(
+  //     BuildContext context, AsyncSnapshot snapshot) {
+  //   if (snapshot.connectionState == ConnectionState.done) {
+  //     return () {
+  //       setState(() {
+  //         computeFuture = computeOnSecondaryIsolate().then((val) {
+  //           showSnackBar(context, 'Secondary Isolate Done $val');
+  //         });
+  //       });
+  //     };
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   void _showAccountDialog(BuildContext context) {
     // String username = 'hallo';
@@ -546,7 +569,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                       child: Text('${snapshot.error}'),
                                     );
                                   } else if (snapshot.data.isEmpty) {
-                                    return Center(
+                                    return Center( // TODO: Add picture if no entry added yet
                                       child: Text('no entries added yet'),
                                     );
                                   }

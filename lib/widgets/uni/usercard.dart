@@ -92,7 +92,7 @@ class _UserCardState extends State<UserCard> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(right: 20),
+                              margin: EdgeInsets.only(right: 20, left: 15),
                               child: Text(
                                 snapshot.data['user_ident'],
                                 style: TextStyle(
