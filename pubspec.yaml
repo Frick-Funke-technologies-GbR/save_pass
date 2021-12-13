@@ -40,6 +40,8 @@ dependencies:
   path: ^1.8.0
   cryptography: ^2.0.2
   connectivity: ^3.0.6
+  path_provider: ^1.6.0
+  permission_handler: ^5.0.1
 
 dev_dependencies:
   flutter_test:

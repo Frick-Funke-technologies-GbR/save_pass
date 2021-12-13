@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/resources/cache.dart';
 import 'package:save_pass/models/resources/sync.dart';
+import 'package:save_pass/widgets/settingsscreen/logoutfunctions.dart';
 import 'package:save_pass/widgets/uni/usercard.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -135,6 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text("Log out"),
                         trailing: Icon(Icons.keyboard_arrow_right),
                         onTap: () {
+                          showLogOutDialog(context);
                           // TODO: Add Log Out screen
                         },
                       ),
@@ -240,6 +242,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 );
                               })
                           // TODO: add an option to create backups in own file format
+                          // TODO: add an option to import backups in own file format
+                          // TODO: add an option to delete all backups (data privacy)
                         ],
                       );
                     }),

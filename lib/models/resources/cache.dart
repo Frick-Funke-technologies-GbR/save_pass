@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -56,4 +59,20 @@ class CacheHandler {
     // print(boolValue);
     return boolValue;
   }
+
+  Future<Directory> getStorageDirectory() async {
+    Directory externalStorageDirectory = await getExternalStorageDirectory();
+    return externalStorageDirectory;
+  }
+  
+  Future<List<Directory>> getStorageDirectories() async {
+    List<Directory> externalStorageDirectories = await getExternalStorageDirectories();
+    return externalStorageDirectories;
+  }
+
+  Future<List<Directory>> getCacheDirectories() async {
+    List<Directory> externalCacheDirectory = await getExternalCacheDirectories();
+    return externalCacheDirectory;
+  }
+  
 }
