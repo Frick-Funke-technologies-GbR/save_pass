@@ -85,6 +85,7 @@ class ApiProvider {
     );
     print('[DEBUG] Status of POST request (/api/user_data): ' +
         response.statusCode.toString());
+    print(response.body);
     final Map result = json.decode(response.body);
     if (response.statusCode == 201) {
       // If the call to the server was successful, parse the JSON

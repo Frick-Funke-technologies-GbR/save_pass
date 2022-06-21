@@ -53,7 +53,7 @@ class DatabaseHandler {
   }
 
   Future<List<EncryptedPasswordEntryClass>>
-      getEncrpytedPasswordEntries() async {
+      getEncryptedPasswordEntries() async {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
     final List<Map<String, dynamic>> maps = await db.query('password_entry');
@@ -131,7 +131,7 @@ class DatabaseHandler {
     if (map.isEmpty) {
       String cachedPassword =
           await CacheHandler().getSecureStringFromCache('master_password');
-      if (cachedPassword == null) {
+      if (cachedPassword == null && await CacheHandler().getBoolFromCache('registered')) {
         throw Exception(
             'Error when storing the masterpassword on register, please restart app');
       }

@@ -7,8 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 import 'package:save_pass/models/resources/cache.dart';
+import 'package:save_pass/models/resources/backup.dart';
+import 'package:save_pass/models/resources/database.dart';
 
-showLogOutDialog(BuildContext context) async {
+void showLogOutDialog(BuildContext context) async {
   Directory storageDirectory = await CacheHandler().getStorageDirectory();
   showDialog(
     context: context,
@@ -93,14 +95,16 @@ showLogOutDialog(BuildContext context) async {
                   bool errorOccured = !(await _createBackup());
                   if (await _requestStoragePermission(Permission.storage) &&
                       !errorOccured) {
-                    // TODO: Add logout process
+                    // _createBackup(storageDirectory);
+                    _localLogout();
+                    Navigator.of(context).pushNamedAndRemoveUntil('/registerscreen', (route) => false); // close all previous routes
+                    // TODO: Delete all Data except the backup, figure out, how to get to Register-screen
                   } else {
                     Navigator.of(context).pop();
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-
                           content: Text.rich(
                             TextSpan(
                               children: [
@@ -130,19 +134,19 @@ showLogOutDialog(BuildContext context) async {
                             ButtonBar(
                               children: [
                                 TextButton(
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                      color: AppDefaultColors.colorPrimaryGrey,
+                                    child: Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color:
+                                            AppDefaultColors.colorPrimaryGrey,
+                                      ),
                                     ),
-                                  ),
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  }
-                                ),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    }),
                                 TextButton(
                                   style: TextButton.styleFrom(
                                     backgroundColor:
@@ -155,6 +159,8 @@ showLogOutDialog(BuildContext context) async {
                                     ),
                                   ),
                                   onPressed: () {
+                                    _localLogout();
+                                    Navigator.of(context).pushNamedAndRemoveUntil('/registerscreen', (route) => false); // close all previous routes
                                     // TODO: Add logout process
                                   },
                                 ),
@@ -176,8 +182,33 @@ showLogOutDialog(BuildContext context) async {
 }
 
 Future<bool> _createBackup() async {
-  // TODO: Add backup creation function
-  return true;
+  bool success = await Backup().backupData();
+  return success;
+}
+
+Future<bool> _localLogout() async {
+  CacheHandler cache = CacheHandler();
+  DatabaseHandler db = DatabaseHandler();
+
+  try {
+    
+    // clear most important cache entries
+    await cache.removeFromCache('master_password');
+    await cache.removeFromCache('user_name');
+    await cache.removeFromCache('user_ident');
+    await cache.removeFromCache('first_name');
+    await cache.removeFromCache('last_name');
+    await cache.removeFromCache('email_adress');
+
+    //clear all data stores in db
+    await db.deleteAllPasswordEntries();
+
+    return true;
+  } catch (exception) {
+    print(
+        '[DEBUG] exception occured during local logout: ${exception.toString()}');
+    return false;
+  }
 }
 
 Future<bool> _requestStoragePermission(Permission permission) async {

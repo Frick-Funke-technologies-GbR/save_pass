@@ -194,198 +194,208 @@ class _PasswordScreenState extends State<PasswordScreen> {
     );
     // TODO: Add widget to display if no entry added yet
     // FIXME: debug api if no entry added yet
-    CustomScrollView _passwordEntryListView(List<PasswordEntryClass> data) {
+    Widget _passwordEntryListView(List<PasswordEntryClass> data) {
       bool shouldCopyData = true;
       List<PasswordEntryClass> dataCopy;
-      return CustomScrollView(
-        slivers: <Widget>[
-          SliverPadding(
-            padding: EdgeInsets.only(bottom: 30),
-            sliver: SliverAppBar(
-              elevation: 0,
-              // forceElevated: true,
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.transparent,
-              title: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(7),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppDefaultColors.colorPrimaryGrey[400],
-                      blurRadius: 3,
-                      spreadRadius: 0.01,
-                    )
-                  ],
-                ),
-                // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                // height: 50,
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 10),
-                      child: Icon(
-                        Icons.search,
-                        color: AppDefaultColors.colorPrimaryGrey[500],
+      return NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (OverscrollIndicatorNotification overscroll) {
+          overscroll.disallowGlow();
+        },
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverPadding(
+              padding: EdgeInsets.only(bottom: 30),
+              sliver: SliverAppBar(
+                elevation: 0,
+                // forceElevated: true,
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.transparent,
+                title: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(7),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppDefaultColors.colorPrimaryGrey[400],
+                        blurRadius: 3,
+                        spreadRadius: 0.01,
+                      )
+                    ],
+                  ),
+                  // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  // height: 50,
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(left: 10),
+                        child: Icon(
+                          Icons.search,
+                          color: AppDefaultColors.colorPrimaryGrey[500],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchFilteringController,
-                        // onChanged: _changeSearchFieldListeners(),
-                        onChanged: (String input) async {
-                          List<PasswordEntryClass> newData = [];
-                          List<int> addIndex = [];
-                          print('shouldCopyData' + shouldCopyData.toString());
-                          shouldCopyData
-                              ? setState(() {
-                                  dataCopy ??=
-                                      data;
-                                  shouldCopyData = false; // FIXME: Add working way to signalize the datacopy
-                                })
-                              : null;
-                          if (input.isEmpty) {
-                            setState(() {
-                              data = dataCopy;
-                            });
-                          }
-                          for (int i = 0; i < data.length; i++) {
-                            print('INPUT $input');
-                            print('DataCopy: ${dataCopy.length}');
-                            print('Data: ${data.length}');
-                            if (!data[i].alias.toLowerCase().contains(input)) {
-                              print('NOT CONTAINS INPUT');
-                              print(data[i].alias);
-                              for (int ii = 0; ii < dataCopy.length; ii++) {
-                                if (dataCopy[ii]
-                                    .alias
-                                    .toLowerCase()
-                                    .contains(input)) {
-                                  setState(() {
-                                    newData.add(dataCopy[ii]);
-                                  });
-                                }
-                              }
+                      Expanded(
+                        child: TextField(
+                          controller: _searchFilteringController,
+                          // onChanged: _changeSearchFieldListeners(),
+                          onChanged: (String input) async {
+                            List<PasswordEntryClass> newData = [];
+                            List<int> addIndex = [];
+                            print('shouldCopyData' + shouldCopyData.toString());
+                            shouldCopyData
+                                ? setState(() {
+                                    dataCopy ??= data;
+                                    shouldCopyData =
+                                        false; // FIXME: Add working way to signalize the datacopy
+                                  })
+                                : null;
+                            if (input.isEmpty) {
                               setState(() {
-                                data.removeAt(i);
+                                data = dataCopy;
                               });
                             }
-                          }
-                          if (newData.isNotEmpty) {
-                            print('HALLO');
-                            for (int i = 0; i < newData.length; i++) {
-                              for (int ii = 0; ii < data.length; ii++) {
-                                if (newData[i].id != data[ii].id) {
-                                  addIndex.add(i);
+                            for (int i = 0; i < data.length; i++) {
+                              print('INPUT $input');
+                              print('DataCopy: ${dataCopy.length}');
+                              print('Data: ${data.length}');
+                              if (!data[i]
+                                  .alias
+                                  .toLowerCase()
+                                  .contains(input)) {
+                                print('NOT CONTAINS INPUT');
+                                print(data[i].alias);
+                                for (int ii = 0; ii < dataCopy.length; ii++) {
+                                  if (dataCopy[ii]
+                                      .alias
+                                      .toLowerCase()
+                                      .contains(input)) {
+                                    setState(() {
+                                      newData.add(dataCopy[ii]);
+                                    });
+                                  }
+                                }
+                                setState(() {
+                                  data.removeAt(i);
+                                });
+                              }
+                            }
+                            if (newData.isNotEmpty) {
+                              print('HALLO');
+                              for (int i = 0; i < newData.length; i++) {
+                                for (int ii = 0; ii < data.length; ii++) {
+                                  if (newData[i].id != data[ii].id) {
+                                    addIndex.add(i);
+                                  }
                                 }
                               }
                             }
-                          }
-                          if (addIndex.isNotEmpty) {
-                            print('HALLO2');
-                            for (int i in addIndex) {
-                              print(addIndex.toString());
-                              setState(() {
-                                data.add(newData[i]);
-                              });
+                            if (addIndex.isNotEmpty) {
+                              print('HALLO2');
+                              for (int i in addIndex) {
+                                print(addIndex.toString());
+                                setState(() {
+                                  data.add(newData[i]);
+                                });
+                              }
                             }
-                          }
-                          // for (int i = 0; i < dataCopy.length; i++) {
-                          //   if (dataCopy[i].alias.toLowerCase().contains(input)) {}}
-                        },
-                        decoration: InputDecoration(
-                          // fillColor: AppDefaultColors.colorPrimaryGrey[100],
-                          // hintText: "Search",
-                          // labelText: 'Search',
-                          hintText: 'Search passwords',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 15,
+                            // for (int i = 0; i < dataCopy.length; i++) {
+                            //   if (dataCopy[i].alias.toLowerCase().contains(input)) {}}
+                          },
+                          decoration: InputDecoration(
+                            // fillColor: AppDefaultColors.colorPrimaryGrey[100],
+                            // hintText: "Search",
+                            // labelText: 'Search',
+                            hintText: 'Search passwords',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 15,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        right: 8,
-                      ),
-                      child: CircleAvatar(
-                        child: RawMaterialButton(
-                          onPressed: () {
-                            _showAccountDialog(context);
-                          },
-                          shape: CircleBorder(),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          right: 8,
                         ),
-                        backgroundColor: Colors.transparent,
-                        radius: 15,
-                        // TODO: Add user account image
-                        backgroundImage: NetworkImage(
-                            'https://www.w3schools.com/w3css/img_lights.jpg'),
-                      ),
-                    )
-                  ],
+                        child: CircleAvatar(
+                          child: RawMaterialButton(
+                            onPressed: () {
+                              _showAccountDialog(context);
+                            },
+                            shape: CircleBorder(),
+                          ),
+                          backgroundColor: Colors.transparent,
+                          radius: 15,
+                          // TODO: Add user account image
+                          backgroundImage: NetworkImage(
+                              'https://www.w3schools.com/w3css/img_lights.jpg'),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
+
+                // backgroundColor: Colors.transparent,
+                // flexibleSpace: FlexibleSpaceBar(),
+                // collapsedHeight: 200,
+
+                snap: true,
+                floating: true,
+                // pinned: true,
               ),
-
-              // backgroundColor: Colors.transparent,
-              // flexibleSpace: FlexibleSpaceBar(),
-              // collapsedHeight: 200,
-
-              snap: true,
-              floating: true,
-              // pinned: true,
             ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                // getPasswordEntries();
-                print('AAAAAAAAAAAAAA' + data[index].thumbnail.runtimeType.toString() + data[index].thumbnail);
-                return PasswordEntry(
-                  data[index].id,
-                  data[index].url,
-                  data[index].alias,
-                  data[index].username,
-                  data[index].password,
-                  data[index].notes,
-                  data[index].thumbnail,
-                );
-              },
-              childCount: data.length,
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  // getPasswordEntries();
+                  print('AAAAAAAAAAAAAA' +
+                      data[index].thumbnail.runtimeType.toString() +
+                      data[index].thumbnail);
+                  return PasswordEntry(
+                    data[index].id,
+                    data[index].url,
+                    data[index].alias,
+                    data[index].username,
+                    data[index].password,
+                    data[index].notes,
+                    data[index].thumbnail,
+                  );
+                },
+                childCount: data.length,
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              constraints: BoxConstraints(minHeight: 100),
-              padding: EdgeInsets.only(top: 20),
-              alignment: Alignment.topCenter,
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Logos provided by ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'Clearbit',
-                      style: TextStyle(
-                          color: AppDefaultColors.colorPrimaryBlue,
+            SliverToBoxAdapter(
+              child: Container(
+                constraints: BoxConstraints(minHeight: 100),
+                padding: EdgeInsets.only(top: 20),
+                alignment: Alignment.topCenter,
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Logos provided by ',
+                        style: TextStyle(
+                          color: Colors.black,
                           fontSize: 12,
-                          decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launch('https://clearbit.com');
-                        },
-                    ),
-                  ],
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Clearbit',
+                        style: TextStyle(
+                            color: AppDefaultColors.colorPrimaryBlue,
+                            fontSize: 12,
+                            decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launch('https://clearbit.com');
+                          },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
 
@@ -569,7 +579,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                       child: Text('${snapshot.error}'),
                                     );
                                   } else if (snapshot.data.isEmpty) {
-                                    return Center( // TODO: Add picture if no entry added yet
+                                    return Center(
+                                      // TODO: Add picture if no entry added yet
                                       child: Text('no entries added yet'),
                                     );
                                   }

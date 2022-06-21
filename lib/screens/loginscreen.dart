@@ -31,17 +31,23 @@ Future<String> getUserIdent() async {
 //   return passcheck;
 // }
 
+// FIXME: Fix following function, in case of previous logout
 Future<bool> checkMasterPassword(
     String password, context, String username) async {
+  CacheHandler cache = CacheHandler();
+  
   if (username == null) {
     try {
-      CacheHandler().getSecureStringFromCache('user_name');
+      cache.getSecureStringFromCache('user_name');
     } catch (e) {
       print('[EXCEPTION_FIX] ' + e.toString());
     }
   }
 
   // Check if user_data was already requested successfully at register
+
+  bool registered = await cache.getBoolFromCache('registered');
+
   bool userIdentAlreadyStored = true;
   try {
     CacheHandler().getSecureStringFromCache('user_ident');
@@ -53,7 +59,7 @@ Future<bool> checkMasterPassword(
   if (!userIdentAlreadyStored) {
     try {
       // FIXME: The followong schould only be called after register
-      ApiProvider().getUserData(username);
+      await ApiProvider().getUserData(username);
     } catch (e) {
       // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
       // FIXME: Here, the state also doesnt change for Snackbar
@@ -160,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Future<bool> _checkNessecaryUsername() async {
       String value = await CacheHandler().getSecureStringFromCache('user_name');
-      print(value);
+      print('[DEBUG] Username field will be shown? $value');
       return value == null ? true : false;
       // await CacheHandler().addSecureStringToCache('user_name', 'fcO3x5GKdthbLnjkImxBWPk7jaz2');
       // return false;

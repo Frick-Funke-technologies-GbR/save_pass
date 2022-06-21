@@ -28,15 +28,15 @@ An open-source cross-platform password manager with cloud sync function. Current
         'creation_date' : '2021-04-23T18:25:43.511Z',
         'created_by' : 'mobile_client',
         'synced_with_server' : false,
-        'last_sync_date' : ''
+        'last_sync_datetime' : ''
     },
     'user' :
     {
-        'username' : 'DarthVader',
+        'user_name' : 'DarthVader',
         'user_ident' : '#av9387n0qng',
-        'firstname' : 'Darth',
-        'lastname' : 'Vader',
-        'emailaddress' : 'darthvader@darkimperium.dstar',
+        'first_name' : 'Darth',
+        'last_name' : 'Vader',
+        'email_address' : 'darthvader@darkimperium.dstar',
         'password' : '',
         'register_date' : '2021-04-23T18:25:43.511Z',
         'last_login_date' : '2021-04-23T18:25:43.511Z',
@@ -45,9 +45,19 @@ An open-source cross-platform password manager with cloud sync function. Current
     'data' : 
     {
         'password_entries' :
-        {
-            (...)
-        }
+        [
+            {
+                'alias': 'asdjcpoianbpoverin',
+                'creation_date': 'öasdlfjopivnaweofn', // creation_date is also encrypted
+                'encryption_salt': 'laskdnoviawhngüäi',
+                'id': 12,
+                'notes': 'lasdfvnaoiwenv',
+                'password': 'aspüdvonpoainseoinn',
+                'thumbnail': null,
+                'url': 'lasdfkopvnoaweinv',
+                'user_name': 'lasvdndvoiawneöpoigh',
+            }
+        ]
     }
 }
 ```

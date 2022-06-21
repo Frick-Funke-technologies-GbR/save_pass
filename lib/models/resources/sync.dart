@@ -1,5 +1,3 @@
-// TODO: Add state changing sync class
-
 import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
@@ -10,7 +8,6 @@ import 'package:save_pass/models/classes/passwordentryClass.dart';
 import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
 import 'package:save_pass/models/resources/database.dart';
-// import 'package:connectivity/';
 
 class Sync {
   Future<bool> normalSync(
@@ -34,7 +31,7 @@ class Sync {
     }
 
     List<EncryptedPasswordEntryClass> localEntries =
-        await db.getEncrpytedPasswordEntries();
+        await db.getEncryptedPasswordEntries();
 
     String userIdent = await cache.getSecureStringFromCache('user_ident');
     String masterPassword =
@@ -103,11 +100,13 @@ class Sync {
     //   ScaffoldMessenger.of(context).showSnackBar(SnackBar());
     // }
 
-    await cache.addBoolToCache(
-        'passwords_synced', true); // singalize, that passwords are synced
-
     await cache.addBoolToCache('did_send_to_cloud', didSendToCloud);
     await cache.addBoolToCache('did_send_to_db', didSendToDB);
+
+    if (didSendToDB && didSendToDB) {
+      await cache.addBoolToCache('passwords_synced', true); // singalize, that passwords are synced
+      await cache.addStringToCache('last_sync_datetime', DateTime.now().toString()); // save sync time
+    }
 
     print('test');
 

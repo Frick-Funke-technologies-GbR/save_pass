@@ -26,10 +26,22 @@ class CacheHandler {
     prefs.setBool(key, boolValue);
   }
 
-  removeFromCache(String key) async {
+  Future<bool> removeFromCache(String key) async { 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(key);
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    await prefs.remove(key);
+    await storage.delete(key: key);
+    return true; // exception handling should be done in parent function, not here
   }
+
+  Future<bool> removeAllFromCache(String key) async { 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    await prefs.clear();
+    await storage.deleteAll();
+    return true; // exception handling should be done in parent function, not here
+  }
+
 
   Future<String> getSecureStringFromCache(String key) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
@@ -74,5 +86,5 @@ class CacheHandler {
     List<Directory> externalCacheDirectory = await getExternalCacheDirectories();
     return externalCacheDirectory;
   }
-  
+    
 }

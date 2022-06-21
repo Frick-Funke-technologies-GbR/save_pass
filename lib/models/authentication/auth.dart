@@ -60,7 +60,7 @@ class BackendAuth {
       String emailaddress,
       String password) async {
     String passwordHash =
-        password; // TODO: Add password derivation/hash function here
+        password; // TODO: IMPORTANT FIX BEFORE LAUNCH!!! Add password derivation/hash function here
 
     final response = await client.post(
       // "http://10.0.2.2:5000/api/auth/register",
@@ -107,7 +107,7 @@ class BackendAuth {
   ) async {
     
     String passwordHash =
-        password; // TODO: Add password derivation/hash function here
+        password; // TODO: IMPORTANT FIX BEFORE LAUNCH!!! Add password derivation/hash function here
 
     final response = await client.post(
       // "http://10.0.2.2:5000/api/check_pass",

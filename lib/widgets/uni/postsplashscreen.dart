@@ -5,7 +5,7 @@ import 'package:save_pass/screens/registerscreen.dart';
 
 FutureBuilder<bool> postSplashScreenBuilder() {
   return FutureBuilder(
-    future: CacheHandler().getBoolFromCache('first_time_login'),
+    future: CacheHandler().getBoolFromCache('registered'),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return Scaffold(backgroundColor: Colors.white);

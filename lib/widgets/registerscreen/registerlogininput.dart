@@ -23,7 +23,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
 
   @override
   void initState() {
-    // TODO: eventually remove bevore release, add manual logout
+    // TODO: eventually remove before release, add manual logout
     super.initState();
     // TODO: Add signout functionality
     // signOutGoogle();
@@ -186,7 +186,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                             Navigator.of(context)
                                 .pushReplacementNamed('/passwordscreen');
                             CacheHandler()
-                                .addBoolToCache('first_time_login', false);
+                                .addBoolToCache('registered', true);
                           } catch (e) {
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -244,7 +244,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                     onPressed: () {
                       Navigator.of(context)
                           .pushReplacementNamed('/loginscreen');
-                      CacheHandler().addBoolToCache('first_time_login', false);
+                      CacheHandler().addBoolToCache('registered', true);
                     },
                   ),
                 ],
@@ -604,7 +604,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
 
                     Navigator.of(context)
                         .pushReplacementNamed('/passwordscreen');
-                    cache.addBoolToCache('first_time_login', false);
+                    cache.addBoolToCache('registered', true);
                     ApiProvider().getUserData(
                         await cache.getSecureStringFromCache('user_name'));
                     // TODO: add save user data in app functionality (button already added)
