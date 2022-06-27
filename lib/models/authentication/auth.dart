@@ -97,7 +97,7 @@ class BackendAuth {
     } else if (response.statusCode == 500) {
       // If that call was not successful, throw an error.
       throw Exception(
-          'Failed to register. Try again soon. If this error keeps repeating, contact us at support.savepass@frifu.de'); 
+          'Failed to register. Try again soon. If this error keeps repeating, contact us at support.savepass@frifu.de');
     }
   }
 
@@ -105,7 +105,6 @@ class BackendAuth {
     String userIdent,
     String password,
   ) async {
-    
     String passwordHash =
         password; // TODO: IMPORTANT FIX BEFORE LAUNCH!!! Add password derivation/hash function here
 
@@ -129,10 +128,9 @@ class BackendAuth {
     if (response.statusCode == 401) {
       return false; // FIXME: Change to throw Exception('wrong password')
     } else if (response.statusCode == 200) {
-
       String authToken = result['auth_token'];
       await _saveAuthToken(authToken);
-      
+
       if (result['data']['password_entries'] == 0) {
         return null;
       }
