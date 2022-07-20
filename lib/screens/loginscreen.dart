@@ -17,9 +17,9 @@ import 'package:save_pass/models/resources/api.dart';
 import 'package:save_pass/models/resources/cache.dart';
 import 'dart:ui' as ui;
 
-Future<String> getUserIdent() async {
+Future<String?> getUserIdent() async {
   CacheHandler cache = CacheHandler();
-  String value = await cache.getSecureStringFromCache('user_ident');
+  String? value = await cache.getSecureStringFromCache('user_ident');
   return value;
 }
 
@@ -32,10 +32,10 @@ Future<String> getUserIdent() async {
 // }
 
 // FIXME: Fix following function, in case of previous logout
-Future<bool> checkMasterPassword(
-    String password, context, String username) async {
+Future<bool?> checkMasterPassword(
+    String password, context, String? username) async {
   CacheHandler cache = CacheHandler();
-  
+
   if (username == null) {
     try {
       cache.getSecureStringFromCache('user_name');
@@ -46,7 +46,7 @@ Future<bool> checkMasterPassword(
 
   // Check if user_data was already requested successfully at register
 
-  bool registered = await cache.getBoolFromCache('registered');
+  bool? registered = await cache.getBoolFromCache('registered');
 
   bool userIdentAlreadyStored = true;
   try {
@@ -59,7 +59,7 @@ Future<bool> checkMasterPassword(
   if (!userIdentAlreadyStored) {
     try {
       // FIXME: The followong schould only be called after register
-      await ApiProvider().getUserData(username);
+      await ApiProvider().getUserData(username!, await CacheHandler().getSecureStringFromCache('auth_token'));
     } catch (e) {
       // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
       // FIXME: Here, the state also doesnt change for Snackbar
@@ -74,7 +74,7 @@ Future<bool> checkMasterPassword(
     }
   }
 
-  String userIdent = await getUserIdent();
+  String? userIdent = await getUserIdent();
   // TODO: Add route when checkPass receives 404 (list empty)
   // bool checkedIn = await api.login(userIdent, password);
   bool checkedIn = await PasswordEntryDatabaseActions(password).login();
@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final passInputKey = GlobalKey<FormState>();
     final passButtonKey = GlobalKey<FormState>();
 
-    void passInputValidator([String username]) async {
+    void passInputValidator([String? username]) async {
       var passwordChecked = await checkMasterPassword(
           passwordTextFieldController.text, context, username);
 
@@ -149,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
           fieldsValidator = passwordChecked;
         });
 
-        if (passInputKey.currentState.validate()) {
+        if (passInputKey.currentState!.validate()) {
           CacheHandler().addSecureStringToCache(
               'master_password', passwordTextFieldController.text);
           Navigator.of(context).pushNamed("/newpasswordscreen");
@@ -165,7 +165,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     Future<bool> _checkNessecaryUsername() async {
-      String value = await CacheHandler().getSecureStringFromCache('user_name');
+      String? value =
+          await CacheHandler().getSecureStringFromCache('user_name');
       print('[DEBUG] Username field will be shown? $value');
       return value == null ? true : false;
       // await CacheHandler().addSecureStringToCache('user_name', 'fcO3x5GKdthbLnjkImxBWPk7jaz2');
@@ -225,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             //     _showUsernameField = true;
                             //   });
                             // });
-                            if (snapshot.data) {
+                            if (snapshot.data != null) {
                               // WidgetsBinding.instance.addPostFrameCallback((_) {
                               _showUsernameField = true;
                               // });
@@ -250,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     // key: passInputKey,
                                     // FIXME: Fix the state not updating
                                     validator: (value) {
-                                      if (value.isEmpty) {
+                                      if (value!.isEmpty) {
                                         return 'Please enter a username';
                                       }
                                       if (usernameValidator) {
@@ -335,7 +336,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 print(
                                     '[VALIDATE_PASSWORDFIELD] passwordcheck: ' +
                                         fieldsValidator.toString());
-                                if (value.isEmpty) {
+                                if (value!.isEmpty) {
                                   return 'Please enter a password';
                                 }
                                 if (wrongPassCount > 3) {

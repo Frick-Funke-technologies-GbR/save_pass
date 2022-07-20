@@ -1,3 +1,5 @@
+
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -21,7 +23,7 @@ class DatabaseHandler {
   }
 
   Future<void> insertPasswordEntry(
-      PasswordEntryClass entry, String password) async {
+      PasswordEntryClass entry, String? password) async {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
     Map<String, dynamic> encryptedEntry = await entry.toEncryptedMap(password);
@@ -79,7 +81,7 @@ class DatabaseHandler {
     return passwordEntries;
   }
 
-  Future<List<PasswordEntryClass>> getPasswordEntries(String password) async {
+  Future<List<PasswordEntryClass>> getPasswordEntries(String? password) async {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
     final List<Map<String, dynamic>> maps = await db.query('password_entry');
@@ -101,7 +103,7 @@ class DatabaseHandler {
   }
 
   Future<PasswordEntryClass> generatePasswordEntry(
-      String password, Map<String, dynamic> map) async {
+      String? password, Map<String, dynamic> map) async {
     return await PasswordEntryClass().fromEncryptedMap(
       password,
       map['id'],
@@ -113,7 +115,7 @@ class DatabaseHandler {
       map['thumbnail'],
       map['encryption_salt'],
       base64Decode(
-          await CacheHandler().getStringFromCache('key_derivation_salt')),
+          await (CacheHandler().getStringFromCache('key_derivation_salt') as FutureOr<String>)),
     );
   }
 
@@ -129,9 +131,9 @@ class DatabaseHandler {
     );
 
     if (map.isEmpty) {
-      String cachedPassword =
+      String? cachedPassword =
           await CacheHandler().getSecureStringFromCache('master_password');
-      if (cachedPassword == null && await CacheHandler().getBoolFromCache('registered')) {
+      if (cachedPassword == null && await (CacheHandler().getBoolFromCache('registered') as FutureOr<bool>)) {
         throw Exception(
             'Error when storing the masterpassword on register, please restart app');
       }
@@ -157,7 +159,7 @@ class DatabaseHandler {
         mapAsMap['thumbnail'],
         mapAsMap['encryption_salt'],
         base64Decode(
-            await CacheHandler().getStringFromCache('key_derivation_salt')),
+            await (CacheHandler().getStringFromCache('key_derivation_salt') as FutureOr<String>)),
       );
       return true;
     } on Exception catch (e) {
@@ -182,7 +184,7 @@ class DatabaseHandler {
     );
   }
 
-  Future<void> deletePasswordEntry(int targetId) async {
+  Future<void> deletePasswordEntry(int? targetId) async {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
     await db.delete(

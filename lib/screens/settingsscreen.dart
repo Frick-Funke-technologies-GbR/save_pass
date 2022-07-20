@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
@@ -16,7 +18,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _showSyncProgressIndicator = false;
 
   Future<bool> _getSyncStatus() async {
-    bool result = await CacheHandler().getBoolFromCache('sync_active');
+    bool? result = await CacheHandler().getBoolFromCache('sync_active');
     result ??= false;
     return result;
   }
@@ -37,9 +39,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
       return success;
     }
-    bool didSync = await cache.getBoolFromCache('did_send_to_cloud') ||
-        await cache.getBoolFromCache('did_send_to_db');
-    didSync ??= false;
+    bool? didSendToCloud = await cache.getBoolFromCache('did_send_to_cloud');
+    didSendToCloud ??= false;
+    bool? didSendToDB = await cache.getBoolFromCache('did_send_to_db');
+    didSendToDB ??= false;
+    bool didSync = didSendToCloud || didSendToDB;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
       backgroundColor: success
@@ -167,7 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 FutureBuilder(
                     future: _getSyncStatus(),
                     builder: (context, snapshot) {
-                      bool syncStatus = snapshot.data;
+                      bool? syncStatus = snapshot.data as bool?;
                       syncStatus ??= false;
                       return Column(
                         children: [
@@ -221,16 +225,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               }
                             },
                           ),
-                          FutureBuilder<Object>(
+                          FutureBuilder<Object?>(
                               future: CacheHandler()
                                   .getBoolFromCache('sync_over_cellular'),
                               builder: (context, snapshot) {
-                                bool cellularSyncActive = snapshot.data;
+                                bool? cellularSyncActive =
+                                    snapshot.data as bool?;
                                 cellularSyncActive ??= false;
                                 return SwitchListTile(
                                   title: Text('Sync over cellular'),
                                   value:
-                                      syncStatus ? cellularSyncActive : false,
+                                      syncStatus! ? cellularSyncActive : false,
                                   onChanged: (switchState) async {
                                     await CacheHandler().addBoolToCache(
                                         'sync_over_cellular',

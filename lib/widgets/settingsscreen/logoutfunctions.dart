@@ -1,3 +1,5 @@
+
+
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
@@ -11,7 +13,7 @@ import 'package:save_pass/models/resources/backup.dart';
 import 'package:save_pass/models/resources/database.dart';
 
 void showLogOutDialog(BuildContext context) async {
-  Directory storageDirectory = await CacheHandler().getStorageDirectory();
+  Directory? storageDirectory = await CacheHandler().getStorageDirectory();
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -48,10 +50,10 @@ void showLogOutDialog(BuildContext context) async {
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     Clipboard.setData(ClipboardData(
-                                        text: storageDirectory.path));
+                                        text: storageDirectory!.path));
                                   },
                                 text:
-                                    '${storageDirectory.path} (Tap to copy)\n\n'),
+                                    '${storageDirectory!.path} (Tap to copy)\n\n'),
                             TextSpan(
                               text:
                                   '(It is not recommendet to handle the backup manually. You will be able to import the data from the settings menu later.)\n\nIf you have cloud sync eneabled, your data will stay in the cloud.',

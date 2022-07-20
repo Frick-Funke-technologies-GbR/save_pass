@@ -1,3 +1,5 @@
+
+
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -6,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CacheHandler {
 
-  addSecureStringToCache(String key, String string) async {
+  addSecureStringToCache(String key, String? string) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.write(key: key, value: string);
   }
@@ -43,47 +45,47 @@ class CacheHandler {
   }
 
 
-  Future<String> getSecureStringFromCache(String key) async {
+  Future<String?> getSecureStringFromCache(String key) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    String stringValue = await storage.read(key: key);
+    String? stringValue = await storage.read(key: key);
     return stringValue;
   }
 
-  Future<String> getStringFromCache(String key) async {
+  Future<String?> getStringFromCache(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print(key);
-    String stringValue = prefs.getString(key);
+    String? stringValue = prefs.getString(key);
     // print(stringValue);
     return stringValue;
   }
 
-  Future<List<String>> getStringListFromCache(String key) async {
+  Future<List<String>?> getStringListFromCache(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print(key);
-    List<String> stringListValue = prefs.getStringList(key);
+    List<String>? stringListValue = prefs.getStringList(key);
     // print(stringListValue);
     return stringListValue;
   }
 
-  Future<bool> getBoolFromCache(String key) async {
+  Future<bool?> getBoolFromCache(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool boolValue = prefs.getBool(key);
+    bool? boolValue = prefs.getBool(key);
     // print(boolValue);
     return boolValue;
   }
 
-  Future<Directory> getStorageDirectory() async {
-    Directory externalStorageDirectory = await getExternalStorageDirectory();
+  Future<Directory?> getStorageDirectory() async {
+    Directory? externalStorageDirectory = await getExternalStorageDirectory();
     return externalStorageDirectory;
   }
   
-  Future<List<Directory>> getStorageDirectories() async {
-    List<Directory> externalStorageDirectories = await getExternalStorageDirectories();
+  Future<List<Directory>?> getStorageDirectories() async {
+    List<Directory>? externalStorageDirectories = await getExternalStorageDirectories();
     return externalStorageDirectories;
   }
 
-  Future<List<Directory>> getCacheDirectories() async {
-    List<Directory> externalCacheDirectory = await getExternalCacheDirectories();
+  Future<List<Directory>?> getCacheDirectories() async {
+    List<Directory>? externalCacheDirectory = await getExternalCacheDirectories();
     return externalCacheDirectory;
   }
     

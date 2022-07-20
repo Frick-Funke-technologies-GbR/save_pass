@@ -1,3 +1,5 @@
+
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -8,9 +10,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:save_pass/models/resources/strings.dart';
 
 class Cryptograph {
-  String password;
+  String? password;
   final List<int> salt = generateSalt();
-  List<int> encryptionSalt;
+  List<int>? encryptionSalt;
   int encryptionMacLength = 32;
   Cryptograph([this.password]);
 
@@ -20,7 +22,7 @@ class Cryptograph {
     return List<int>.generate(length, (i) => _random.nextInt(256));
   }
 
-  Future<List<int>> generateKeyFromPass({List<int> keySalt}) async {
+  Future<List<int>> generateKeyFromPass({List<int>? keySalt}) async {
 
     final pbkdf2 = Pbkdf2(
       macAlgorithm: Hmac.sha256(),
@@ -33,7 +35,7 @@ class Cryptograph {
     keySalt = keySalt ?? salt;
 
     // Password we want to hash
-    final secretKey = SecretKey(password.codeUnits);
+    final secretKey = SecretKey(password!.codeUnits);
 
     // A random salt
     final nonce = keySalt;
@@ -143,8 +145,8 @@ class Cryptograph {
   Future<String> decrypt(
     List<int> encryptedContent,
     List<int> key, {
-    List<int> salt, // FIXME add keyword required in future implementation of null savety 
-    int macLength,
+    List<int>? salt, // FIXME add keyword required in future implementation of null savety 
+    int? macLength,
   }) async {
     // final secretBox = SecretBox.fromConcatenation(
     //   encryptedContent,
@@ -176,7 +178,7 @@ class Cryptograph {
       //   encryptedContentInListView.lengthInBytes - macLength - 16,
       //   encryptedContentInListView.lengthInBytes - macLength,
       // ),
-      nonce: salt,
+      nonce: salt!,
     );
 
     print(encryptedContentInListView.lengthInBytes);
@@ -225,11 +227,11 @@ class Generator {
   Map<String, dynamic> generatePassword(
     int length,
     int complexity,
-    bool containWords,
-    bool containNumbers,
-    bool containSpecialchar,
-    bool containUppercase,
-    bool containLowercase,
+    bool? containWords,
+    bool? containNumbers,
+    bool? containSpecialchar,
+    bool? containUppercase,
+    bool? containLowercase,
   ) {
   Map<String, dynamic> passwordMap = {};
   int whichCharacter = 0;
@@ -337,7 +339,7 @@ class Generator {
 
   for (int iter = 0; iter < length; iter++) {
     String i = iter.toString().padLeft(3);
-    if (probabilityFromComplexity(complexity, true) && containWords) {
+    if (probabilityFromComplexity(complexity, true) && containWords!) {
       int where = _random.nextInt(nounsWithLessThanTwoSyllables.length);
       String word = nounsWithLessThanTwoSyllables[where];
       passwordMap[i] = {word : 'grey_bright'};
@@ -350,19 +352,19 @@ class Generator {
       }
       bool exsists = false;
       if (!(whichCharacter == 3)) {
-        if (whichCharacter == 0 && containSpecialchar) {
+        if (whichCharacter == 0 && containSpecialchar!) {
           for (int ii = 0; ii < (complexity / 4).round(); ii++) {
             charval += punctuations[_random.nextInt(punctuations.length)];
           }
           passwordMap[i] = {charval : 'red'};
-        } else if (whichCharacter == 1 && containNumbers) {
+        } else if (whichCharacter == 1 && containNumbers!) {
           for (int ii = 0; ii < (complexity / 4).round(); ii++) {
             charval += digits[_random.nextInt(digits.length)];
           }
           passwordMap[i] = {charval : 'blue'};
         }
       } else {
-        if (containUppercase && containLowercase) {
+        if (containUppercase! && containLowercase!) {
           if (_random.nextBool()) {
             for (int ii = 0; ii < (length / 4).round(); ii++) {
               charval += uppercase[_random.nextInt(uppercase.length)];
@@ -379,7 +381,7 @@ class Generator {
               charval += uppercase[_random.nextInt(uppercase.length)];
             }
             passwordMap[i] = {charval : 'grey'};          
-        } else if (containLowercase) {
+        } else if (containLowercase!) {
             for (int ii = 0; ii < (complexity / 4).round(); ii++) {
               charval += lowercase[_random.nextInt(lowercase.length)];
             }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
@@ -11,12 +12,11 @@ import 'package:save_pass/models/resources/database.dart';
 
 class Sync {
   Future<bool> normalSync(
-      [bool bypassSyncedCheck = false, BuildContext context]) async {
-    
+      [bool bypassSyncedCheck = false, BuildContext? context]) async {
     if (!await checkConnectionAvailability()) {
       throw Exception('No valid connection available');
     }
-    
+
     CacheHandler cache = CacheHandler();
     DatabaseHandler db = DatabaseHandler();
     ApiProvider api = ApiProvider();
@@ -25,7 +25,8 @@ class Sync {
     bool didSendToDB = false;
 
     if (!bypassSyncedCheck) {
-      if (await cache.getBoolFromCache('passwords_synced')) {
+      if (await (cache.getBoolFromCache('passwords_synced')
+          as FutureOr<bool>)) {
         return true;
       }
     }
@@ -33,14 +34,15 @@ class Sync {
     List<EncryptedPasswordEntryClass> localEntries =
         await db.getEncryptedPasswordEntries();
 
-    String userIdent = await cache.getSecureStringFromCache('user_ident');
-    String masterPassword =
+    String userIdent = await (cache.getSecureStringFromCache('user_ident')
+        as FutureOr<String>);
+    String? masterPassword =
         await cache.getSecureStringFromCache('master_password');
-    List<int> salt =
-        base64Decode((await cache.getStringFromCache('key_derivation_salt')))
-            .toList();
+    List<int> salt = base64Decode((await (cache
+            .getStringFromCache('key_derivation_salt') as FutureOr<String>)))
+        .toList();
 
-    List<List<int>> localEntriesAlias = [];
+    List<List<int>?> localEntriesAlias = [];
 
     for (EncryptedPasswordEntryClass i in localEntries) {
       localEntriesAlias.add(i.alias);
@@ -48,11 +50,12 @@ class Sync {
 
     try {
       List<EncryptedPasswordEntryClass> cloudEntries =
-          await api.getEncryptedUserPasswordEntries(userIdent, masterPassword);
+          await (api.getEncryptedUserPasswordEntries(userIdent, masterPassword)
+              as FutureOr<List<EncryptedPasswordEntryClass>>);
 
       for (EncryptedPasswordEntryClass i in cloudEntries) {
         bool contains = false;
-        for (List<int> localAlias in localEntriesAlias) {
+        for (List<int>? localAlias in localEntriesAlias) {
           if (listEquals(localAlias, i.alias)) {
             contains = true;
           }
@@ -64,14 +67,15 @@ class Sync {
         }
       }
 
-      for (List<int> i in localEntriesAlias) {
+      for (List<int>? i in localEntriesAlias) {
         bool contains = false;
         for (EncryptedPasswordEntryClass cloudEntry in cloudEntries) {
           if (listEquals(cloudEntry.alias, i)) {
             contains = true;
           }
         }
-        if (!contains) { // FIXME: START - somewhere here seems to be an comparison error
+        if (!contains) {
+          // FIXME: START - somewhere here seems to be an comparison error
           int index =
               localEntriesAlias.indexWhere((element) => listEquals(i, element));
           EncryptedPasswordEntryClass localEntry =
@@ -80,12 +84,12 @@ class Sync {
           api.addUserPasswordEntry(
             userIdent,
             masterPassword,
-            localEntry.alias,
-            localEntry.url,
-            localEntry.username,
-            localEntry.password,
-            localEntry.notes,
-            localEntry.encryptionSalt,
+            localEntry.alias!,
+            localEntry.url!,
+            localEntry.username!,
+            localEntry.password!,
+            localEntry.notes!,
+            localEntry.encryptionSalt!,
           ); // FIXME: END
           didSendToCloud = true;
         }
@@ -104,8 +108,10 @@ class Sync {
     await cache.addBoolToCache('did_send_to_db', didSendToDB);
 
     if (didSendToDB && didSendToDB) {
-      await cache.addBoolToCache('passwords_synced', true); // singalize, that passwords are synced
-      await cache.addStringToCache('last_sync_datetime', DateTime.now().toString()); // save sync time
+      await cache.addBoolToCache(
+          'passwords_synced', true); // singalize, that passwords are synced
+      await cache.addStringToCache(
+          'last_sync_datetime', DateTime.now().toString()); // save sync time
     }
 
     print('test');
@@ -113,19 +119,18 @@ class Sync {
     return true;
   }
 
-
   Future<bool> checkConnectionAvailability() async {
     Connectivity connect = Connectivity();
     CacheHandler cache = CacheHandler();
     ConnectivityResult result = await connect.checkConnectivity();
     print('ConnectivityResult: ' + result.index.toString());
-    bool syncOverCellular = false;
+    bool? syncOverCellular = false;
     try {
-      syncOverCellular = await cache.getBoolFromCache('sync_over_cellular');
+      syncOverCellular = await (cache.getBoolFromCache('sync_over_cellular')
+          as FutureOr<bool>);
     } on Exception {
       syncOverCellular = false;
-    } 
-    syncOverCellular ??= false;
+    }
     if (syncOverCellular) {
       if (result == ConnectivityResult.mobile) {
         return true;
@@ -143,5 +148,6 @@ class Sync {
         return false;
       }
     }
+    return false;
   }
 }

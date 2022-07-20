@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -71,20 +72,20 @@ class _PasswordActionButtonWithDialogWidgetState
     if (!generatedPassword) {
       if (_passwordFieldController.text !=
           _passwordRepeatFieldController.text) {
-        _passwordFieldKey.currentState.validate();
+        _passwordFieldKey.currentState!.validate();
         return false;
         // _passwordFieldKey.currentState.validate();
       } else {
-        String userIdent = await cache.getSecureStringFromCache('user_ident');
-        String masterPassword =
+        String? userIdent = await cache.getSecureStringFromCache('user_ident');
+        String? masterPassword =
             await cache.getSecureStringFromCache('master_password');
 
-        String exception;
+        String? exception;
         String thumbnail;
 
         try {
-          thumbnail =
-              base64Encode(await api.getIconAsBlob(_urlFieldController.text));
+          thumbnail = base64Encode(await (api
+              .getIconAsBlob(_urlFieldController.text) as FutureOr<List<int>>));
         } catch (e) {
           thumbnail = 'null';
         }
@@ -109,16 +110,16 @@ class _PasswordActionButtonWithDialogWidgetState
         return true;
       }
     } else {
-      String userIdent = await cache.getSecureStringFromCache('user_ident');
-      String masterPassword =
+      String? userIdent = await cache.getSecureStringFromCache('user_ident');
+      String? masterPassword =
           await cache.getSecureStringFromCache('master_password');
 
-      String exception;
+      String? exception;
       String thumbnail;
 
       try {
-        thumbnail =
-            base64Encode(await api.getIconAsBlob(_urlFieldController.text));
+        thumbnail = base64Encode(await (api
+            .getIconAsBlob(_urlFieldController.text) as FutureOr<List<int>>));
       } catch (e) {
         thumbnail = 'null';
       }
@@ -143,7 +144,7 @@ class _PasswordActionButtonWithDialogWidgetState
 
   Row _generatedPasswordRow(Map<String, dynamic> data) {
     print(data.toString());
-    List<Widget> chunks = new List<Widget>();
+    List<Widget> chunks = [];
     String wholePassword = '';
     for (String count in data.keys) {
       for (String chunk in data[count].keys) {
@@ -182,12 +183,12 @@ class _PasswordActionButtonWithDialogWidgetState
     // String username = _usernameFieldController.text;
     // String notes = _notesFieldController.text;
 
-    List<String> ids = await cache.getStringListFromCache('stored_ids');
+    List<String>? ids = await cache.getStringListFromCache('stored_ids');
 
     // check if alias already exists
     if (ids != null) {
       for (String id in ids) {
-        String storedalias = await cache
+        String? storedalias = await cache
             .getSecureStringFromCache('stored_alias_with_id_' + id.toString());
 
         if (storedalias == alias) {
@@ -198,19 +199,19 @@ class _PasswordActionButtonWithDialogWidgetState
       }
     }
 
-    bool aliasvalidate = _aliasFieldKey.currentState.validate();
-    bool urlvalidate = _urlFieldKey.currentState.validate();
-    bool usernamevalidate = _usernameFieldKey.currentState.validate();
-    bool notesvalidate = _notesFieldKey.currentState.validate();
+    bool aliasvalidate = _aliasFieldKey.currentState!.validate();
+    bool urlvalidate = _urlFieldKey.currentState!.validate();
+    bool usernamevalidate = _usernameFieldKey.currentState!.validate();
+    bool notesvalidate = _notesFieldKey.currentState!.validate();
 
     // Only for generated password widget:
     int _passwordLength = 5;
     int _passwordComplexity = 3;
-    bool _containWords = true;
-    bool _containNumbers = true;
-    bool _containSpecialchar = true;
-    bool _containUppercase = true;
-    bool _containLowercase = true;
+    bool? _containWords = true;
+    bool? _containNumbers = true;
+    bool? _containSpecialchar = true;
+    bool? _containUppercase = true;
+    bool? _containLowercase = true;
     double _lengthSliderValue = 5;
     double _complexitySliderValue = 3;
 
@@ -330,8 +331,8 @@ class _PasswordActionButtonWithDialogWidgetState
                         // textColor: Colors.white,
                         // color: AppDefaultColors.colorPrimaryGrey[500],
                         onPressed: () async {
-                          var error;
-                          Exception exception;
+                          late var error;
+                          Exception? exception;
                           try {
                             error = await validatePasswordFields();
                           } on Exception catch (e) {
@@ -339,7 +340,8 @@ class _PasswordActionButtonWithDialogWidgetState
                           }
                           if (!error == true) {
                           } else {
-                            await cache.addBoolToCache('passwords_synced', false); // Set the state switching boolean for password syncing
+                            await cache.addBoolToCache('passwords_synced',
+                                false); // Set the state switching boolean for password syncing
                             Navigator.of(context)
                                 .popAndPushNamed('/passwordscreen');
                             final sucessSnackBar = SnackBar(
@@ -368,7 +370,7 @@ class _PasswordActionButtonWithDialogWidgetState
                               ),
                             );
                             // Navigator.of(context).pop();
-                            _passwordscreenScaffoldKey.currentState
+                            _passwordscreenScaffoldKey.currentState!
                                 .showSnackBar(
                               exception == null
                                   ? unsucessSnackBar
@@ -635,7 +637,8 @@ class _PasswordActionButtonWithDialogWidgetState
                   onPressed: () async {
                     // validateAddPasswordEntryFields(true, context);
                     var error = await validatePasswordFields(true);
-                    await cache.addBoolToCache('passwords_synced', false); // Set the state switching boolean for password syncing
+                    await cache.addBoolToCache('passwords_synced',
+                        false); // Set the state switching boolean for password syncing
                     Navigator.of(context).popAndPushNamed('/passwordscreen');
                     final sucessSnackBar = SnackBar(
                       content: Text('The entry was stored sucessfully!'),
@@ -661,7 +664,7 @@ class _PasswordActionButtonWithDialogWidgetState
                     );
                     error ??= false;
                     // Navigator.of(context).pop();
-                    _passwordscreenScaffoldKey.currentState.showSnackBar(
+                    _passwordscreenScaffoldKey.currentState!.showSnackBar(
                       error ? unsucessSnackBar : sucessSnackBar,
                     );
                   },
@@ -730,7 +733,7 @@ class _PasswordActionButtonWithDialogWidgetState
                           filled: true,
                         ),
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value!.isEmpty) {
                             return 'please enter an alias';
                           }
                           if (!_aliasValidator) {
