@@ -731,68 +731,71 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                 ),
               ),
               RaisedButton(
-                  child: Text('Submit'),
-                  color: AppDefaultColors.colorPrimaryBlue,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7)),
-                  onPressed: () async {
-                    // setState(() {
-                    //   _showPasswordInputWidget = true;
-                    // });
-                    if (!_showPasswordInputWidget) {
-                      bool goFurther = await _validateSignInEmailFields();
-                      if (goFurther) {
+                child: Text('Submit'),
+                color: AppDefaultColors.colorPrimaryBlue,
+                textColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(7)),
+                onPressed: () async {
+                  // setState(() {
+                  //   _showPasswordInputWidget = true;
+                  // });
+                  if (!_showPasswordInputWidget) {
+                    bool goFurther = await _validateSignInEmailFields();
+                    if (goFurther) {
+                      setState(() {
+                        _showPasswordInputWidget = true;
+                      });
+                    }
+                  } else {
+                    if (await _validatePasswordFields()) {
+                      bool goFurther = await _startRegister();
+
+                      if (!goFurther) {
                         setState(() {
-                          _showPasswordInputWidget = true;
+                          _showPasswordInputWidget = false;
+                        });
+                        if (_usernameAlreadyAdded)
+                          _usernameInputKey.currentState!.validate();
+                        setState(() {
+                          _usernameAlreadyAdded = false;
                         });
                       }
-                    } else {
-                      if (await _validatePasswordFields()) {
-                        bool goFurther = await _startRegister();
+                      if (_emailAlreadyAdded) {
+                        _emailInputKey.currentState!.validate();
+                        setState(() {
+                          _emailAlreadyAdded = false;
+                        });
+                      }
 
-                        if (!goFurther) {
-                          setState(() {
-                            _showPasswordInputWidget = false;
-                          });
-                          if (_usernameAlreadyAdded)
-                            _usernameInputKey.currentState!.validate();
-                          setState(() {
-                            _usernameAlreadyAdded = false;
-                          });
-                        }
-                        if (_emailAlreadyAdded) {
-                          _emailInputKey.currentState!.validate();
-                          setState(() {
-                            _emailAlreadyAdded = false;
-                          });
-                        }
+                      if (goFurther) {
+                        CacheHandler cache = CacheHandler();
+                        BackendAuth auth = BackendAuth();
 
-                        if (goFurther) {
-                          CacheHandler cache = CacheHandler();
-                          BackendAuth auth = BackendAuth();
+                        await auth.login(
+                          await cache.getSecureStringFromCache('user_ident'),
+                          await cache
+                              .getSecureStringFromCache('master_password'),
+                        );
 
-                          await auth.login(
-                            await cache.getSecureStringFromCache('user_ident'),
-                            await cache
-                                .getSecureStringFromCache('master_password'),
-                          );
-
-                          //   Navigator.of(context)
-                          //       .pushReplacementNamed('/passwordscreen');
-                          //   cache.addBoolToCache('registered', true);
-                          //   String? authToken = await CacheHandler()
-                          //       .getSecureStringFromCache('auth_token');
-                          //   ApiProvider().getUserData(
-                          //       await (cache.getSecureStringFromCache('user_name')
-                          //           as FutureOr<String>),
-                          //       authToken););
-                          // TODO: add save user data in app functionality (button already added)
-                          // _toggleSaveUserInApp ? null : cache.removeFromCache('user_name') && cache.removeFromCache('user_ident') && cache.removeFromCache('master_password');
-                        }
+                        Navigator.of(context)
+                            .pushReplacementNamed('/passwordscreen');
+                        cache.addBoolToCache('registered', true);
+                        String? authToken = await CacheHandler()
+                            .getSecureStringFromCache('auth_token');
+                        ApiProvider().getUserData(
+                            await (cache
+                                .getSecureStringFromCache(
+                                    'user_name') as FutureOr<
+                                String>), // FIXME: IMPORTANT BUG!!!!!!!!!!!!! The old cached auth token is getting used, zumindest glaube ich das.
+                            authToken);
+                        // TODO: add save user data in app functionality (button already added)
+                        // _toggleSaveUserInApp ? null : cache.removeFromCache('user_name') && cache.removeFromCache('user_ident') && cache.removeFromCache('master_password');
                       }
                     }
-                  }),
+                  }
+                },
+              ),
             ],
           ),
         ],
