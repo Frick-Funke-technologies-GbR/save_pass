@@ -84,12 +84,20 @@ class BackendAuth {
 
     final Map? result = json.decode(response.body);
 
+    print(result);
+
     if (response.statusCode == 201) {
       // If the call to the server was successful, parse the JSON
-      await _saveAuthToken(result!['auth_token']);
+
+      String authToken = result!['auth_token'];
+
+      await _saveAuthToken(authToken);
+
+      await CacheHandler().addSecureStringToCache('ident_auth_token',
+          authToken); // save the registration auth token for identification when trying to get user data
 
       await _saveUserIdent(result["data"]["user_ident"]);
-      // await _saveUserName(result["data"]['username']);
+      await _saveUserName(result["data"]['username']);
 
       return UserClass.fromJson(result["data"]);
     } else if (response.statusCode == 202) {
@@ -146,10 +154,10 @@ class BackendAuth {
     cache.addSecureStringToCache('user_ident', userIdent);
   }
 
-  // _saveUserName(String userName) {
-  //   CacheHandler cache = CacheHandler();
-  //   cache.addSecureStringToCache('user_name', userName);
-  // }
+  _saveUserName(String userName) {
+    CacheHandler cache = CacheHandler();
+    cache.addSecureStringToCache('user_name', userName);
+  }
 
   _saveAuthToken(String? authToken) async {
     CacheHandler cache = CacheHandler();
