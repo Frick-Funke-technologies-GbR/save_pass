@@ -83,6 +83,12 @@ class ApiProvider {
           userIdent, await cache.getSecureStringFromCache('master_password'));
     }
 
+    String? identAuthToken =
+        await cache.getSecureStringFromCache('ident_auth_token');
+    if (identAuthToken == null) {
+      throw Exception('No ident auth token found');
+    }
+
     final response = await client.get(
       // "http://10.0.2.2:5000/api/login",
       Uri.parse('https://savepass.frifu.de/api/db/user_data'),
@@ -92,14 +98,15 @@ class ApiProvider {
       headers: {
         "username": username,
         'all': 'false',
-        "Authorization": "Bearer " + authToken!
+        "Authorization": "Bearer " + authToken!,
+        'ident_auth_token': identAuthToken
       },
     );
     print('[DEBUG] Status of POST request (/api/db/user_data): ' +
         response.statusCode.toString());
     print(response.body);
     final Map? result = json.decode(response.body);
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       await _saveUserIdent(result!["data"]["user_ident"]);
       await _saveUserName(result["data"]["username"]);
