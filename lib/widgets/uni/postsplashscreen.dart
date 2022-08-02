@@ -12,7 +12,7 @@ FutureBuilder<bool?> postSplashScreenBuilder() {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return Scaffold(backgroundColor: Colors.white);
       }
-      if (snapshot.data == null || snapshot.data == true) {
+      if (snapshot.data == null || snapshot.data == false) {
         return RegisterScreen();
       } else {
         return LoginScreen();
