@@ -43,6 +43,8 @@ class Backup {
           'last_name': await cache.getSecureStringFromCache('last_name'),
           'email_adress': await cache.getSecureStringFromCache('email_adress'),
           'password': passwordHash,
+          'ident_auth_token':
+              await cache.getSecureStringFromCache('ident_auth_token'),
           'register_date': null,
           'last_login_date': null,
           'google_sign_in': null
