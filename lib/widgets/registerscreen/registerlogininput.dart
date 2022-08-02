@@ -177,7 +177,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                               await cache
                                   .getSecureStringFromCache('master_password'),
                             );
-                            await CacheHandler().addStringToCache(
+                            await cache.addStringToCache(
                                 'key_derivation_salt', keyDerivationSalt);
                             await BackendAuth().login(
                               await cache
@@ -187,7 +187,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                             );
                             Navigator.of(context)
                                 .pushReplacementNamed('/passwordscreen');
-                            CacheHandler().addBoolToCache('registered', true);
+                            cache.addBoolToCache('registered', true);
                           } catch (e) {
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
