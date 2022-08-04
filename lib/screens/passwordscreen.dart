@@ -1,6 +1,8 @@
 // import 'dart:js';
 // import 'dart:ui';
 
+
+
 import 'dart:isolate';
 
 import 'package:flutter/cupertino.dart';
@@ -54,7 +56,7 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
-  Future<List<PasswordEntryClass>> getPasswordEntriesFuture;
+  Future<List<PasswordEntryClass>>? getPasswordEntriesFuture;
   String _searchText = '';
   // List<PasswordEntryClass> _entries;
 
@@ -63,8 +65,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
     DatabaseHandler db = DatabaseHandler();
 
     // TODO: Add user_ident to cache before this lines. probably on register.
-    String userIdent = await cache.getSecureStringFromCache('user_ident');
-    String password = await cache.getSecureStringFromCache('master_password');
+    String? userIdent = await cache.getSecureStringFromCache('user_ident');
+    String? password = await cache.getSecureStringFromCache('master_password');
 
     List<PasswordEntryClass> entries = await db.getPasswordEntries(password);
 
@@ -79,7 +81,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
     for (PasswordEntryClass entry in entries) {
       await cache.addStringToCache(
-          'stored_alias_with_id_' + entry.id.toString(), entry.alias);
+          'stored_alias_with_id_' + entry.id.toString(), entry.alias!);
       ids.add(entry.id.toString());
     }
 
@@ -194,13 +196,13 @@ class _PasswordScreenState extends State<PasswordScreen> {
     );
     // TODO: Add widget to display if no entry added yet
     // FIXME: debug api if no entry added yet
-    Widget _passwordEntryListView(List<PasswordEntryClass> data) {
+    Widget _passwordEntryListView(List<PasswordEntryClass>? data) {
       bool shouldCopyData = true;
-      List<PasswordEntryClass> dataCopy;
+      List<PasswordEntryClass>? dataCopy;
       return NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (OverscrollIndicatorNotification overscroll) {
           overscroll.disallowGlow();
-        },
+        } as bool Function(OverscrollIndicatorNotification)?,
         child: CustomScrollView(
           slivers: <Widget>[
             SliverPadding(
@@ -216,7 +218,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     borderRadius: BorderRadius.circular(7),
                     boxShadow: [
                       BoxShadow(
-                        color: AppDefaultColors.colorPrimaryGrey[400],
+                        color: AppDefaultColors.colorPrimaryGrey[400]!,
                         blurRadius: 3,
                         spreadRadius: 0.01,
                       )
@@ -253,36 +255,36 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                 data = dataCopy;
                               });
                             }
-                            for (int i = 0; i < data.length; i++) {
+                            for (int i = 0; i < data!.length; i++) {
                               print('INPUT $input');
-                              print('DataCopy: ${dataCopy.length}');
-                              print('Data: ${data.length}');
-                              if (!data[i]
-                                  .alias
+                              print('DataCopy: ${dataCopy!.length}');
+                              print('Data: ${data!.length}');
+                              if (!data![i]
+                                  .alias!
                                   .toLowerCase()
                                   .contains(input)) {
                                 print('NOT CONTAINS INPUT');
-                                print(data[i].alias);
-                                for (int ii = 0; ii < dataCopy.length; ii++) {
-                                  if (dataCopy[ii]
-                                      .alias
+                                print(data![i].alias);
+                                for (int ii = 0; ii < dataCopy!.length; ii++) {
+                                  if (dataCopy![ii]
+                                      .alias!
                                       .toLowerCase()
                                       .contains(input)) {
                                     setState(() {
-                                      newData.add(dataCopy[ii]);
+                                      newData.add(dataCopy![ii]);
                                     });
                                   }
                                 }
                                 setState(() {
-                                  data.removeAt(i);
+                                  data!.removeAt(i);
                                 });
                               }
                             }
                             if (newData.isNotEmpty) {
                               print('HALLO');
                               for (int i = 0; i < newData.length; i++) {
-                                for (int ii = 0; ii < data.length; ii++) {
-                                  if (newData[i].id != data[ii].id) {
+                                for (int ii = 0; ii < data!.length; ii++) {
+                                  if (newData[i].id != data![ii].id) {
                                     addIndex.add(i);
                                   }
                                 }
@@ -293,7 +295,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                               for (int i in addIndex) {
                                 print(addIndex.toString());
                                 setState(() {
-                                  data.add(newData[i]);
+                                  data!.add(newData[i]);
                                 });
                               }
                             }
@@ -348,19 +350,19 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 (context, index) {
                   // getPasswordEntries();
                   print('AAAAAAAAAAAAAA' +
-                      data[index].thumbnail.runtimeType.toString() +
-                      data[index].thumbnail);
+                      data![index].thumbnail.runtimeType.toString() +
+                      data![index].thumbnail!);
                   return PasswordEntry(
-                    data[index].id,
-                    data[index].url,
-                    data[index].alias,
-                    data[index].username,
-                    data[index].password,
-                    data[index].notes,
-                    data[index].thumbnail,
+                    data![index].id,
+                    data![index].url,
+                    data![index].alias,
+                    data![index].username,
+                    data![index].password,
+                    data![index].notes,
+                    data![index].thumbnail,
                   );
                 },
-                childCount: data.length,
+                childCount: data!.length,
               ),
             ),
             SliverToBoxAdapter(
@@ -578,13 +580,13 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                     return Center(
                                       child: Text('${snapshot.error}'),
                                     );
-                                  } else if (snapshot.data.isEmpty) {
+                                  } else if (snapshot.data!.isEmpty) {
                                     return Center(
                                       // TODO: Add picture if no entry added yet
                                       child: Text('no entries added yet'),
                                     );
                                   }
-                                  List<PasswordEntryClass> data = snapshot.data;
+                                  List<PasswordEntryClass>? data = snapshot.data;
                                   return _passwordEntryListView(data);
                               }
                             },

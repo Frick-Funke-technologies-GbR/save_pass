@@ -6,38 +6,37 @@ import 'package:save_pass/models/resources/cache.dart';
 final _passwordFieldController = TextEditingController();
 final _passwordRepeatFieldController = TextEditingController();
 
-final _passwordFieldKey = GlobalKey<FormState>();
-final _passwordRepeatFieldKey = GlobalKey<FormState>();
+GlobalKey<FormState> _passwordFieldKey = GlobalKey<FormState>();
+GlobalKey<FormState> _passwordRepeatFieldKey = GlobalKey<FormState>();
 
-bool passwordMatchValidatorFalse;
+late bool passwordMatchValidatorFalse;
 
-
-Future<String> validatePasswordFields() async {
-  ApiProvider api = ApiProvider();
+Future validatePasswordFields() async {
   CacheHandler cache = CacheHandler();
 
   if (_passwordFieldController.text != _passwordRepeatFieldController.text) {
-    _passwordFieldKey.currentState.validate();
+    _passwordFieldKey.currentState!.validate();
     // _passwordFieldKey.currentState.validate();
   } else {
-    String userIdent = await cache.getSecureStringFromCache('user_ident');
+    // String? userIdent = await cache.getSecureStringFromCache('user_ident');
     // FIXME: possible error found in registration progress. if not, ignore/delete this comment
     // String masterPassword =
     //     await cache.getSecureStringFromCache('master_password');
 
-    String exception = null;
+    // String? exception = null;
 
     // await api
     //     .login(userIdent, masterPassword)
     //     .catchError(
     //         (e) => e = exception == null ? null : exception.toString());
-    
-    await CacheHandler().addSecureStringToCache('master_password', _passwordFieldController.text);
-    return null;
+
+    await cache.addSecureStringToCache(
+        'master_password', _passwordFieldController.text);
   }
 }
 
 Future showAddPasswordDialog(BuildContext context, bool register) async {
+  // TODO: Important for safety: add password validation for specific rules like length and complexity
   await showDialog(
     barrierDismissible: false,
     // barrierColor:,
@@ -72,6 +71,7 @@ Future showAddPasswordDialog(BuildContext context, bool register) async {
                       labelText: 'password',
                     ),
                     validator: (value) {
+                      // FIXME: not working, throws LateError, if called from validatePasswordFields()
                       if (!passwordMatchValidatorFalse) {
                         return 'passwords don\'t match';
                       }
@@ -153,12 +153,12 @@ Future showAddPasswordDialog(BuildContext context, bool register) async {
               // textColor: Colors.white,
               // color: AppDefaultColors.colorPrimaryGrey[500],
               onPressed: () async {
-                String goFurther = await validatePasswordFields();
-                if (goFurther == null) {
-                  Navigator.of(context).pop();
-                } else {
-                  return false;
+                try {
+                  await validatePasswordFields();
+                } catch (e) {
+                  return false as Future;
                 }
+                Navigator.of(context).pop();
               },
               // var error = await validatePasswordFields();
               //   Navigator.of(context).pop();

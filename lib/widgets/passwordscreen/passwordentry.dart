@@ -16,13 +16,13 @@ import 'package:save_pass/models/resources/database.dart';
 class PasswordEntry extends StatefulWidget {
   // TODO: Add recursive color change, remember notes icon
 
-  final int passwordId;
-  final String storedwebadress;
-  final String storedalias;
-  final String storedusername;
-  final String storedpassword;
-  final String storednotes;
-  final String storedThumbnail;
+  final int? passwordId;
+  final String? storedwebadress;
+  final String? storedalias;
+  final String? storedusername;
+  final String? storedpassword;
+  final String? storednotes;
+  final String? storedThumbnail;
   // final _passwordShowTimeIndicator = GlobalKey<FormState>();
 
   const PasswordEntry(
@@ -40,15 +40,16 @@ class PasswordEntry extends StatefulWidget {
 }
 
 class _PasswordEntryState extends State<PasswordEntry> {
-  Timer _timer;
+  Timer? _timer;
   int _timerStart = 10;
   double _timeIndicatorValue = 1.0;
   bool _shouldStartIndicator = true;
 
-  Future<Image> getThumbnail(String domain) async {
-    Uint8List result = Uint8List.fromList([]);
+  Future<Image> getThumbnail(String? domain) async {
+    Uint8List? result = Uint8List.fromList([]);
     try {
-      result = await ApiProvider().getIconAsBlob(domain);
+      result =
+          await (ApiProvider().getIconAsBlob(domain) as FutureOr<Uint8List>);
     } on Exception {
       result = null;
     }
@@ -60,7 +61,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
 
   @override
   void dispose() {
-    _timer != null ? _timer.cancel() : null;
+    _timer != null ? _timer!.cancel() : null;
     super.dispose();
   }
 
@@ -131,7 +132,8 @@ class _PasswordEntryState extends State<PasswordEntry> {
                     //     : randInt() == 2
                     //         ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png'
                     //         : 'https://upload.wikimedia.org/wikipedia/de/thumb/9/9f/Twitter_bird_logo_2012.svg/300px-Twitter_bird_logo_2012.svg.png'),
-                    child: widget.storedThumbnail != 'null' && widget.storedThumbnail != null
+                    child: widget.storedThumbnail != 'null' &&
+                            widget.storedThumbnail != null
                         ? widget.storedThumbnail != ''
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
@@ -140,13 +142,14 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                 //   borderRadius: BorderRadius.circular(5),
                                 // ),
                                 child: Image.memory(
-                                  base64Decode(widget.storedThumbnail),
+                                  base64Decode(widget.storedThumbnail!),
                                 ),
                               )
                             : FutureBuilder(
                                 future: getThumbnail(widget.storedwebadress),
-                                builder: (context, snapshot) {
-                                  return snapshot.data;
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<Image> snapshot) {
+                                  return snapshot.data as Widget;
                                 },
                               )
                         : Image.asset('assets/save_pass_icon_placeholder.png'),
@@ -167,7 +170,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                     child: OverflowBox(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        widget.storedalias,
+                        widget.storedalias!,
                         // maxLines: 1,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -212,7 +215,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                       child: Text(
                         widget.storedusername == ''
                             ? 'no username'
-                            : widget.storedusername,
+                            : widget.storedusername!,
                         overflow: TextOverflow.fade,
                         style:
                             TextStyle(color: AppDefaultColors.colorPrimaryBlue),
@@ -316,8 +319,8 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                           backgroundColor: Colors.transparent,
                                         ),
                                         onPressed: () async {
-                                          bool result;
-                                          String exc;
+                                          late bool result;
+                                          late String exc;
                                           try {
                                             // result = await ApiProvider()
                                             //     .deleteUserPasswordEntry(
@@ -336,7 +339,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                             result = true;
                                           } catch (e) {
                                             result = false;
-                                            exc = e;
+                                            exc = e.toString();
                                           } finally {
                                             Navigator.of(context)
                                                 .popAndPushNamed(
@@ -420,7 +423,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                                   child: Text(
                                     widget.storednotes == ''
                                         ? 'no notes'
-                                        : widget.storednotes,
+                                        : widget.storednotes!,
                                     // textHeightBehavior: TextHeightBehavior(
                                     //   applyHeightToLastDescent: true,
                                     //   applyHeightToFirstAscent: true,
@@ -613,7 +616,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                         ),
                         child: RichText(
                           text: TextSpan(
-                            text: 'username: ',
+                            text: 'username/email: ',
                             style: GoogleFonts.firaCode(
                               color: AppDefaultColors.colorPrimaryGrey[800],
                               // color: Colors.yellow[700],

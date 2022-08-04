@@ -8,6 +8,8 @@
 //           'synced_with_server': await cache.getBoolFromCache('passwords_synced'),
 //           'last_sync_datetime': DateTime
 
+
+
 //   }
 // }
 
@@ -24,7 +26,7 @@
 //           'user_ident': await cache.getSecureStringFromCache('user_ident'),
 //           'first_name': await cache.getSecureStringFromCache('first_name'),
 //           'last_name': await cache.getSecureStringFromCache('last_name'),
-//           'email_adress': await cache.getSecureStringFromCache('email_adress'),
+//           'email_address': await cache.getSecureStringFromCache('email_address'),
 //           'password': passwordHash,
 //           'register_date': null,
 //           'last_login_date': null,

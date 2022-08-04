@@ -13,22 +13,29 @@ class UserCard extends StatefulWidget {
   _UserCardState createState() => _UserCardState();
 }
 
+_getUserDataFromMap(dataTable, String identifier) {
+  String? result = dataTable[identifier] as String?;
+  result ??= '';
+  return result;
+}
+
 class _UserCardState extends State<UserCard> {
-  Future<Map<String, String>> getUserData() async {
-    String userIdent =
+  Future<Map<String?, String?>> getUserData() async {
+    String? userIdent =
         await CacheHandler().getSecureStringFromCache('user_ident');
-    String userName =
+    String? userName =
         await CacheHandler().getSecureStringFromCache('user_name');
-    String emailAdress =
-        await CacheHandler().getSecureStringFromCache('email_adress');
-    String firstName =
+    print(userName);
+    String? emailAddress =
+        await CacheHandler().getSecureStringFromCache('email_address');
+    String? firstName =
         await CacheHandler().getSecureStringFromCache('first_name');
-    String lastName =
+    String? lastName =
         await CacheHandler().getSecureStringFromCache('last_name');
-    Map<String, String> userDataList = {};
+    Map<String, String?> userDataList = {};
     userDataList['user_ident'] = userIdent;
     userDataList['user_name'] = userName;
-    userDataList['email_adress'] = emailAdress;
+    userDataList['email_address'] = emailAddress;
     userDataList['first_name'] = firstName;
     userDataList['last_name'] = lastName;
     return userDataList;
@@ -36,7 +43,7 @@ class _UserCardState extends State<UserCard> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<Map<String?, String?>>(
         future: getUserData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -83,7 +90,7 @@ class _UserCardState extends State<UserCard> {
                               height: 20,
                               margin: EdgeInsets.only(left: 5),
                               child: Text(
-                                snapshot.data['user_name'],
+                                _getUserDataFromMap(snapshot.data, 'user_name'),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -94,7 +101,8 @@ class _UserCardState extends State<UserCard> {
                             Container(
                               margin: EdgeInsets.only(right: 20, left: 15),
                               child: Text(
-                                snapshot.data['user_ident'],
+                                _getUserDataFromMap(
+                                    snapshot.data, 'user_ident'),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   fontStyle: FontStyle.italic,
@@ -118,7 +126,7 @@ class _UserCardState extends State<UserCard> {
                         Container(
                           margin: EdgeInsets.only(left: 13),
                           child: Text(
-                            snapshot.data['email_adress'],
+                            _getUserDataFromMap(snapshot.data, 'email_address'),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -145,9 +153,9 @@ class _UserCardState extends State<UserCard> {
                         Container(
                           margin: EdgeInsets.only(left: 13),
                           child: Text(
-                            snapshot.data['first_name'] +
+                            _getUserDataFromMap(snapshot.data, 'first_name') +
                                 ' ' +
-                                snapshot.data['last_name'],
+                                _getUserDataFromMap(snapshot.data, 'last_name'),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,

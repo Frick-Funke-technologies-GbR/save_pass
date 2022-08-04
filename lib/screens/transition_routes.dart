@@ -1,8 +1,10 @@
+
+
 import 'package:flutter/material.dart';
 
 class InputScreenToMainScreenRoute extends PageRouteBuilder {
-  final Widget enterPage;
-  final Widget exitPage;
+  final Widget? enterPage;
+  final Widget? exitPage;
   InputScreenToMainScreenRoute({this.exitPage, this.enterPage})
       : super(
           pageBuilder: (
@@ -10,7 +12,7 @@ class InputScreenToMainScreenRoute extends PageRouteBuilder {
             Animation<double> animation,
             Animation<double> secondaryAnimation,
           ) =>
-              enterPage,
+              enterPage!,
           transitionsBuilder: (
             BuildContext context,
             Animation<double> animation,

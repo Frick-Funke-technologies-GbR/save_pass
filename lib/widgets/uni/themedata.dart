@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 
@@ -5,7 +7,7 @@ ThemeData themeData() {
   return ThemeData(
     primarySwatch: AppDefaultColors.colorPrimaryBlue,
     switchTheme: SwitchThemeData(
-        overlayColor: MaterialStateProperty.resolveWith<Color>(
+        overlayColor: MaterialStateProperty.resolveWith<Color?>(
       (states) => states.contains(MaterialState.disabled)
           ? AppDefaultColors.colorPrimaryGrey
           : AppDefaultColors.colorPrimaryBlue[900],

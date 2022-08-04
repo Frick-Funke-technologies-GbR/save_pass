@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +18,7 @@ class RegisterLoginInputWidget extends StatefulWidget {
 }
 
 class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
-  User user;
+  User? user;
   bool _showSecondRegisterInputWidget = false;
   bool _showRegisterWithGoogleInfoWidget = false;
 
@@ -158,7 +159,8 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                         ),
                         onPressed: () async {
                           // TODO: Add username textinput, finish code
-                          User user = await signInWithGoogle();
+                          User user =
+                              await (signInWithGoogle() as FutureOr<User>);
                           this.user = user;
                           print(user.toString());
                           try {
@@ -166,7 +168,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                                 base64Encode(Cryptograph().salt);
                             await showAddPasswordDialog(context, true);
                             CacheHandler cache = CacheHandler();
-                            UserClass addedUser = await BackendAuth().register(
+                            UserClass? addedUser = await BackendAuth().register(
                               true,
                               user.uid,
                               user.displayName,
@@ -175,7 +177,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                               await cache
                                   .getSecureStringFromCache('master_password'),
                             );
-                            await CacheHandler().addStringToCache(
+                            await cache.addStringToCache(
                                 'key_derivation_salt', keyDerivationSalt);
                             await BackendAuth().login(
                               await cache
@@ -185,8 +187,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
                             );
                             Navigator.of(context)
                                 .pushReplacementNamed('/passwordscreen');
-                            CacheHandler()
-                                .addBoolToCache('registered', true);
+                            cache.addBoolToCache('registered', true);
                           } catch (e) {
                             Scaffold.of(context).showSnackBar(
                               SnackBar(
@@ -259,7 +260,7 @@ class _RegisterLoginInputWidgetState extends State<RegisterLoginInputWidget> {
 
 class ChoosePasswordWidget extends StatelessWidget {
   const ChoosePasswordWidget({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -272,7 +273,7 @@ class ChoosePasswordWidget extends StatelessWidget {
 
 class RegisterWithGoogleInfoWidget extends StatelessWidget {
   const RegisterWithGoogleInfoWidget({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -296,10 +297,12 @@ class RegisterInputWidget extends StatefulWidget {
 }
 
 class _RegisterInputWidgetState extends State<RegisterInputWidget> {
-  bool _toggleSaveUserInApp = false;
+  bool? _toggleSaveUserInApp = false;
   bool _signInWithEmailFieldsValidator = false;
   bool _usernameAlreadyAdded = false;
   bool _emailAlreadyAdded = false;
+  bool _showPasswordInputWidget = false;
+  bool _passwordFieldsEqual = false;
 
   final _usernameInputKey = GlobalKey<FormState>();
   final _emailInputKey = GlobalKey<FormState>();
@@ -311,45 +314,57 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
   final _firstNameInputController = TextEditingController();
   final _lastNameInputController = TextEditingController();
 
-  Future<bool> _validateSignInEmailFields() async {
+  final _passwordFieldController = TextEditingController();
+  final _passwordRepeatFieldController = TextEditingController();
+  final _passwordFieldKey = GlobalKey<FormState>();
+  final _passwordRepeatFieldKey = GlobalKey<FormState>();
+
+  Future<bool> _startRegister() async {
+    CacheHandler cache = CacheHandler();
+    BackendAuth auth = BackendAuth();
+
+    // setState(() {
+    //   _usernameAlreadyAdded = false;
+    // });
+    // setState(() {
+    //   _emailAlreadyAdded = false;
+    // });
+
+    String keyDerivationSalt = base64Encode(Cryptograph().salt);
+    await cache.addStringToCache('key_derivation_salt', keyDerivationSalt);
+
     try {
-      setState(() {
-        _usernameAlreadyAdded = false;
-      });
-      setState(() {
-        _emailAlreadyAdded = false;
-      });
-
-      _usernameInputKey.currentState.validate();
-      _emailInputKey.currentState.validate();
-      _firstNameInputKey.currentState.validate();
-      _lastNameInputKey.currentState.validate();
-
-      String keyDerivationSalt = base64Encode(Cryptograph().salt);
-      await CacheHandler()
-          .addStringToCache('key_derivation_salt', keyDerivationSalt);
-
-      return true;
+      await auth.register(
+        false,
+        _usernameInputController.text,
+        _firstNameInputController.text,
+        _lastNameInputController.text,
+        _emailInputController.text,
+        _passwordFieldController.text,
+      );
     } catch (e) {
-      if (e.toString() == 'Exception: Username not available') {
+      print('AAAAAAAAAA');
+      print(e);
+      if (e.toString() ==
+          'Exception: Username not available or already in use') {
         setState(() {
           _usernameAlreadyAdded = true;
         });
-        _usernameInputKey.currentState.validate();
-        _emailInputKey.currentState.validate();
-        _firstNameInputKey.currentState.validate();
-        _lastNameInputKey.currentState.validate();
-        print('point1');
+        // _usernameInputKey.currentState!.validate();
+        // _emailInputKey.currentState!.validate();
+        // _firstNameInputKey.currentState!.validate();
+        // _lastNameInputKey.currentState!.validate();
         return false;
       }
-      if (e.toString() == 'Exception: Email address already exists') {
+      if (e.toString() ==
+          'Exception: Email already registered. Please log in.') {
         setState(() {
           _emailAlreadyAdded = true;
         });
-        _usernameInputKey.currentState.validate();
-        _emailInputKey.currentState.validate();
-        _firstNameInputKey.currentState.validate();
-        _lastNameInputKey.currentState.validate();
+        // _usernameInputKey.currentState!.validate();
+        // _emailInputKey.currentState!.validate();
+        // _firstNameInputKey.currentState!.validate();
+        // _lastNameInputKey.currentState!.validate();
         return false;
       }
       Scaffold.of(context).showSnackBar(
@@ -366,6 +381,147 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
       );
       return false;
     }
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Registration progress successfully'),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+      ),
+    );
+    return true;
+  }
+
+  Future<bool> _validateSignInEmailFields() async {
+    ApiProvider api = ApiProvider();
+
+    if (!(_usernameInputKey.currentState!.validate() &&
+        _emailInputKey.currentState!.validate() &&
+        _firstNameInputKey.currentState!.validate() &&
+        _lastNameInputKey.currentState!.validate())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> _validatePasswordFields() async {
+    CacheHandler cache = CacheHandler();
+
+    if (_passwordFieldController.text != _passwordRepeatFieldController.text) {
+      setState(() {
+        _passwordFieldsEqual = false;
+      });
+      _passwordFieldKey.currentState!.validate();
+      return false;
+    } else {
+      setState(() {
+        _passwordFieldsEqual = true;
+      });
+      // String? userIdent = await cache.getSecureStringFromCache('user_ident');
+      // FIXME: possible error found in registration progress. if not, ignore/delete this comment
+      // String masterPassword =
+      //     await cache.getSecureStringFromCache('master_password');
+
+      // String? exception = null;
+
+      // await api
+      //     .login(userIdent, masterPassword)
+      //     .catchError(
+      //         (e) => e = exception == null ? null : exception.toString());
+
+      await cache.addSecureStringToCache(
+          'master_password',
+          _passwordFieldController
+              .text); // TODO: Implement avoidance of saving password locally in future
+      return true;
+    }
+  }
+
+  Widget _passwordInput() {
+    return Column(
+      children: [
+        Container(
+          height: 60,
+          margin: EdgeInsets.only(top: 5),
+          // padding: EdgeInsets.symmetric(),
+          constraints: BoxConstraints(maxWidth: 340),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            color: Colors.white,
+          ),
+          child: Form(
+            key: _passwordFieldKey,
+            child: TextFormField(
+              expands: false,
+              controller: _passwordFieldController,
+              obscureText: true,
+              decoration: InputDecoration(
+                suffixIcon: Icon(Icons.password),
+                // fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
+                filled: false,
+                labelText: 'password',
+              ),
+              validator: (value) {
+                // FIXME: not working, throws LateError, if called from validatePasswordFields()
+                if (!_passwordFieldsEqual) {
+                  return 'passwords don\'t match';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+        Container(
+          height: 60,
+          margin: EdgeInsets.only(top: 5),
+          // padding: EdgeInsets.symmetric(),
+          constraints: BoxConstraints(maxWidth: 340),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            color: Colors.white,
+          ),
+          child: Form(
+            key: _passwordRepeatFieldKey,
+            child: TextFormField(
+              expands: false,
+              controller: _passwordRepeatFieldController,
+              obscureText: true,
+              decoration: InputDecoration(
+                suffixIcon: Icon(Icons.password),
+                // fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
+                filled: false,
+                labelText: 'repeat password',
+              ),
+              validator: (value) {
+                if (!_passwordFieldsEqual) {
+                  return 'passwords don\'t match';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -382,163 +538,175 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 60,
-            margin: EdgeInsets.only(top: 5),
-            // padding: EdgeInsets.symmetric(),
-            constraints: BoxConstraints(maxWidth: 340),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              color: Colors.white,
-            ),
-            child: Form(
-              key: _usernameInputKey,
-              child: TextFormField(
-                expands: false,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'type in a username';
-                  }
-                  if (_usernameAlreadyAdded) {
-                    return 'username already in use';
-                  }
-                  return null;
-                },
-                controller: _usernameInputController,
-                decoration: InputDecoration(
-                  // prefixIcon: Icon(Icons.security),
-                  suffixIcon: Icon(Icons.person),
-                  // fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
+          AnimatedCrossFade(
+            duration: Duration(milliseconds: 500),
+            crossFadeState: _showPasswordInputWidget
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            secondChild: _passwordInput(),
+            firstChild: Column(
+              children: [
+                Container(
+                  height: 60,
+                  margin: EdgeInsets.only(top: 5),
+                  // padding: EdgeInsets.symmetric(),
+                  constraints: BoxConstraints(maxWidth: 340),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: Colors.white,
+                  ),
+                  child: Form(
+                    key: _usernameInputKey,
+                    child: TextFormField(
+                      expands: false,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'type in a username';
+                        }
+                        if (_usernameAlreadyAdded) {
+                          return 'username already in use';
+                        }
+                        return null;
+                      },
+                      controller: _usernameInputController,
+                      decoration: InputDecoration(
+                        // prefixIcon: Icon(Icons.security),
+                        suffixIcon: Icon(Icons.person),
+                        // fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                        // filled: true,
+                        // hintText: '',
+                        labelText: 'username',
+                      ),
                     ),
                   ),
-                  // filled: true,
-                  // hintText: '',
-                  labelText: 'username',
                 ),
-              ),
-            ),
-          ),
-          Container(
-            height: 60,
-            margin: EdgeInsets.only(top: 5),
-            // padding: EdgeInsets.symmetric(),
-            constraints: BoxConstraints(maxWidth: 340),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              color: Colors.white,
-            ),
-            child: Form(
-              key: _emailInputKey,
-              child: TextFormField(
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'type in an email';
-                  }
-                  if (_emailAlreadyAdded) {
-                    // print('_emailAlreadyAdded');
-                    // print(_emailAlreadyAdded);
-                    return 'email already added';
-                  }
-                  return null;
-                },
-                keyboardType: TextInputType.emailAddress,
-                controller: _emailInputController,
-                decoration: InputDecoration(
-                  // prefixIcon: Icon(Icons.security),
-                  suffixIcon: Icon(Icons.email),
-                  // fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
+                Container(
+                  height: 60,
+                  margin: EdgeInsets.only(top: 5),
+                  // padding: EdgeInsets.symmetric(),
+                  constraints: BoxConstraints(maxWidth: 340),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: Colors.white,
+                  ),
+                  child: Form(
+                    key: _emailInputKey,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'type in an email';
+                        }
+                        print('BBBBBBBBBBBB');
+                        print(_emailAlreadyAdded);
+                        if (_emailAlreadyAdded) {
+                          return 'email already added';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.emailAddress,
+                      controller: _emailInputController,
+                      decoration: InputDecoration(
+                        // prefixIcon: Icon(Icons.security),
+                        suffixIcon: Icon(Icons.email),
+                        // fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                        // filled: true,
+                        // hintText: '',
+                        labelText: 'email',
+                      ),
                     ),
                   ),
-                  // filled: true,
-                  // hintText: '',
-                  labelText: 'email',
                 ),
-              ),
-            ),
-          ),
-          Container(
-            height: 60,
-            margin: EdgeInsets.only(top: 5),
-            // padding: EdgeInsets.symmetric(),
-            constraints: BoxConstraints(maxWidth: 340),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              color: Colors.white,
-            ),
-            child: Form(
-              key: _firstNameInputKey,
-              child: TextFormField(
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'type in your first name';
-                  }
-                  return null;
-                },
-                controller: _firstNameInputController,
-                decoration: InputDecoration(
-                  // prefixIcon: Icon(Icons.security),
-                  suffixIcon: Icon(Icons.contacts),
-                  // fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
+                Container(
+                  height: 60,
+                  margin: EdgeInsets.only(top: 5),
+                  // padding: EdgeInsets.symmetric(),
+                  constraints: BoxConstraints(maxWidth: 340),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: Colors.white,
+                  ),
+                  child: Form(
+                    key: _firstNameInputKey,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'type in your first name';
+                        }
+                        return null;
+                      },
+                      controller: _firstNameInputController,
+                      decoration: InputDecoration(
+                        // prefixIcon: Icon(Icons.security),
+                        suffixIcon: Icon(Icons.contacts),
+                        // fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                        // filled: true,
+                        // hintText: '',
+                        labelText: 'first name',
+                      ),
                     ),
                   ),
-                  // filled: true,
-                  // hintText: '',
-                  labelText: 'first name',
                 ),
-              ),
-            ),
-          ),
-          Container(
-            height: 60,
-            margin: EdgeInsets.only(top: 5),
-            // padding: EdgeInsets.symmetric(),
-            constraints: BoxConstraints(maxWidth: 340),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              color: Colors.white,
-            ),
-            child: Form(
-              key: _lastNameInputKey,
-              child: TextFormField(
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'type in your last name';
-                  }
-                  return null;
-                },
-                controller: _lastNameInputController,
-                decoration: InputDecoration(
-                  // prefixIcon: Icon(Icons.security),
-                  suffixIcon: Icon(Icons.contacts),
-                  // fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
+                Container(
+                  height: 60,
+                  margin: EdgeInsets.only(top: 5),
+                  // padding: EdgeInsets.symmetric(),
+                  constraints: BoxConstraints(maxWidth: 340),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: Colors.white,
+                  ),
+                  child: Form(
+                    key: _lastNameInputKey,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'type in your last name';
+                        }
+                        return null;
+                      },
+                      controller: _lastNameInputController,
+                      decoration: InputDecoration(
+                        // prefixIcon: Icon(Icons.security),
+                        suffixIcon: Icon(Icons.contacts),
+                        // fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                        // filled: true,
+                        // hintText: '',
+                        labelText: 'last name',
+                      ),
                     ),
                   ),
-                  // filled: true,
-                  // hintText: '',
-                  labelText: 'last name',
                 ),
-              ),
+              ],
             ),
           ),
           Row(
@@ -553,7 +721,7 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                     'save user data in app',
                     style: TextStyle(fontSize: 14),
                   ),
-                  onChanged: (bool val) {
+                  onChanged: (bool? val) {
                     setState(() {
                       _toggleSaveUserInApp = val;
                     });
@@ -569,46 +737,62 @@ class _RegisterInputWidgetState extends State<RegisterInputWidget> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(7)),
                 onPressed: () async {
-                  bool goFurther = await _validateSignInEmailFields();
-                  if (goFurther) {
-                    await showAddPasswordDialog(context, true);
-                    CacheHandler cache = CacheHandler();
-                    BackendAuth auth = BackendAuth();
+                  // setState(() {
+                  //   _showPasswordInputWidget = true;
+                  // });
+                  if (!_showPasswordInputWidget) {
+                    bool goFurther = await _validateSignInEmailFields();
+                    if (goFurther) {
+                      setState(() {
+                        _showPasswordInputWidget = true;
+                      });
+                    }
+                  } else {
+                    if (await _validatePasswordFields()) {
+                      bool goFurther = await _startRegister();
 
-                    auth.register(
-                      false,
-                      _usernameInputController.text,
-                      _firstNameInputController.text,
-                      _lastNameInputController.text,
-                      _emailInputController.text,
-                      await cache.getSecureStringFromCache('master_password'),
-                    );
+                      if (!goFurther) {
+                        setState(() {
+                          _showPasswordInputWidget = false;
+                        });
+                        if (_usernameAlreadyAdded)
+                          _usernameInputKey.currentState!.validate();
+                        setState(() {
+                          _usernameAlreadyAdded = false;
+                        });
+                      }
+                      if (_emailAlreadyAdded) {
+                        _emailInputKey.currentState!.validate();
+                        setState(() {
+                          _emailAlreadyAdded = false;
+                        });
+                      }
 
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Registration progress successfully'),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: AppDefaultColors.colorPrimaryGrey[800],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                        ),
-                      ),
-                    );
-                    
-                    await auth.login(
-                      await cache.getSecureStringFromCache('user_ident'),
-                      await cache.getSecureStringFromCache('master_password'),
-                    );
+                      if (goFurther) {
+                        CacheHandler cache = CacheHandler();
+                        BackendAuth auth = BackendAuth();
 
-                    Navigator.of(context)
-                        .pushReplacementNamed('/passwordscreen');
-                    cache.addBoolToCache('registered', true);
-                    ApiProvider().getUserData(
-                        await cache.getSecureStringFromCache('user_name'));
-                    // TODO: add save user data in app functionality (button already added)
-                    // _toggleSaveUserInApp ? null : cache.removeFromCache('user_name') && cache.removeFromCache('user_ident') && cache.removeFromCache('master_password');
+                        await auth.login(
+                          await cache.getSecureStringFromCache('user_ident'),
+                          await cache
+                              .getSecureStringFromCache('master_password'),
+                        );
+
+                        Navigator.of(context)
+                            .pushReplacementNamed('/passwordscreen');
+                        cache.addBoolToCache('registered', true);
+                        String? authToken = await CacheHandler()
+                            .getSecureStringFromCache('auth_token');
+                        ApiProvider().getUserData(
+                            await (cache
+                                .getSecureStringFromCache(
+                                    'user_name') as FutureOr<
+                                String>), // FIXME: IMPORTANT BUG!!!!!!!!!!!!! The old cached auth token is getting used, zumindest glaube ich das.
+                            authToken);
+                        // TODO: add save user data in app functionality (button already added)
+                        // _toggleSaveUserInApp ? null : cache.removeFromCache('user_name') && cache.removeFromCache('user_ident') && cache.removeFromCache('master_password');
+                      }
+                    }
                   }
                 },
               ),

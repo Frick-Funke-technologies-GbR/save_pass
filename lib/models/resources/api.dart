@@ -13,10 +13,10 @@ class ApiProvider {
   // FIXME: Add server reachability check e.g. by checking connection to internet
   Client client = Client();
 
-  Future<Uint8List> getIconAsBlob(String domain) async {
+  Future<Uint8List?> getIconAsBlob(String? domain) async {
     try {
-      final response = await client
-          .get('https://logo.clearbit.com/$domain?size=600&format=png');
+      final response = await client.get(
+          Uri.parse('https://logo.clearbit.com/$domain?size=600&format=png'));
       print(
           '[DEBUG] Icon GET request Status: ${response.statusCode.toString()}');
 
@@ -72,30 +72,49 @@ class ApiProvider {
   //   }
   // }
 
-  Future getUserData(
-    String username,
-  ) async {
+  Future getUserData(String username, String? authToken) async {
+    CacheHandler cache = CacheHandler();
+    if (authToken == null) {
+      String? userIdent = await cache.getSecureStringFromCache('user_ident');
+      if (userIdent == null) {
+        throw Exception('No user ident found after no auth token provided');
+      }
+      authToken = await getAuthToken(
+          userIdent, await cache.getSecureStringFromCache('master_password'));
+    }
+
+    String? identAuthToken =
+        await cache.getSecureStringFromCache('ident_auth_token');
+    if (identAuthToken == null) {
+      throw Exception('No ident auth token found');
+    }
+
     final response = await client.get(
       // "http://10.0.2.2:5000/api/login",
-      'https://savepass.frifu.de/api/user_data',
+      Uri.parse('https://savepass.frifu.de/api/db/user_data'),
       // headers: {
       //   "Authorization" : userIdent
       // },
-      headers: {"username": username, 'all': 'false'},
+      headers: {
+        "username": username,
+        'all': 'false',
+        "Authorization": "Bearer " + authToken!,
+        'ident_auth_token': identAuthToken
+      },
     );
-    print('[DEBUG] Status of POST request (/api/user_data): ' +
+    print('[DEBUG] Status of POST request (/api/db/user_data): ' +
         response.statusCode.toString());
     print(response.body);
-    final Map result = json.decode(response.body);
-    if (response.statusCode == 201) {
+    final Map? result = json.decode(response.body);
+    if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
-      await _saveUserIdent(result["data"]["user_ident"]);
+      await _saveUserIdent(result!["data"]["user_ident"]);
       await _saveUserName(result["data"]["username"]);
       await _saveFirstName(result["data"]["firstname"]);
       await _saveLastName(result["data"]["lastname"]);
-      await _saveEmailAdress(result["data"]["emailadress"]);
+      await _saveEmailAdress(result["data"]["emailaddress"]);
     } else if (response.statusCode == 400) {
-      throw Exception(result['message']);
+      throw Exception(result!['message']);
     } else {
       // If that call was not successful, throw an error.
       print(json.decode(response.body).toString());
@@ -129,11 +148,11 @@ class ApiProvider {
   //   }
   // }
 
-  Future<String> getAuthToken(String userIdent, String password) async {
-    bool loginProcessResult = await BackendAuth().login(userIdent, password);
+  Future<String?> getAuthToken(String userIdent, String? password) async {
+    bool? loginProcessResult = await BackendAuth().login(userIdent, password);
     loginProcessResult ??= true;
     if (loginProcessResult) {
-      String authToken =
+      String? authToken =
           await CacheHandler().getSecureStringFromCache('auth_token');
       return authToken;
     } else {
@@ -141,9 +160,9 @@ class ApiProvider {
     }
   }
 
-  Future<List<EncryptedPasswordEntryClass>> getEncryptedUserPasswordEntries(
+  Future<List<EncryptedPasswordEntryClass>?> getEncryptedUserPasswordEntries(
     String userIdent,
-    String password, {
+    String? password, {
     int authTimeoutCount = 0,
   }) async {
     if (authTimeoutCount >= 3) {
@@ -151,7 +170,7 @@ class ApiProvider {
           'An error occured. Please contact the developer under support.savepass@frifu.de');
     }
 
-    String authToken = await getAuthToken(userIdent, password);
+    String? authToken = await getAuthToken(userIdent, password);
 
     print(authToken);
 
@@ -160,10 +179,10 @@ class ApiProvider {
     final response = await retry(
       () => client.get(
         // "http://10.0.2.2:5000/api/password_entry",
-        'https://savepass.frifu.de/api/db/password_entry',
+        Uri.parse('https://savepass.frifu.de/api/db/password_entry'),
         headers: {
           "user_ident": userIdent,
-          "Authorization": "Bearer " + authToken
+          "Authorization": "Bearer " + authToken!
         },
       ),
       // .then((resp) {
@@ -174,14 +193,14 @@ class ApiProvider {
     print('[DEBUG] Status of GET request (/api/db/password_entry): ' +
         response.statusCode.toString());
     print(response.body);
-    final Map<String, dynamic> result = json.decode(response.body);
+    final Map<String, dynamic>? result = json.decode(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       List<EncryptedPasswordEntryClass> passwordEntries = [];
 
       // print('following is result[\'data\']');
       // print(result['data'].toString());
-      for (Map<String, dynamic> json_ in result["data"]) {
+      for (Map<String, dynamic> json_ in result!["data"]) {
         print(json_);
         try {
           passwordEntries.add(EncryptedPasswordEntryClass.fromJson(json_));
@@ -193,11 +212,11 @@ class ApiProvider {
         }
       }
       for (EncryptedPasswordEntryClass passwordEntry in passwordEntries) {
-        print(passwordEntry.alias + passwordEntry.notes);
+        print(passwordEntry.alias! + passwordEntry.notes!);
       }
-      return passwordEntries ?? '';
+      return passwordEntries;
     } else if (response.statusCode == 401) {
-      String message = result['message'];
+      String? message = result!['message'];
       print(message);
       return getEncryptedUserPasswordEntries(userIdent, password,
           authTimeoutCount: authTimeoutCount + 1);
@@ -218,7 +237,7 @@ class ApiProvider {
     // }
   }
 
-  Future<List<PasswordEntryClass>> getUserPasswordEntries(
+  Future<List<PasswordEntryClass>?> getUserPasswordEntries(
     String userIdent,
     String password, {
     int authTimeoutCount = 0,
@@ -228,7 +247,7 @@ class ApiProvider {
           'An error occured. Please contact the developer under support.savepass@frifu.de');
     }
 
-    String authToken = await getAuthToken(userIdent, password);
+    String? authToken = await getAuthToken(userIdent, password);
 
     print(authToken);
 
@@ -237,10 +256,10 @@ class ApiProvider {
     final response = await retry(
       () => client.get(
         // "http://10.0.2.2:5000/api/password_entry",
-        'https://savepass.frifu.de/api/db/password_entry',
+        Uri.parse('https://savepass.frifu.de/api/db/password_entry'),
         headers: {
           "user_ident": userIdent,
-          "Authorization": "Bearer " + authToken
+          "Authorization": "Bearer " + authToken!
         },
       ),
       // .then((resp) {
@@ -251,14 +270,14 @@ class ApiProvider {
     print('[DEBUG] Status of GET request (/api/db/password_entry): ' +
         response.statusCode.toString());
     print(response.body);
-    final Map<String, dynamic> result = json.decode(response.body);
+    final Map<String, dynamic>? result = json.decode(response.body);
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       List<PasswordEntryClass> passwordEntries = [];
 
       // print('following is result[\'data\']');
       // print(result['data'].toString());
-      for (Map<String, dynamic> json_ in result["data"]) {
+      for (Map<String, dynamic> json_ in result!["data"]) {
         print(json_);
         try {
           // print(PasswordEntryClass.fromJson(json_).toString());
@@ -274,7 +293,8 @@ class ApiProvider {
               null,
               base64Decode(json_['encryption_salt']).toList(),
               base64Decode(
-                await CacheHandler().getStringFromCache('key_derivation_salt'),
+                await (CacheHandler().getStringFromCache('key_derivation_salt')
+                    as FutureOr<String>),
               ),
             ),
           );
@@ -286,11 +306,11 @@ class ApiProvider {
         }
       }
       for (PasswordEntryClass passwordEntry in passwordEntries) {
-        print(passwordEntry.alias + passwordEntry.notes);
+        print(passwordEntry.alias! + passwordEntry.notes!);
       }
-      return passwordEntries ?? '';
+      return passwordEntries;
     } else if (response.statusCode == 401) {
-      String message = result['message'];
+      String? message = result!['message'];
       print(message);
       return getUserPasswordEntries(userIdent, password,
           authTimeoutCount: authTimeoutCount + 1);
@@ -311,9 +331,9 @@ class ApiProvider {
     // }
   }
 
-  Future<bool> addUserPasswordEntry(
+  Future<bool?> addUserPasswordEntry(
     String userIdent,
-    String masterPassword,
+    String? masterPassword,
     List<int> alias,
     List<int> url,
     List<int> username,
@@ -327,13 +347,14 @@ class ApiProvider {
           'An error occured. Please contact the developer under support.savepass@frifu.de');
     }
 
-    String authToken = await getAuthToken(userIdent, masterPassword);
+    String authToken =
+        await (getAuthToken(userIdent, masterPassword) as FutureOr<String>);
 
     print(authToken);
 
     final response = await client.post(
       // "http://10.0.2.2:5000/api/password_entry",
-      'https://savepass.frifu.de/api/db/password_entry',
+      Uri.parse('https://savepass.frifu.de/api/db/password_entry'),
       headers: {
         "user_ident": userIdent,
         'Authorization': 'Bearer ' + authToken,
@@ -385,7 +406,8 @@ class ApiProvider {
           'An error occured. Please contact the developer under support.savepass@frifu.de');
     }
 
-    String authToken = await getAuthToken(userIdent, masterPassword);
+    String authToken =
+        await (getAuthToken(userIdent, masterPassword) as FutureOr<String>);
 
     try {
       final response = await client.send(Request("DELETE",
@@ -421,7 +443,7 @@ class ApiProvider {
   }
 
   @deprecated
-  Future<Map<String, dynamic>> getGeneratedPassword(
+  Future<Map<String, dynamic>?> getGeneratedPassword(
     int length,
     int complexity,
     bool words,
@@ -431,7 +453,7 @@ class ApiProvider {
     bool numbers,
   ) async {
     final response = await client.get(
-      'https://savepass.frifu.de/api/generate_password',
+      Uri.parse('https://savepass.frifu.de/api/generate_password'),
       headers: {
         'length': length.toString(),
         'complexity': complexity.toString(),
@@ -445,10 +467,10 @@ class ApiProvider {
     print('[DEBUG] Status of GET request (/api/generate_password): ' +
         response.statusCode.toString());
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body)['data'];
+      final Map<String, dynamic>? data = json.decode(response.body)['data'];
       return data;
     } else {
-      final Map<String, dynamic> message =
+      final Map<String, dynamic>? message =
           json.decode(response.body)['message'];
       throw Exception(message);
     }
@@ -460,30 +482,30 @@ class ApiProvider {
   //   });
   // }
 
-  _saveUserIdent(String userIdent) {
+  _saveUserIdent(String? userIdent) {
     CacheHandler cache = CacheHandler();
     cache.addSecureStringToCache('user_ident', userIdent);
   }
 
-  _saveUserName(String userName) {
+  _saveUserName(String? userName) {
     CacheHandler cache = CacheHandler();
     // print(userName.toString() + '_________________________________________________________________________');
     cache.addSecureStringToCache('user_name', userName);
   }
 
-  _saveFirstName(String firstName) {
+  _saveFirstName(String? firstName) {
     CacheHandler cache = CacheHandler();
     cache.addSecureStringToCache('first_name', firstName);
   }
 
-  _saveLastName(String lastName) {
+  _saveLastName(String? lastName) {
     CacheHandler cache = CacheHandler();
     cache.addSecureStringToCache('last_name', lastName);
   }
 
-  _saveEmailAdress(String emailAdress) {
+  _saveEmailAdress(String? emailAdress) {
     CacheHandler cache = CacheHandler();
-    cache.addSecureStringToCache('email_adress', emailAdress);
+    cache.addSecureStringToCache('email_address', emailAdress);
   }
 
   _savePassword(String password) {

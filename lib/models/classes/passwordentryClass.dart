@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -7,15 +8,15 @@ import 'package:save_pass/models/resources/database.dart';
 import 'package:save_pass/models/resources/cryptograph.dart';
 
 class PasswordEntryClass {
-  int id;
-  String alias;
-  String password;
-  String username;
-  String url;
-  String notes;
-  String thumbnail; // FIXME: add to string
-  String creationDate;
-  List<int> encryptionSalt;
+  int? id;
+  String? alias;
+  String? password;
+  String? username;
+  String? url;
+  String? notes;
+  String? thumbnail; // FIXME: add to string
+  String? creationDate;
+  List<int>? encryptionSalt;
 
   PasswordEntryClass([
     this.id,
@@ -41,13 +42,13 @@ class PasswordEntryClass {
       parsedJson['thumbnail'],
     );
     print('following is result in PasswordEntryClass.fromJson():');
-    print(result.alias +
+    print(result.alias! +
         ';' +
-        result.notes +
+        result.notes! +
         ';' +
-        result.password +
+        result.password! +
         ';' +
-        result.username);
+        result.username!);
     return result;
   }
   Map<String, dynamic> toMap() {
@@ -63,35 +64,36 @@ class PasswordEntryClass {
     };
   }
 
-  Future<Map<String, dynamic>> toEncryptedMap(String encryptionPassword) async {
+  Future<Map<String, dynamic>> toEncryptedMap(
+      String? encryptionPassword) async {
     // Salt changes with every new reference meaning with every new password entry encryption
     Cryptograph c = Cryptograph(encryptionPassword);
     // List<int> salt = c.salt;
     List<int> key = await c.generateKeyFromPass(
-        keySalt: base64Decode(
-            await CacheHandler().getStringFromCache('key_derivation_salt')));
+        keySalt: base64Decode(await (CacheHandler()
+            .getStringFromCache('key_derivation_salt') as FutureOr<String>)));
     return {
-      'alias': Uint8List.fromList(await c.encrypt(alias, key)),
-      'password': Uint8List.fromList(await c.encrypt(password, key)),
-      'username': Uint8List.fromList(await c.encrypt(username, key)),
-      'url': Uint8List.fromList(await c.encrypt(url, key)),
-      'notes': Uint8List.fromList(await c.encrypt(notes, key)),
-      'thumbnail': Uint8List.fromList(await c.encrypt(thumbnail,
+      'alias': Uint8List.fromList(await c.encrypt(alias!, key)),
+      'password': Uint8List.fromList(await c.encrypt(password!, key)),
+      'username': Uint8List.fromList(await c.encrypt(username!, key)),
+      'url': Uint8List.fromList(await c.encrypt(url!, key)),
+      'notes': Uint8List.fromList(await c.encrypt(notes!, key)),
+      'thumbnail': Uint8List.fromList(await c.encrypt(thumbnail!,
           key)), // Also encrypt thumbnail, because hackers might conclude the password from it.
-      'encryption_salt': Uint8List.fromList(c.encryptionSalt),
+      'encryption_salt': Uint8List.fromList(c.encryptionSalt!),
     };
   }
 
   Future<PasswordEntryClass> fromEncryptedMap(
-    String masterPassword,
-    int id,
+    String? masterPassword,
+    int? id,
     List<int> alias,
     List<int> password,
     List<int> username,
     List<int> url,
     List<int> notes,
-    List<int> thumbnail,
-    List<int> encryptionSalt,
+    List<int>? thumbnail,
+    List<int>? encryptionSalt,
     List<int> salt,
   ) async {
     Cryptograph c = Cryptograph(masterPassword);
@@ -130,15 +132,15 @@ class PasswordEntryDatabaseActions {
 }
 
 class EncryptedPasswordEntryClass {
-  int id;
-  List<int> alias;
-  List<int> password;
-  List<int> username;
-  List<int> url;
-  List<int> notes;
-  List<int> thumbnail;
-  List<int> creationDate;
-  List<int> encryptionSalt;
+  int? id;
+  List<int>? alias;
+  List<int>? password;
+  List<int>? username;
+  List<int>? url;
+  List<int>? notes;
+  List<int>? thumbnail;
+  List<int>? creationDate;
+  List<int>? encryptionSalt;
 
   EncryptedPasswordEntryClass([
     this.id,
@@ -153,13 +155,13 @@ class EncryptedPasswordEntryClass {
 
   Map<String, dynamic> toUin8ListMap(EncryptedPasswordEntryClass entry) {
     return {
-      'alias': Uint8List.fromList(entry.alias),
-      'password': Uint8List.fromList(entry.password),
-      'username': Uint8List.fromList(entry.username),
-      'url': Uint8List.fromList(entry.url),
-      'notes': Uint8List.fromList(entry.notes),
-      'thumbnail': Uint8List.fromList(entry.thumbnail),
-      'encryption_salt': Uint8List.fromList(entry.encryptionSalt),
+      'alias': Uint8List.fromList(entry.alias!),
+      'password': Uint8List.fromList(entry.password!),
+      'username': Uint8List.fromList(entry.username!),
+      'url': Uint8List.fromList(entry.url!),
+      'notes': Uint8List.fromList(entry.notes!),
+      'thumbnail': Uint8List.fromList(entry.thumbnail!),
+      'encryption_salt': Uint8List.fromList(entry.encryptionSalt!),
     };
   }
 
@@ -181,14 +183,14 @@ class EncryptedPasswordEntryClass {
   }
 
   Future<EncryptedPasswordEntryClass> fromMap(
-    int id,
-    List<int> alias,
-    List<int> password,
-    List<int> username,
-    List<int> url,
-    List<int> notes,
-    List<int> thumbnail,
-    List<int> encryptionSalt,
+    int? id,
+    List<int>? alias,
+    List<int>? password,
+    List<int>? username,
+    List<int>? url,
+    List<int>? notes,
+    List<int>? thumbnail,
+    List<int>? encryptionSalt,
   ) async {
     return EncryptedPasswordEntryClass(
       id,

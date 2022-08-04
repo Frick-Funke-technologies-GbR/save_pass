@@ -11,7 +11,7 @@ import 'package:save_pass/models/resources/backup.dart';
 import 'package:save_pass/models/resources/database.dart';
 
 void showLogOutDialog(BuildContext context) async {
-  Directory storageDirectory = await CacheHandler().getStorageDirectory();
+  Directory? storageDirectory = await CacheHandler().getStorageDirectory();
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -48,10 +48,10 @@ void showLogOutDialog(BuildContext context) async {
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     Clipboard.setData(ClipboardData(
-                                        text: storageDirectory.path));
+                                        text: storageDirectory!.path));
                                   },
                                 text:
-                                    '${storageDirectory.path} (Tap to copy)\n\n'),
+                                    '${storageDirectory!.path} (Tap to copy)\n\n'),
                             TextSpan(
                               text:
                                   '(It is not recommendet to handle the backup manually. You will be able to import the data from the settings menu later.)\n\nIf you have cloud sync eneabled, your data will stay in the cloud.',
@@ -97,7 +97,9 @@ void showLogOutDialog(BuildContext context) async {
                       !errorOccured) {
                     // _createBackup(storageDirectory);
                     _localLogout();
-                    Navigator.of(context).pushNamedAndRemoveUntil('/registerscreen', (route) => false); // close all previous routes
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/registerscreen',
+                        (route) => false); // close all previous routes
                     // TODO: Delete all Data except the backup, figure out, how to get to Register-screen
                   } else {
                     Navigator.of(context).pop();
@@ -160,7 +162,10 @@ void showLogOutDialog(BuildContext context) async {
                                   ),
                                   onPressed: () {
                                     _localLogout();
-                                    Navigator.of(context).pushNamedAndRemoveUntil('/registerscreen', (route) => false); // close all previous routes
+                                    Navigator.of(context).pushNamedAndRemoveUntil(
+                                        '/registerscreen',
+                                        (route) =>
+                                            false); // close all previous routes
                                     // TODO: Add logout process
                                   },
                                 ),
@@ -191,14 +196,13 @@ Future<bool> _localLogout() async {
   DatabaseHandler db = DatabaseHandler();
 
   try {
-    
     // clear most important cache entries
     await cache.removeFromCache('master_password');
     await cache.removeFromCache('user_name');
     await cache.removeFromCache('user_ident');
     await cache.removeFromCache('first_name');
     await cache.removeFromCache('last_name');
-    await cache.removeFromCache('email_adress');
+    await cache.removeFromCache('email_address');
 
     //clear all data stores in db
     await db.deleteAllPasswordEntries();
