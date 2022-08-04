@@ -41,7 +41,7 @@ class Backup {
           'user_ident': await cache.getSecureStringFromCache('user_ident'),
           'first_name': await cache.getSecureStringFromCache('first_name'),
           'last_name': await cache.getSecureStringFromCache('last_name'),
-          'email_adress': await cache.getSecureStringFromCache('email_adress'),
+          'email_adress': await cache.getSecureStringFromCache('email_address'),
           'password': passwordHash,
           'ident_auth_token':
               await cache.getSecureStringFromCache('ident_auth_token'),

@@ -182,7 +182,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   : CrossFadeState.showFirst,
                               duration: Duration(milliseconds: 20),
                               firstChild: TextButton(
-                                child: Text('sync now'),
+                                child: Text('sync now',
+                                    style: TextStyle(color: Colors.white)),
                                 onPressed: syncStatus
                                     ? () async {
                                         setState(() {

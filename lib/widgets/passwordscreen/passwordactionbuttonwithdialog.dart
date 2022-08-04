@@ -829,7 +829,7 @@ class _PasswordActionButtonWithDialogWidgetState
                       child: TextFormField(
                         controller: _usernameFieldController,
                         decoration: InputDecoration(
-                          labelText: 'username',
+                          labelText: 'username / email address',
                           filled: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),

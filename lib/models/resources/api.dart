@@ -112,7 +112,7 @@ class ApiProvider {
       await _saveUserName(result["data"]["username"]);
       await _saveFirstName(result["data"]["firstname"]);
       await _saveLastName(result["data"]["lastname"]);
-      await _saveEmailAdress(result["data"]["emailadress"]);
+      await _saveEmailAdress(result["data"]["emailaddress"]);
     } else if (response.statusCode == 400) {
       throw Exception(result!['message']);
     } else {
@@ -505,7 +505,7 @@ class ApiProvider {
 
   _saveEmailAdress(String? emailAdress) {
     CacheHandler cache = CacheHandler();
-    cache.addSecureStringToCache('email_adress', emailAdress);
+    cache.addSecureStringToCache('email_address', emailAdress);
   }
 
   _savePassword(String password) {

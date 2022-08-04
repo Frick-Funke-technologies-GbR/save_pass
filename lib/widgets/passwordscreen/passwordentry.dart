@@ -616,7 +616,7 @@ class _PasswordEntryState extends State<PasswordEntry> {
                         ),
                         child: RichText(
                           text: TextSpan(
-                            text: 'username: ',
+                            text: 'username/email: ',
                             style: GoogleFonts.firaCode(
                               color: AppDefaultColors.colorPrimaryGrey[800],
                               // color: Colors.yellow[700],

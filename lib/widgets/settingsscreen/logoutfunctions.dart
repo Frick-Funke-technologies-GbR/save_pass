@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
@@ -99,7 +97,9 @@ void showLogOutDialog(BuildContext context) async {
                       !errorOccured) {
                     // _createBackup(storageDirectory);
                     _localLogout();
-                    Navigator.of(context).pushNamedAndRemoveUntil('/registerscreen', (route) => false); // close all previous routes
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/registerscreen',
+                        (route) => false); // close all previous routes
                     // TODO: Delete all Data except the backup, figure out, how to get to Register-screen
                   } else {
                     Navigator.of(context).pop();
@@ -162,7 +162,10 @@ void showLogOutDialog(BuildContext context) async {
                                   ),
                                   onPressed: () {
                                     _localLogout();
-                                    Navigator.of(context).pushNamedAndRemoveUntil('/registerscreen', (route) => false); // close all previous routes
+                                    Navigator.of(context).pushNamedAndRemoveUntil(
+                                        '/registerscreen',
+                                        (route) =>
+                                            false); // close all previous routes
                                     // TODO: Add logout process
                                   },
                                 ),
@@ -193,14 +196,13 @@ Future<bool> _localLogout() async {
   DatabaseHandler db = DatabaseHandler();
 
   try {
-    
     // clear most important cache entries
     await cache.removeFromCache('master_password');
     await cache.removeFromCache('user_name');
     await cache.removeFromCache('user_ident');
     await cache.removeFromCache('first_name');
     await cache.removeFromCache('last_name');
-    await cache.removeFromCache('email_adress');
+    await cache.removeFromCache('email_address');
 
     //clear all data stores in db
     await db.deleteAllPasswordEntries();

@@ -59,7 +59,8 @@ Future<bool?> checkMasterPassword(
   if (!userIdentAlreadyStored) {
     try {
       // FIXME: The followong schould only be called after register
-      await ApiProvider().getUserData(username!, await CacheHandler().getSecureStringFromCache('auth_token'));
+      await ApiProvider().getUserData(username!,
+          await CacheHandler().getSecureStringFromCache('auth_token'));
     } catch (e) {
       // If user is not added yet, or an other reason to throw an login error exists, show Snackbar
       // FIXME: Here, the state also doesnt change for Snackbar
@@ -226,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             //     _showUsernameField = true;
                             //   });
                             // });
-                            if (snapshot.data != null) {
+                            if (snapshot.data == true) {
                               // WidgetsBinding.instance.addPostFrameCallback((_) {
                               _showUsernameField = true;
                               // });
@@ -484,6 +485,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             // print(await CacheHandler().getSecureStringFromCache('user_ident'));
                             // Sync().normalSync(true); // TODO: debug sync function
                             // print(await ApiProvider().getIconAsBlob('facebook.com'));
+                            // print(await CacheHandler()
+                            //     .getSecureStringFromCache('user_ident'));
+                            // print(await CacheHandler()
+                            //     .getSecureStringFromCache('user_name'));
+                            // print(await CacheHandler()
+                            //     .getSecureStringFromCache('master_password'));
                             // ____________________________________
 
                             passInputValidator(_showUsernameField

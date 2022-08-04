@@ -176,7 +176,7 @@ class BackendAuth {
 
   // _saveEmailAdress(String emailAdress) {
   //   CacheHandler cache = CacheHandler();
-  //   cache.addSecureStringToCache('email_adress', emailAdress);
+  //   cache.addSecureStringToCache('email_address', emailAdress);
   // }
 
   // _savePassword(String password) {

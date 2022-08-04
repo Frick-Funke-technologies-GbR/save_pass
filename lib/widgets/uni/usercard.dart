@@ -25,8 +25,9 @@ class _UserCardState extends State<UserCard> {
         await CacheHandler().getSecureStringFromCache('user_ident');
     String? userName =
         await CacheHandler().getSecureStringFromCache('user_name');
-    String? emailAdress =
-        await CacheHandler().getSecureStringFromCache('email_adress');
+    print(userName);
+    String? emailAddress =
+        await CacheHandler().getSecureStringFromCache('email_address');
     String? firstName =
         await CacheHandler().getSecureStringFromCache('first_name');
     String? lastName =
@@ -34,7 +35,7 @@ class _UserCardState extends State<UserCard> {
     Map<String, String?> userDataList = {};
     userDataList['user_ident'] = userIdent;
     userDataList['user_name'] = userName;
-    userDataList['email_adress'] = emailAdress;
+    userDataList['email_address'] = emailAddress;
     userDataList['first_name'] = firstName;
     userDataList['last_name'] = lastName;
     return userDataList;
@@ -89,7 +90,7 @@ class _UserCardState extends State<UserCard> {
                               height: 20,
                               margin: EdgeInsets.only(left: 5),
                               child: Text(
-                                _getUserDataFromMap(snapshot.data, 'user_data'),
+                                _getUserDataFromMap(snapshot.data, 'user_name'),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -125,7 +126,7 @@ class _UserCardState extends State<UserCard> {
                         Container(
                           margin: EdgeInsets.only(left: 13),
                           child: Text(
-                            _getUserDataFromMap(snapshot.data, 'email_adress'),
+                            _getUserDataFromMap(snapshot.data, 'email_address'),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
