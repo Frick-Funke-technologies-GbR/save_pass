@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:save_pass/models/classes/defaultcolors.dart';
 
@@ -9,7 +7,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     return BottomAppBar(
       // shape: CircularNotchedRectangle(),
       color: Colors.white,
-      
+
       // notchMargin: 4,
       child: Builder(
         builder: (context) => Row(
@@ -35,7 +33,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
             // ),
             IconButton(
               icon: Icon(Icons.feedback),
-              onPressed: null,
+              onPressed: () {
+                Navigator.pushNamed(context, '/notificationsscreen');
+              },
               // padding: EdgeInsets.symmetric(horizontal: 30),
               color: AppDefaultColors.colorPrimaryGrey,
             ),
@@ -103,4 +103,3 @@ class CustomBottomNavigationBarWalletScr extends StatelessWidget {
     );
   }
 }
-

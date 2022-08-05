@@ -1,8 +1,6 @@
 // import 'dart:js';
 // import 'dart:ui';
 
-
-
 import 'dart:isolate';
 
 import 'package:flutter/cupertino.dart';
@@ -573,7 +571,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                 case ConnectionState.waiting:
                                   return Center(
                                       child: CircularProgressIndicator());
-                                  break;
                                 default:
                                   if (snapshot.hasError) {
                                     print('test4');
@@ -586,7 +583,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                       child: Text('no entries added yet'),
                                     );
                                   }
-                                  List<PasswordEntryClass>? data = snapshot.data;
+                                  List<PasswordEntryClass>? data =
+                                      snapshot.data;
                                   return _passwordEntryListView(data);
                               }
                             },
