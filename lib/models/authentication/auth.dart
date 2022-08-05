@@ -140,7 +140,7 @@ class BackendAuth {
     } else if (response.statusCode == 200) {
       String? authToken = result!['auth_token'];
       await _saveAuthToken(authToken);
-      
+
       if (result['data']['password_entries'] == 0) {
         return null;
       }

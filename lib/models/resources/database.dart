@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -27,7 +25,7 @@ class DatabaseHandler {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
     Map<String, dynamic> encryptedEntry = await entry.toEncryptedMap(password);
-    
+
     int result = await db.insert(
       'password_entry',
       encryptedEntry,
@@ -42,8 +40,8 @@ class DatabaseHandler {
       EncryptedPasswordEntryClass entry) async {
     final Database db = await getDatabase();
     print('[DATABASE] Path: ' + db.path);
-    Map<String, dynamic> mapEntry = entry.toUin8ListMap(entry); // FIXME: Here, the db suddenly doesnt except UInt8List any more. Mist.
-    print(entry);
+    Map<String, dynamic> mapEntry = entry.toUin8ListMap(
+        entry); // FIXME: Here, the db suddenly doesnt except UInt8List any more. Mist.
     int result = await db.insert(
       'password_entry',
       mapEntry,
@@ -88,6 +86,8 @@ class DatabaseHandler {
 
     // Convert the List<Map<String, dynamic> into a List<PasswordEntryClass> while decrypt the members contents
     List<PasswordEntryClass> passwordEntries = [];
+    Stopwatch stopwatch1 = Stopwatch()..start();
+
     for (Map<String, dynamic> iteratedEntry in maps) {
       Map<String, dynamic> entry = Map.of(iteratedEntry);
       // FIXME: Remove following line for future implementation of creation date
@@ -99,6 +99,8 @@ class DatabaseHandler {
       passwordEntries.add(decryptedEntry);
       stopwatch.stop();
     }
+    print(
+        '[DECRYPTION] Whole execution process chain took: ${stopwatch1.elapsed}');
     return passwordEntries;
   }
 
@@ -114,8 +116,8 @@ class DatabaseHandler {
       map['notes'],
       map['thumbnail'],
       map['encryption_salt'],
-      base64Decode(
-          await (CacheHandler().getStringFromCache('key_derivation_salt') as FutureOr<String>)),
+      base64Decode(await (CacheHandler()
+          .getStringFromCache('key_derivation_salt') as FutureOr<String>)),
     );
   }
 
@@ -133,7 +135,9 @@ class DatabaseHandler {
     if (map.isEmpty) {
       String? cachedPassword =
           await CacheHandler().getSecureStringFromCache('master_password');
-      if (cachedPassword == null && await (CacheHandler().getBoolFromCache('registered') as FutureOr<bool>)) {
+      if (cachedPassword == null &&
+          await (CacheHandler().getBoolFromCache('registered')
+              as FutureOr<bool>)) {
         throw Exception(
             'Error when storing the masterpassword on register, please restart app');
       }
@@ -143,7 +147,7 @@ class DatabaseHandler {
       }
     }
 
-    print('TESTTESTTEST');
+    // print('TESTTESTTEST');
 
     Map<String, dynamic> mapAsMap = map[0];
 
@@ -158,8 +162,8 @@ class DatabaseHandler {
         mapAsMap['notes'],
         mapAsMap['thumbnail'],
         mapAsMap['encryption_salt'],
-        base64Decode(
-            await (CacheHandler().getStringFromCache('key_derivation_salt') as FutureOr<String>)),
+        base64Decode(await (CacheHandler()
+            .getStringFromCache('key_derivation_salt') as FutureOr<String>)),
       );
       return true;
     } on Exception catch (e) {

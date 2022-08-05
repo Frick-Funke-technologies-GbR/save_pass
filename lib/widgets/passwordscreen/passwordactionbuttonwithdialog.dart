@@ -76,7 +76,7 @@ class _PasswordActionButtonWithDialogWidgetState
         return false;
         // _passwordFieldKey.currentState.validate();
       } else {
-        String? userIdent = await cache.getSecureStringFromCache('user_ident');
+        // String? userIdent = await cache.getSecureStringFromCache('user_ident');
         String? masterPassword =
             await cache.getSecureStringFromCache('master_password');
 
@@ -110,7 +110,7 @@ class _PasswordActionButtonWithDialogWidgetState
         return true;
       }
     } else {
-      String? userIdent = await cache.getSecureStringFromCache('user_ident');
+      // String? userIdent = await cache.getSecureStringFromCache('user_ident');
       String? masterPassword =
           await cache.getSecureStringFromCache('master_password');
 
@@ -401,7 +401,7 @@ class _PasswordActionButtonWithDialogWidgetState
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              title: Text('Generate Pasword'),
+              title: Text('Generate Password'),
               content: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
